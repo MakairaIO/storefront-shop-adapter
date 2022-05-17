@@ -1,0 +1,25 @@
+{
+  "name": "eslint-preset",
+  "version": "0.0.0",
+  "description": "contains the eslint config for this monorepo to share it between the packages",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MakairaIO/storefront-shop-adapter.git"
+  },
+  "author": "Jonas Embach <je@marmalade.group>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MakairaIO/storefront-shop-adapter/issues"
+  },
+  "homepage": "https://github.com/MakairaIO/storefront-shop-adapter#readme",
+  "dependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.21.0",
+    "@typescript-eslint/parser": "^5.21.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-jest": "^26.1.5",
+    "eslint-plugin-react": "^7.29.4",
+    "eslint-plugin-react-hooks": "^4.5.0"
+  }
+}

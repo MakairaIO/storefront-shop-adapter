@@ -1,0 +1,46 @@
+{
+  "name": "storefront-shop-adapter",
+  "version": "0.0.0",
+  "description": " ",
+  "main": "index.js",
+  "scripts": {
+    "lint": "turbo run lint",
+    "test": "turbo run test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MakairaIO/storefront-shop-adapter.git"
+  },
+  "keywords": [
+    "storefront",
+    "makaira",
+    "shop",
+    "adapter",
+    "oxid",
+    "shopify",
+    "plentymarkets",
+    "local"
+  ],
+  "author": "Jonas Embach <je@marmalade.group>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MakairaIO/storefront-shop-adapter/issues"
+  },
+  "homepage": "https://github.com/MakairaIO/storefront-shop-adapter#readme",
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.21.0",
+    "@typescript-eslint/parser": "^5.21.0",
+    "eslint": "^8.14.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-jest": "^26.1.5",
+    "eslint-plugin-react": "^7.29.4",
+    "eslint-plugin-react-hooks": "^4.5.0",
+    "prettier": "^2.6.2",
+    "turbo": "^1.2.5",
+    "typescript": "^4.6.3"
+  },
+  "workspaces": [
+    "packages/*"
+  ]
+}

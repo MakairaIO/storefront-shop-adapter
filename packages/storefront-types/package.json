@@ -1,0 +1,30 @@
+{
+  "name": "@makaira/storefront-types",
+  "version": "0.0.0",
+  "description": "Contains the makaira shop adapter typescript type definitions",
+  "main": "src/index.ts",
+  "scripts": {
+    "lint": "eslint src --fix",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MakairaIO/storefront-shop-adapter.git"
+  },
+  "keywords": [
+    "storefront",
+    "makaira",
+    "typescript",
+    "types"
+  ],
+  "author": "Jonas Embach <je@marmalade.group>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MakairaIO/storefront-shop-adapter/issues"
+  },
+  "homepage": "https://github.com/MakairaIO/storefront-shop-adapter#readme",
+  "devDependencies": {
+    "eslint-preset": "*",
+    "tsconfig-preset": "*"
+  }
+}

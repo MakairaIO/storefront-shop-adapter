@@ -1,0 +1,17 @@
+{
+  "name": "tsconfig-preset",
+  "version": "0.0.0",
+  "description": "contains the tsconfig for this monorepo to share it between the packages",
+  "main": "index.js",
+  "files": ["base.json"],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MakairaIO/storefront-shop-adapter.git"
+  },
+  "author": "Jonas Embach <je@marmalade.group>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MakairaIO/storefront-shop-adapter/issues"
+  },
+  "homepage": "https://github.com/MakairaIO/storefront-shop-adapter#readme"
+}

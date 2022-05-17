@@ -1,0 +1,5 @@
+{
+  "extends": "tsconfig-preset/base.json",
+  "include": ["."],
+  "exclude": ["dist", "build", "node_modules"]
+}
