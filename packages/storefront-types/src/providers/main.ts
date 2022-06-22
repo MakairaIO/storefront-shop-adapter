@@ -1,8 +1,8 @@
-import { Constructor } from "../general";
-import { MakairaShopProviderCart } from "./cart";
-import { MakairaShopProviderCheckout } from "./checkout";
-import { MakairaShopProviderUser } from "./user";
-import { MakairaShopProviderWishlist } from "./wishlist";
+import { Constructor } from '../general'
+import { MakairaShopProviderCart } from './cart'
+import { MakairaShopProviderCheckout } from './checkout'
+import { MakairaShopProviderUser } from './user'
+import { MakairaShopProviderWishlist } from './wishlist'
 
 export type MakairaShopProviderOptions<
   CartProviderType = MakairaShopProviderCart,
@@ -11,12 +11,12 @@ export type MakairaShopProviderOptions<
   WishlistProviderType = MakairaShopProviderWishlist
 > = {
   providers?: {
-    cart?: Constructor<CartProviderType>;
-    checkout?: Constructor<CheckoutProviderType>;
-    user?: Constructor<UserProviderType>;
-    wishlist?: Constructor<WishlistProviderType>;
-  };
-};
+    cart?: Constructor<CartProviderType>
+    checkout?: Constructor<CheckoutProviderType>
+    user?: Constructor<UserProviderType>
+    wishlist?: Constructor<WishlistProviderType>
+  }
+}
 
 export interface MakairaShopProvider<
   CartProviderType extends MakairaShopProviderCart,
@@ -24,11 +24,11 @@ export interface MakairaShopProvider<
   UserProviderType extends MakairaShopProviderUser,
   WishlistProviderType extends MakairaShopProviderWishlist
 > {
-  cart: CartProviderType;
+  cart: CartProviderType
 
-  checkout: CheckoutProviderType;
+  checkout: CheckoutProviderType
 
-  user: UserProviderType;
+  user: UserProviderType
 
-  wishlist: WishlistProviderType;
+  wishlist: WishlistProviderType
 }

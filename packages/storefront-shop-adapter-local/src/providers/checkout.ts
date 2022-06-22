@@ -2,8 +2,8 @@ import {
   MakairaGetCheckout,
   MakairaShopProviderCheckout,
   MakairaSubmitCheckout,
-} from "@makaira/storefront-types";
-import { StorefrontShopAdapterLocal } from "./main";
+} from '@makaira/storefront-types'
+import { StorefrontShopAdapterLocal } from './main'
 
 export class StorefrontShopAdapterLocalCheckout
   implements MakairaShopProviderCheckout
@@ -11,10 +11,10 @@ export class StorefrontShopAdapterLocalCheckout
   constructor(private mainAdapter: StorefrontShopAdapterLocal) {}
 
   getCheckout: MakairaGetCheckout<unknown, undefined, Error> = async () => {
-    return { data: undefined, error: undefined };
-  };
+    return { data: undefined, error: undefined }
+  }
 
   submit: MakairaSubmitCheckout<unknown, undefined, Error> = async () => {
-    return { data: undefined, error: undefined };
-  };
+    return { data: undefined, error: undefined }
+  }
 }

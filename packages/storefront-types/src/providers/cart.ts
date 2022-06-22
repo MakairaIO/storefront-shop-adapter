@@ -1,16 +1,16 @@
-import { MakairaShopProviderInteractor } from "../general/shop-provider-interactor";
-import { MakairaProduct } from "../product";
+import { MakairaShopProviderInteractor } from '../general/shop-provider-interactor'
+import { MakairaProduct } from '../product'
 
 //#region type definition: add-to-cart
 export type MakairaAddItemToCartInput<AdditionalInput = unknown> = {
-  product: MakairaProduct;
-  quantity: number;
-} & AdditionalInput;
+  product: MakairaProduct
+  quantity: number
+} & AdditionalInput
 
 export type MakairaAddItemToCartResData<RawResponse = unknown> = {
-  items: { product: MakairaProduct; quantity: number }[];
-  raw: RawResponse;
-};
+  items: { product: MakairaProduct; quantity: number }[]
+  raw: RawResponse
+}
 
 export type MakairaAddItemToCart<
   AdditionalInput = unknown,
@@ -20,16 +20,16 @@ export type MakairaAddItemToCart<
   MakairaAddItemToCartInput<AdditionalInput>,
   MakairaAddItemToCartResData<RawResponse>,
   ResError
->;
+>
 //#endregion
 
 //#region type definition: get-cart
-export type MakairaGetCartInput<AdditionalInput = unknown> = AdditionalInput;
+export type MakairaGetCartInput<AdditionalInput = unknown> = AdditionalInput
 
 export type MakairaGetCartResData<RawResponse = unknown> = {
-  items: { product: MakairaProduct; quantity: number }[];
-  raw: RawResponse;
-};
+  items: { product: MakairaProduct; quantity: number }[]
+  raw: RawResponse
+}
 
 export type MakairaGetCart<
   AdditionalInput = unknown,
@@ -39,18 +39,18 @@ export type MakairaGetCart<
   MakairaGetCartInput<AdditionalInput>,
   MakairaGetCartResData<RawResponse>,
   ResError
->;
+>
 //#endregion
 
 //#region type definition: remove-item-from-cart
 export type MakairaRemoveItemFromCartInput<AdditionalInput = unknown> = {
-  product: MakairaProduct;
-} & AdditionalInput;
+  product: MakairaProduct
+} & AdditionalInput
 
 export type MakairaRemoveItemFromCartResData<RawResponse = unknown> = {
-  items: { product: MakairaProduct; quantity: number }[];
-  raw: RawResponse;
-};
+  items: { product: MakairaProduct; quantity: number }[]
+  raw: RawResponse
+}
 
 export type MakairaRemoveItemFromCart<
   AdditionalInput = unknown,
@@ -60,18 +60,18 @@ export type MakairaRemoveItemFromCart<
   MakairaRemoveItemFromCartInput<AdditionalInput>,
   MakairaRemoveItemFromCartResData<RawResponse>,
   ResError
->;
+>
 //#endregion
 
 //#region type definition: update-item
 export type MakairaUpdateItemFromCartInput<AdditionalInput = unknown> = {
-  product: MakairaProduct;
-  quantity: number;
-} & AdditionalInput;
+  product: MakairaProduct
+  quantity: number
+} & AdditionalInput
 
 export type MakairaUpdateItemFromCartResData<RawResponse = unknown> = {
-  raw: RawResponse;
-};
+  raw: RawResponse
+}
 
 export type MakairaUpdateItemFromCart<
   AdditionalInput = unknown,
@@ -81,13 +81,13 @@ export type MakairaUpdateItemFromCart<
   MakairaUpdateItemFromCartInput<AdditionalInput>,
   MakairaUpdateItemFromCartResData<RawResponse>,
   ResError
->;
+>
 //#endregion
 
 //#region type definition: provider cart
 export type MakairaShopProviderCart = {
-  addItem: MakairaAddItemToCart;
-  getCart: MakairaGetCart;
-  removeItem: MakairaRemoveItemFromCart;
-  updateItem: MakairaUpdateItemFromCart;
-};
+  addItem: MakairaAddItemToCart
+  getCart: MakairaGetCart
+  removeItem: MakairaRemoveItemFromCart
+  updateItem: MakairaUpdateItemFromCart
+}

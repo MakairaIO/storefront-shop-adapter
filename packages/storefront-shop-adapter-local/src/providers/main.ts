@@ -5,11 +5,11 @@ import {
   MakairaShopProviderOptions,
   MakairaShopProviderUser,
   MakairaShopProviderWishlist,
-} from "@makaira/storefront-types";
-import { StorefrontShopAdapterLocalCart } from "./cart";
-import { StorefrontShopAdapterLocalCheckout } from "./checkout";
-import { StorefrontShopAdapterLocalUser } from "./user";
-import { StorefrontShopAdapterLocalWishlist } from "./wishlist";
+} from '@makaira/storefront-types'
+import { StorefrontShopAdapterLocalCart } from './cart'
+import { StorefrontShopAdapterLocalCheckout } from './checkout'
+import { StorefrontShopAdapterLocalUser } from './user'
+import { StorefrontShopAdapterLocalWishlist } from './wishlist'
 
 export class StorefrontShopAdapterLocal<
     CartProviderType extends MakairaShopProviderCart = StorefrontShopAdapterLocalCart,
@@ -26,13 +26,13 @@ export class StorefrontShopAdapterLocal<
       WishlistProviderType
     >
 {
-  cart: CartProviderType;
+  cart: CartProviderType
 
-  checkout: CheckoutProviderType;
+  checkout: CheckoutProviderType
 
-  user: UserProviderType;
+  user: UserProviderType
 
-  wishlist: WishlistProviderType;
+  wishlist: WishlistProviderType
 
   constructor(
     options: MakairaShopProviderOptions<
@@ -42,25 +42,25 @@ export class StorefrontShopAdapterLocal<
       WishlistProviderType
     > = {}
   ) {
-    super();
+    super()
 
     const {
       cart: CartProvider = StorefrontShopAdapterLocalCart,
       checkout: CheckoutProvider = StorefrontShopAdapterLocalCheckout,
       user: UserProvider = StorefrontShopAdapterLocalUser,
       wishlist: WishlistProvider = StorefrontShopAdapterLocalWishlist,
-    } = options.providers ?? {};
+    } = options.providers ?? {}
 
     // @ts-expect-error https://stackoverflow.com/questions/56505560/how-to-fix-ts2322-could-be-instantiated-with-a-different-subtype-of-constraint
-    this.cart = new CartProvider(this);
+    this.cart = new CartProvider(this)
 
     // @ts-expect-error https://stackoverflow.com/questions/56505560/how-to-fix-ts2322-could-be-instantiated-with-a-different-subtype-of-constraint
-    this.checkout = new CheckoutProvider(this);
+    this.checkout = new CheckoutProvider(this)
 
     // @ts-expect-error https://stackoverflow.com/questions/56505560/how-to-fix-ts2322-could-be-instantiated-with-a-different-subtype-of-constraint
-    this.user = new UserProvider(this);
+    this.user = new UserProvider(this)
 
     // @ts-expect-error https://stackoverflow.com/questions/56505560/how-to-fix-ts2322-could-be-instantiated-with-a-different-subtype-of-constraint
-    this.wishlist = new WishlistProvider(this);
+    this.wishlist = new WishlistProvider(this)
   }
 }

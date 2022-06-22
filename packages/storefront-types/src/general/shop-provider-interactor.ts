@@ -1,8 +1,8 @@
-import { MakairaResponse } from "./response";
+import { MakairaResponse } from './response'
 
 export type MakairaShopProviderInteractorContext<Input> = {
-  input: Input;
-};
+  input: Input
+}
 
 export type MakairaShopProviderInteractor<
   Input = unknown,
@@ -10,4 +10,4 @@ export type MakairaShopProviderInteractor<
   ResError extends Error = Error
 > = (
   context: MakairaShopProviderInteractorContext<Input>
-) => Promise<MakairaResponse<ResData, ResError>>;
+) => Promise<MakairaResponse<ResData, ResError>>

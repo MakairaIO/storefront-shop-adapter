@@ -1,8 +1,8 @@
-import { MakairaLoginResData } from "../providers";
+import { MakairaLoginResData } from '../providers'
 
 export class MakairaLoginEvent extends CustomEvent<MakairaLoginResData> {
-  static eventName = "makaira:login";
+  static eventName = 'makaira:login'
   constructor() {
-    super(MakairaLoginEvent.eventName);
+    super(MakairaLoginEvent.eventName)
   }
 }
