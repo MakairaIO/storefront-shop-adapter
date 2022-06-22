@@ -8,7 +8,8 @@ export type MakairaShopProviderOptions<
   CartProviderType = MakairaShopProviderCart,
   CheckoutProviderType = MakairaShopProviderCheckout,
   UserProviderType = MakairaShopProviderUser,
-  WishlistProviderType = MakairaShopProviderWishlist
+  WishlistProviderType = MakairaShopProviderWishlist,
+  AdditionalOptions = unknown
 > = {
   providers?: {
     cart?: Constructor<CartProviderType>
@@ -16,7 +17,7 @@ export type MakairaShopProviderOptions<
     user?: Constructor<UserProviderType>
     wishlist?: Constructor<WishlistProviderType>
   }
-}
+} & AdditionalOptions
 
 export interface MakairaShopProvider<
   CartProviderType extends MakairaShopProviderCart,
