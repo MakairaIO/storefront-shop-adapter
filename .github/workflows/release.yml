@@ -58,7 +58,7 @@ jobs:
         uses: renovatebot/github-action@v32.0.1
         with:
           configurationFile: ./renovate.config.js
-          token: ${{ secrets.GH_TOKEN }}
+          token: ${{ secrets.RENOVATE_TOKEN }}
         env:
           GIT_AUTHOR: ${{ secrets.GIT_AUTHOR }}
 
@@ -66,6 +66,8 @@ jobs:
         run: ./node_modules/.bin/turbo run release --filter=!@makaira/storefront-types
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
           GIT_AUTHOR_NAME: ${{ secrets.GIT_USERNAME }}
           GIT_AUTHOR_EMAIL: ${{ secrets.GIT_EMAIL }}
