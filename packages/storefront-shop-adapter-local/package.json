@@ -1,6 +1,6 @@
 {
   "name": "@makaira/storefront-shop-adapter-local",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Contains the makaira local shop adapter to connect your storefront with a localstorage",
   "main": "dist/esm/index.js",
   "typings": "dist/types/index.d.ts",
