@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    "strict": true,
+    "allowJs": false,
+    "noImplicitAny": true,
+    "moduleResolution": "Node",
+    "lib": ["dom", "es6"],
+    "paths": {
+      "@makaira/storefront-types": ["../storefront-types/src"],
+      "@makaira/storefront-types/*": ["../storefront-types/src/*"],
+      "@makaira/storefront-shop-adapter-local/*": [
+        "../storefront-shop-adapter-local/src/*"
+      ],
+      "@makaira/storefront-shop-adapter-local": [
+        "../storefront-shop-adapter-local/src"
+      ]
+    }
+  }
+}

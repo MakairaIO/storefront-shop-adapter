@@ -1,8 +1,5 @@
-export * from "./auth";
-export * from "./cart";
-export * from "./checkout";
-export * from "./customer";
-export * from "./product";
+export * from './general'
+export * from './providers'
+export * from './events'
 
-export * from "./general";
-export * from "./provider";
+export * from './product'

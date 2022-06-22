@@ -2,9 +2,18 @@
   "name": "@makaira/storefront-types",
   "version": "0.0.0",
   "description": "Contains the makaira shop adapter typescript type definitions",
-  "main": "src/index.ts",
+  "main": "dist/esm/index.js",
+  "typings": "dist/types/index.d.ts",
+  "exports": {
+    "import": "dist/esm/index.js",
+    "require": "dist/cjs/index.js",
+    "default": "dist/esm/index.js"
+  },
   "scripts": {
+    "clean": "rimraf ./dist",
     "lint": "eslint src --fix",
+    "build": "tsc --project tsconfig.build.esm.json & tsc --project tsconfig.build.cjs.json",
+    "release": "semantic-release",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -22,9 +31,5 @@
   "bugs": {
     "url": "https://github.com/MakairaIO/storefront-shop-adapter/issues"
   },
-  "homepage": "https://github.com/MakairaIO/storefront-shop-adapter#readme",
-  "devDependencies": {
-    "eslint-preset": "*",
-    "tsconfig-preset": "*"
-  }
+  "homepage": "https://github.com/MakairaIO/storefront-shop-adapter#readme"
 }

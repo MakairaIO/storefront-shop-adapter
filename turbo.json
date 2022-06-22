@@ -6,6 +6,12 @@
     "test": {
       "outputs": ["coverage/**"],
       "dependsOn": []
+    },
+    "clean": { "outputs": ["dist/**"], "dependsOn": [] },
+    "build": { "outputs": ["dist/**"], "dependsOn": ["clean"] },
+    "release": {
+      "outputs": ["package.json"],
+      "dependsOn": ["build"]
     }
   }
 }

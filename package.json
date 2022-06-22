@@ -4,8 +4,14 @@
   "description": " ",
   "main": "index.js",
   "scripts": {
+    "cleanup": "turbo run cleanup",
+    "build": "turbo run build",
     "lint": "turbo run lint",
-    "test": "turbo run test"
+    "test": "turbo run test",
+    "prepare": "husky install",
+    "lint-staged": "lint-staged",
+    "commitlint": "commitlint",
+    "renovate": "renovate"
   },
   "repository": {
     "type": "git",
@@ -28,17 +34,34 @@
   },
   "homepage": "https://github.com/MakairaIO/storefront-shop-adapter#readme",
   "devDependencies": {
+    "@commitlint/cli": "^17.0.2",
+    "@commitlint/config-conventional": "^17.0.2",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^8.0.4",
     "@typescript-eslint/eslint-plugin": "^5.21.0",
-    "@typescript-eslint/parser": "^5.21.0",
+    "@typescript-eslint/parser": "^5.28.0",
+    "commitlint": "^17.0.2",
     "eslint": "^8.14.0",
     "eslint-config-prettier": "^8.5.0",
+    "eslint-import-resolver-typescript": "^2.7.1",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-jest": "^26.1.5",
     "eslint-plugin-react": "^7.29.4",
     "eslint-plugin-react-hooks": "^4.5.0",
+    "husky": "^8.0.1",
+    "is-ci": "^3.0.1",
+    "lint-staged": "^13.0.1",
     "prettier": "^2.6.2",
+    "renovate": "^32.93.0",
+    "rimraf": "^3.0.2",
+    "semantic-release-monorepo": "^7.0.5",
     "turbo": "^1.2.5",
-    "typescript": "^4.6.3"
+    "typescript": "^4.7.3"
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
   },
   "workspaces": [
     "packages/*"

@@ -1,0 +1,16 @@
+{
+  "extends": ["config:base", ":semanticCommitTypeAll(fix)"],
+  "dependencyDashboard": true,
+  "packageRules": [
+    {
+      "matchPackageNames": ["@makaira/storefront-types"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "automergeType": "branch",
+      "automerge": true
+    },
+    {
+      "matchUpdateTypes": ["major"],
+      "labels": ["UPDATE-MAJOR"]
+    }
+  ]
+}

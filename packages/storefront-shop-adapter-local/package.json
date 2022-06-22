@@ -2,9 +2,18 @@
   "name": "@makaira/storefront-shop-adapter-local",
   "version": "0.0.0",
   "description": "Contains the makaira local shop adapter to connect your storefront with a localstorage",
-  "main": "src/index.ts",
+  "main": "dist/esm/index.js",
+  "typings": "dist/types/index.d.ts",
+  "exports": {
+    "import": "dist/esm/index.js",
+    "require": "dist/cjs/index.js",
+    "default": "dist/esm/index.js"
+  },
   "scripts": {
+    "clean": "rimraf ./dist",
     "lint": "eslint src --fix",
+    "build": "tsc --project tsconfig.build.esm.json & tsc --project tsconfig.build.cjs.json",
+    "release": "semantic-release",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -23,8 +32,7 @@
   },
   "homepage": "https://github.com/MakairaIO/storefront-shop-adapter#readme",
   "devDependencies": {
-    "eslint-preset": "*",
-    "tsconfig-preset": "*",
+    "@faker-js/faker": "^7.2.0",
     "@makaira/storefront-types": "*"
   }
 }
