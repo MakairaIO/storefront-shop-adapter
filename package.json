@@ -10,8 +10,7 @@
     "test": "turbo run test",
     "prepare": "husky install",
     "lint-staged": "lint-staged",
-    "commitlint": "commitlint",
-    "renovate": "renovate"
+    "commitlint": "commitlint"
   },
   "repository": {
     "type": "git",
@@ -52,7 +51,6 @@
     "is-ci": "^3.0.1",
     "lint-staged": "^13.0.1",
     "prettier": "^2.6.2",
-    "renovate": "^32.93.0",
     "rimraf": "^3.0.2",
     "semantic-release-monorepo": "^7.0.5",
     "turbo": "^1.2.5",
