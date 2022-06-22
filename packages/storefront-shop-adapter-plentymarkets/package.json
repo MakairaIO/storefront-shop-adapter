@@ -1,0 +1,40 @@
+{
+  "name": "@makaira/storefront-shop-adapter-plentymarkets",
+  "version": "1.0.0",
+  "description": "Contains the makaira plentymarkets shop adapter to connect your storefront with your plentymarkets shop",
+  "main": "dist/esm/index.js",
+  "typings": "dist/types/index.d.ts",
+  "exports": {
+    "import": "dist/esm/index.js",
+    "require": "dist/cjs/index.js",
+    "default": "dist/esm/index.js"
+  },
+  "scripts": {
+    "clean": "rimraf ./dist",
+    "lint": "eslint src --fix",
+    "build": "tsc --project tsconfig.build.esm.json & tsc --project tsconfig.build.cjs.json",
+    "release": "semantic-release",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MakairaIO/storefront-shop-adapter.git"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "storefront",
+    "makaira",
+    "plentymarkets"
+  ],
+  "author": "Jonas Embach <je@marmalade.group>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MakairaIO/storefront-shop-adapter/issues"
+  },
+  "homepage": "https://github.com/MakairaIO/storefront-shop-adapter#readme",
+  "devDependencies": {
+    "@makaira/storefront-types": "1.0.0"
+  }
+}
