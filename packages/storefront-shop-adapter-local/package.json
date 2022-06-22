@@ -34,8 +34,10 @@
     "url": "https://github.com/MakairaIO/storefront-shop-adapter/issues"
   },
   "homepage": "https://github.com/MakairaIO/storefront-shop-adapter#readme",
+  "dependencies": {
+    "@faker-js/faker": "^7.3.0"
+  },
   "devDependencies": {
-    "@faker-js/faker": "^7.2.0",
     "@makaira/storefront-types": "1.0.0"
   }
 }
