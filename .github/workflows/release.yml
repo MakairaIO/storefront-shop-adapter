@@ -43,7 +43,7 @@ jobs:
         run: npm ci
 
       - name: Semantic release storefront-types
-        run: ./node_modules/.bin/turbo --filter=@makaira/storefront-types
+        run: ./node_modules/.bin/turbo run release --filter=@makaira/storefront-types
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
@@ -62,7 +62,7 @@ jobs:
           GIT_AUTHOR: ${{ secrets.GIT_AUTHOR }}
           
       - name: Semantic release
-        run: ./node_modules/.bin/turbo release --filter=!@makaira/storefront-types
+        run: ./node_modules/.bin/turbo run release --filter=!@makaira/storefront-types
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
