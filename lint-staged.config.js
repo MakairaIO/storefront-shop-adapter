@@ -1,4 +1,5 @@
 module.exports = {
+  '*': 'prettier --write',
   '**/*.{js,jsx}': ['eslint --fix'],
   '**/*.{ts,tsx}': [
     () => 'tsc --project tsconfig.json --noEmit --skipLibCheck',
