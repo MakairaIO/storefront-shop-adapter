@@ -1,0 +1,46 @@
+{
+  "name": "@makaira/storefront-react",
+  "version": "1.0.0",
+  "description": "Contains the makaira react layer to connect makaira shop adapters to connect your storefront with",
+  "main": "dist/esm/index.js",
+  "typings": "dist/types/index.d.ts",
+  "exports": {
+    "import": "dist/esm/index.js",
+    "require": "dist/cjs/index.js",
+    "default": "dist/esm/index.js"
+  },
+  "scripts": {
+    "clean": "rimraf ./dist",
+    "lint:eslint": "eslint src --fix",
+    "lint:tsc": "tsc --project tsconfig.json --noEmit --skipLibCheck",
+    "build": "tsc --project tsconfig.build.esm.json & tsc --project tsconfig.build.cjs.json",
+    "release": "semantic-release",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MakairaIO/storefront-shop-adapter.git"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "storefront",
+    "makaira",
+    "react"
+  ],
+  "author": "Jonas Embach <je@marmalade.group>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MakairaIO/storefront-shop-adapter/issues"
+  },
+  "homepage": "https://github.com/MakairaIO/storefront-shop-adapter#readme",
+  "devDependencies": {
+    "@makaira/storefront-types": "1.0.0",
+    "@types/react": "^18.0.14"
+  },
+  "peerDependencies": {
+    "react": ">=16.8",
+    "react-dom": ">=16.8"
+  }
+}
