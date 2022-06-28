@@ -1,9 +1,15 @@
 import {
   MakairaGetUser,
   MakairaLogin,
+  MakairaLoginResData,
   MakairaLogout,
+  MakairaLogoutResData,
   MakairaShopProviderUser,
   MakairaSignup,
+  MakairaSignupResData,
+  UserLoginEvent,
+  UserLogoutEvent,
+  UserSignupEvent,
 } from '@makaira/storefront-types'
 import { faker } from '@faker-js/faker'
 import { StorefrontShopAdapterLocal } from './main'
@@ -36,8 +42,14 @@ export class StorefrontShopAdapterLocalUser implements MakairaShopProviderUser {
 
     this.setStore(userStore)
 
+    const data = { user: userStore.user, raw: userStore }
+
+    this.mainAdapter.dispatchEvent(
+      new UserLoginEvent<MakairaLoginResData<UserStoreVersioned>>(data)
+    )
+
     return {
-      data: { user: userStore.user, raw: userStore },
+      data,
       error: undefined,
     }
   }
@@ -53,7 +65,13 @@ export class StorefrontShopAdapterLocalUser implements MakairaShopProviderUser {
 
     this.setStore(userStore)
 
-    return { data: { raw: userStore }, error: undefined }
+    const data = { raw: userStore }
+
+    this.mainAdapter.dispatchEvent(
+      new UserLogoutEvent<MakairaLogoutResData<UserStoreVersioned>>(data)
+    )
+
+    return { data, error: undefined }
   }
 
   signup: MakairaSignup<unknown, UserStoreVersioned, Error> = async () => {
@@ -70,7 +88,13 @@ export class StorefrontShopAdapterLocalUser implements MakairaShopProviderUser {
 
     this.setStore(userStore)
 
-    return { data: { user: userStore.user, raw: userStore }, error: undefined }
+    const data = { user: userStore.user, raw: userStore }
+
+    this.mainAdapter.dispatchEvent(
+      new UserSignupEvent<MakairaSignupResData<UserStoreVersioned>>(data)
+    )
+
+    return { data, error: undefined }
   }
 
   getUser: MakairaGetUser<unknown, UserStoreVersioned, Error> = async () => {

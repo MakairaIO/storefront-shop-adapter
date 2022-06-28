@@ -24,7 +24,7 @@ export interface MakairaShopProvider<
   CheckoutProviderType extends MakairaShopProviderCheckout = MakairaShopProviderCheckout,
   UserProviderType extends MakairaShopProviderUser = MakairaShopProviderUser,
   WishlistProviderType extends MakairaShopProviderWishlist = MakairaShopProviderWishlist
-> {
+> extends EventTarget {
   cart: CartProviderType
 
   checkout: CheckoutProviderType

@@ -5,6 +5,12 @@ import {
   MakairaShopProviderCart,
   MakairaUpdateItemFromCart,
   MakairaProduct,
+  CartAddItemEvent,
+  MakairaAddItemToCartResData,
+  CartRemoveItemEvent,
+  MakairaRemoveItemFromCartResData,
+  MakairaUpdateItemFromCartResData,
+  CartUpdateItemEvent,
 } from '@makaira/storefront-types'
 import { ShopAdapterLocalStorageVersioned } from '../types'
 import { StorefrontShopAdapterLocal } from './main'
@@ -43,7 +49,15 @@ export class StorefrontShopAdapterLocalCart implements MakairaShopProviderCart {
 
     this.setStore(cart)
 
-    return { data: { items: cart.items, raw: cart }, error: undefined }
+    const data = { items: cart.items, raw: cart }
+
+    this.mainAdapter.dispatchEvent(
+      new CartAddItemEvent<MakairaAddItemToCartResData<CartStoreVersioned>>(
+        data
+      )
+    )
+
+    return { data, error: undefined }
   }
 
   removeItem: MakairaRemoveItemFromCart<unknown, CartStoreVersioned, Error> =
@@ -65,7 +79,15 @@ export class StorefrontShopAdapterLocalCart implements MakairaShopProviderCart {
 
       this.setStore(cart)
 
-      return { data: { items: cart.items, raw: cart }, error: undefined }
+      const data = { items: cart.items, raw: cart }
+
+      this.mainAdapter.dispatchEvent(
+        new CartRemoveItemEvent<
+          MakairaRemoveItemFromCartResData<CartStoreVersioned>
+        >(data)
+      )
+
+      return { data, error: undefined }
     }
 
   updateItem: MakairaUpdateItemFromCart<unknown, CartStoreVersioned, Error> =
@@ -86,6 +108,14 @@ export class StorefrontShopAdapterLocalCart implements MakairaShopProviderCart {
       cart.items[itemExistsIndex].quantity = quantity
 
       this.setStore(cart)
+
+      const data = { items: cart.items, raw: cart }
+
+      this.mainAdapter.dispatchEvent(
+        new CartUpdateItemEvent<
+          MakairaUpdateItemFromCartResData<CartStoreVersioned>
+        >(data)
+      )
 
       return { data: { items: cart.items, raw: cart }, error: undefined }
     }
