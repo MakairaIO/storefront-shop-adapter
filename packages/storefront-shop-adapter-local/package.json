@@ -39,6 +39,6 @@
     "@faker-js/faker": "^7.3.0"
   },
   "devDependencies": {
-    "@makaira/storefront-types": "1.0.0"
+    "@makaira/storefront-types": "1.1.0"
   }
 }
