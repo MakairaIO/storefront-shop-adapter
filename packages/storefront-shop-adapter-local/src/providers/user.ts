@@ -1,4 +1,5 @@
 import {
+  MakairaGetUser,
   MakairaLogin,
   MakairaLogout,
   MakairaShopProviderUser,
@@ -6,18 +7,20 @@ import {
 } from '@makaira/storefront-types'
 import { faker } from '@faker-js/faker'
 import { StorefrontShopAdapterLocal } from './main'
+import { ShopAdapterLocalStorageVersioned } from '../types'
 
 type UserStore = {
-  version: 'v1'
   user?: { id: string }
 }
+
+type UserStoreVersioned = ShopAdapterLocalStorageVersioned<'v1', UserStore>
 
 export class StorefrontShopAdapterLocalUser implements MakairaShopProviderUser {
   LOCAL_STORAGE_STORE = 'makaira-shop-local-user'
 
   constructor(private mainAdapter: StorefrontShopAdapterLocal) {}
 
-  login: MakairaLogin<unknown, UserStore, Error> = async ({
+  login: MakairaLogin<unknown, UserStoreVersioned, Error> = async ({
     input: { password, username },
   }) => {
     const userStore = this.getStore()
@@ -39,7 +42,7 @@ export class StorefrontShopAdapterLocalUser implements MakairaShopProviderUser {
     }
   }
 
-  logout: MakairaLogout<unknown, UserStore, Error> = async () => {
+  logout: MakairaLogout<unknown, UserStoreVersioned, Error> = async () => {
     const userStore = this.getStore()
 
     if (!userStore.user) {
@@ -53,9 +56,7 @@ export class StorefrontShopAdapterLocalUser implements MakairaShopProviderUser {
     return { data: { raw: userStore }, error: undefined }
   }
 
-  signup: MakairaSignup<unknown, UserStore, Error> = async ({
-    input: { username, password },
-  }) => {
+  signup: MakairaSignup<unknown, UserStoreVersioned, Error> = async () => {
     const userStore = this.getStore()
 
     if (!userStore.user) {
@@ -72,17 +73,27 @@ export class StorefrontShopAdapterLocalUser implements MakairaShopProviderUser {
     return { data: { user: userStore.user, raw: userStore }, error: undefined }
   }
 
-  private getStore(): UserStore {
+  getUser: MakairaGetUser<unknown, UserStoreVersioned, Error> = async () => {
+    const userStore = this.getStore()
+
+    if (!userStore.user) {
+      return { data: undefined, error: new Error('no user signed in') }
+    }
+
+    return { data: { user: userStore.user, raw: userStore }, error: undefined }
+  }
+
+  private getStore(): UserStoreVersioned {
     const rawStore = localStorage.getItem(this.LOCAL_STORAGE_STORE)
 
     if (!rawStore) {
       return { version: 'v1', user: undefined }
     }
 
-    return JSON.parse(rawStore) as UserStore
+    return JSON.parse(rawStore) as UserStoreVersioned
   }
 
-  private async setStore(store: UserStore) {
+  private async setStore(store: UserStoreVersioned) {
     localStorage.setItem(this.LOCAL_STORAGE_STORE, JSON.stringify(store))
   }
 }

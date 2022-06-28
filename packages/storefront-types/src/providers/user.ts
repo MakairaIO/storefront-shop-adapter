@@ -62,9 +62,29 @@ export type MakairaSignup<
 >
 //#endregion
 
+//#region type definition: getUser
+export type MakairaGetUserInput<AdditionalInput = unknown> = AdditionalInput
+
+export type MakairaGetUserResData<RawResponse = unknown> = {
+  user?: { id: string }
+  raw: RawResponse
+}
+
+export type MakairaGetUser<
+  AdditionalInput = unknown,
+  RawResponse = unknown,
+  ResError extends Error = Error
+> = MakairaShopProviderInteractor<
+  MakairaGetUserInput<AdditionalInput>,
+  MakairaGetUserResData<RawResponse>,
+  ResError
+>
+//#endregion
+
 //#region type definition: provider user
 export type MakairaShopProviderUser = {
   login: MakairaLogin
   logout: MakairaLogout
   signup: MakairaSignup
+  getUser: MakairaGetUser
 }
