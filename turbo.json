@@ -2,7 +2,8 @@
   "$schema": "https://turborepo.org/schema.json",
   "baseBranch": "origin/main",
   "pipeline": {
-    "lint": { "outputs": [] },
+    "lint:eslint": { "outputs": ["src/**"] },
+    "lint:tsc": { "outputs": [] },
     "test": {
       "outputs": ["coverage/**"],
       "dependsOn": []

@@ -11,7 +11,8 @@
   },
   "scripts": {
     "clean": "rimraf ./dist",
-    "lint": "eslint src --fix",
+    "lint:eslint": "eslint src --fix",
+    "lint:tsc": "tsc --project tsconfig.json --noEmit --skipLibCheck",
     "build": "tsc --project tsconfig.build.esm.json & tsc --project tsconfig.build.cjs.json",
     "release": "semantic-release",
     "test": "echo \"Error: no test specified\" && exit 1"

@@ -6,7 +6,8 @@
   "scripts": {
     "cleanup": "turbo run cleanup",
     "build": "turbo run build",
-    "lint": "turbo run lint",
+    "lint:eslint": "turbo run lint:eslint",
+    "lint:tsc": "turbo run lint:tsc",
     "test": "turbo run test",
     "prepare": "husky install",
     "lint-staged": "lint-staged",
