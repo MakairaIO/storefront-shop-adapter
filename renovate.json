@@ -1,6 +1,7 @@
 {
   "extends": ["config:base", ":semanticCommitTypeAll(fix)"],
   "dependencyDashboard": true,
+  "updateInternalDeps": true,
   "packageRules": [
     {
       "matchPackageNames": ["@makaira/storefront-types"],
