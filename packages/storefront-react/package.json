@@ -1,7 +1,7 @@
 {
-  "name": "@makaira/storefront-types",
-  "version": "1.1.0",
-  "description": "Contains the makaira shop adapter typescript type definitions",
+  "name": "@makaira/storefront-react",
+  "version": "1.0.0",
+  "description": "Contains the makaira react layer to connect makaira shop adapters to connect your storefront with",
   "main": "dist/esm/index.js",
   "typings": "dist/types/index.d.ts",
   "exports": {
@@ -27,13 +27,20 @@
   "keywords": [
     "storefront",
     "makaira",
-    "typescript",
-    "types"
+    "react"
   ],
   "author": "Jonas Embach <je@marmalade.group>",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/MakairaIO/storefront-shop-adapter/issues"
   },
-  "homepage": "https://github.com/MakairaIO/storefront-shop-adapter#readme"
+  "homepage": "https://github.com/MakairaIO/storefront-shop-adapter#readme",
+  "devDependencies": {
+    "@makaira/storefront-types": "1.1.0",
+    "@types/react": "^18.0.14"
+  },
+  "peerDependencies": {
+    "react": ">=16.8",
+    "react-dom": ">=16.8"
+  }
 }

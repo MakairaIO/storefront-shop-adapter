@@ -11,7 +11,8 @@
   },
   "scripts": {
     "clean": "rimraf ./dist",
-    "lint": "eslint src --fix",
+    "lint:eslint": "eslint src --fix",
+    "lint:tsc": "tsc --project tsconfig.json --noEmit --skipLibCheck",
     "build": "tsc --project tsconfig.build.esm.json & tsc --project tsconfig.build.cjs.json",
     "release": "semantic-release",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -34,8 +35,10 @@
     "url": "https://github.com/MakairaIO/storefront-shop-adapter/issues"
   },
   "homepage": "https://github.com/MakairaIO/storefront-shop-adapter#readme",
+  "dependencies": {
+    "@faker-js/faker": "^7.3.0"
+  },
   "devDependencies": {
-    "@faker-js/faker": "^7.2.0",
-    "@makaira/storefront-types": "1.0.0"
+    "@makaira/storefront-types": "1.1.0"
   }
 }

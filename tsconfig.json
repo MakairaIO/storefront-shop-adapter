@@ -5,7 +5,9 @@
     "allowJs": false,
     "noImplicitAny": true,
     "moduleResolution": "Node",
+    "esModuleInterop": true,
     "lib": ["dom", "es6"],
+    "jsx": "react",
     "paths": {
       "@makaira/storefront-types": ["../storefront-types/src"],
       "@makaira/storefront-types/*": ["../storefront-types/src/*"],
