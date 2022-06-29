@@ -36,11 +36,13 @@
   },
   "homepage": "https://github.com/MakairaIO/storefront-shop-adapter#readme",
   "devDependencies": {
-    "@makaira/storefront-types": "1.1.0",
     "@types/react": "^18.0.14"
   },
   "peerDependencies": {
     "react": ">=16.8",
     "react-dom": ">=16.8"
+  },
+  "dependencies": {
+    "@makaira/storefront-types": "^1.1.0"
   }
 }
