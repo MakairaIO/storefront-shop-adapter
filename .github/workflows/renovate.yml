@@ -1,0 +1,24 @@
+name: Release a new version
+on:
+  push:
+    branches:
+      - fix/set-correct-exports-path
+
+jobs:
+  release:
+    name: Release
+    if: |
+      !(github.event_name == 'push' && contains(github.event.head_commit.message, '[skip ci]')) &&
+      !(github.event_name == 'pull_request' && contains(join(github.event.pull_request.title, github.event.pull_request.body), '[skip ci]'))
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Run renovate
+        uses: renovatebot/github-action@v32.0.1
+        with:
+          configurationFile: ./renovate.config.js
+          token: ${{ secrets.RENOVATE_TOKEN }}
+        env:
+          GIT_AUTHOR: ${{ secrets.GIT_AUTHOR }}
+          LOG_LEVEL: debug
