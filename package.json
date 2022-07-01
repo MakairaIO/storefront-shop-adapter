@@ -2,7 +2,6 @@
   "name": "storefront-shop-adapter",
   "version": "0.0.0",
   "description": " ",
-  "main": "index.js",
   "scripts": {
     "cleanup": "turbo run cleanup",
     "build": "turbo run build",
