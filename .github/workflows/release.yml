@@ -61,6 +61,7 @@ jobs:
           token: ${{ secrets.RENOVATE_TOKEN }}
         env:
           GIT_AUTHOR: ${{ secrets.GIT_AUTHOR }}
+          LOG_LEVEL: debug
 
       - name: Semantic release
         run: ./scripts/release.sh
