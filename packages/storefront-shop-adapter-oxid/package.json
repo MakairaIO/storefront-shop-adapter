@@ -14,7 +14,7 @@
     "lint": "eslint src --fix",
     "build": "tsc --project tsconfig.build.esm.json & tsc --project tsconfig.build.cjs.json",
     "release": "semantic-release",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --passWithNoTests"
   },
   "repository": {
     "type": "git",
@@ -36,5 +36,20 @@
   "homepage": "https://github.com/MakairaIO/storefront-shop-adapter#readme",
   "devDependencies": {
     "@makaira/storefront-types": "1.0.0"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "transform": {
+      "^.+\\\\.ts?$": "ts-jest"
+    },
+    "transformIgnorePatterns": [
+      "./node_modules/"
+    ],
+    "globals": {
+      "ts-jest": {
+        "diagnostics": false
+      }
+    }
   }
 }

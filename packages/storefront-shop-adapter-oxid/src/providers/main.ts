@@ -11,6 +11,15 @@ import { StorefrontShopAdapterOxidCheckout } from './checkout'
 import { StorefrontShopAdapterOxidUser } from './user'
 import { StorefrontShopAdapterOxidWishlist } from './wishlist'
 
+type AdditionalOxidOptions = {
+  url?: string
+}
+
+type FetchParameters = {
+  path: string
+  body: object
+}
+
 export class StorefrontShopAdapterOxid<
     CartProviderType extends MakairaShopProviderCart = StorefrontShopAdapterOxidCart,
     CheckoutProviderType extends MakairaShopProviderCheckout = StorefrontShopAdapterOxidCheckout,
@@ -34,12 +43,15 @@ export class StorefrontShopAdapterOxid<
 
   wishlist: WishlistProviderType
 
+  additionalOptions: AdditionalOxidOptions
+
   constructor(
     options: MakairaShopProviderOptions<
       CartProviderType,
       CheckoutProviderType,
       UserProviderType,
-      WishlistProviderType
+      WishlistProviderType,
+      AdditionalOxidOptions
     > = {}
   ) {
     super()
@@ -50,6 +62,10 @@ export class StorefrontShopAdapterOxid<
       user: UserProvider = StorefrontShopAdapterOxidUser,
       wishlist: WishlistProvider = StorefrontShopAdapterOxidWishlist,
     } = options.providers ?? {}
+
+    this.additionalOptions = {
+      url: options.url,
+    }
 
     // @ts-expect-error https://stackoverflow.com/questions/56505560/how-to-fix-ts2322-could-be-instantiated-with-a-different-subtype-of-constraint
     this.cart = new CartProvider(this)
@@ -62,5 +78,19 @@ export class StorefrontShopAdapterOxid<
 
     // @ts-expect-error https://stackoverflow.com/questions/56505560/how-to-fix-ts2322-could-be-instantiated-with-a-different-subtype-of-constraint
     this.wishlist = new WishlistProvider(this)
+  }
+
+  public async fetchFromShop({
+    path,
+    body = {},
+  }: FetchParameters): Promise<Response> {
+    const requestUrl = `${this.additionalOptions.url}${
+      !path.startsWith('/') && '/'
+    }${path}`
+
+    return fetch(requestUrl, {
+      method: 'POST',
+      body: JSON.stringify(body),
+    })
   }
 }
