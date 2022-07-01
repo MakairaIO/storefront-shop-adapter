@@ -1,6 +1,12 @@
 {
-  "extends": ["config:base", ":semanticCommitTypeAll(fix)"],
+  "extends": [
+    "config:base",
+    ":semanticCommitTypeAll(fix)",
+    ":disableRateLimiting"
+  ],
   "dependencyDashboard": true,
+  "updateInternalDeps": true,
+  "prHourlyLimit": 0,
   "packageRules": [
     {
       "matchPackageNames": ["@makaira/storefront-types"],

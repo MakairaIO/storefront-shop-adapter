@@ -61,9 +61,10 @@ jobs:
           token: ${{ secrets.RENOVATE_TOKEN }}
         env:
           GIT_AUTHOR: ${{ secrets.GIT_AUTHOR }}
+          LOG_LEVEL: debug
 
       - name: Semantic release
-        run: ./node_modules/.bin/turbo run release --filter=!@makaira/storefront-types
+        run: ./scripts/release.sh
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 

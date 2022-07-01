@@ -20,11 +20,11 @@ export type MakairaShopProviderOptions<
 } & AdditionalOptions
 
 export interface MakairaShopProvider<
-  CartProviderType extends MakairaShopProviderCart,
-  CheckoutProviderType extends MakairaShopProviderCheckout,
-  UserProviderType extends MakairaShopProviderUser,
-  WishlistProviderType extends MakairaShopProviderWishlist
-> {
+  CartProviderType extends MakairaShopProviderCart = MakairaShopProviderCart,
+  CheckoutProviderType extends MakairaShopProviderCheckout = MakairaShopProviderCheckout,
+  UserProviderType extends MakairaShopProviderUser = MakairaShopProviderUser,
+  WishlistProviderType extends MakairaShopProviderWishlist = MakairaShopProviderWishlist
+> extends EventTarget {
   cart: CartProviderType
 
   checkout: CheckoutProviderType
