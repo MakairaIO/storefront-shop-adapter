@@ -1,2 +1,2 @@
-export { ShopProvider, ShopProviderProps } from './context'
 export * from './hooks'
+export { ShopProvider, ShopProviderProps } from './context'
