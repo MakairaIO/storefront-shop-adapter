@@ -12,7 +12,7 @@
     {
       "matchPackageNames": ["@makaira/storefront-types"],
       "matchUpdateTypes": ["minor", "patch"],
-      "matchBaseBranches": ["main"],
+      "matchBaseBranches": ["stable"],
       "automergeType": "branch",
       "automerge": true,
       "ignoreTests": true,
