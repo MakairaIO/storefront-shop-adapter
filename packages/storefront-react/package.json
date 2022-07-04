@@ -9,6 +9,9 @@
     "require": "./dist/cjs/index.js",
     "default": "./dist/esm/index.js"
   },
+  "files": [
+    "./dist"
+  ],
   "scripts": {
     "clean": "rimraf ./dist",
     "lint:eslint": "eslint src --fix",
