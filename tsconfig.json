@@ -16,7 +16,9 @@
       ],
       "@makaira/storefront-shop-adapter-local": [
         "../storefront-shop-adapter-local/src"
-      ]
+      ],
+      "@makaira/storefront-react": ["../storefront-react/src"],
+      "@makaira/storefront-react/*": ["../storefront-react/src/*"]
     }
   }
 }
