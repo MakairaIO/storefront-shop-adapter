@@ -12,9 +12,21 @@
     {
       "matchPackageNames": ["@makaira/storefront-types"],
       "matchUpdateTypes": ["minor", "patch"],
+      "matchBaseBranches": ["main"],
       "automergeType": "branch",
       "automerge": true,
       "ignoreTests": true,
+      "commitMessageSuffix": "[skip ci]"
+    },
+    {
+      "matchPackageNames": ["@makaira/storefront-types"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "matchBaseBranches": ["next"],
+      "automergeType": "branch",
+      "allowedVersions": "/^.*-next/",
+      "automerge": true,
+      "ignoreTests": true,
+      "ignoreUnstable": false,
       "commitMessageSuffix": "[skip ci]"
     },
     {

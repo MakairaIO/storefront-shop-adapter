@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - stable
+      - next
 
 jobs:
   release:
@@ -60,8 +61,7 @@ jobs:
           configurationFile: ./renovate.config.js
           token: ${{ secrets.RENOVATE_TOKEN }}
         env:
-          GIT_AUTHOR: ${{ secrets.GIT_AUTHOR }}
-          LOG_LEVEL: debug
+          GIT_AUTHOR: ${{ secrets.GIT_AUTHOR }}debug
 
       - name: Semantic release
         run: ./node_modules/.bin/turbo run release --filter="!@makaira/storefront-types" --concurrency=1 --continue=false

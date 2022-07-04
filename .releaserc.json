@@ -1,5 +1,5 @@
 {
-  "branches": ["stable"],
+  "branches": ["stable", { "branch": "next", "prerelease": true }],
   "extends": "semantic-release-monorepo",
   "plugins": [
     "@semantic-release/commit-analyzer",
