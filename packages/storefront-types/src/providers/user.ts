@@ -81,6 +81,26 @@ export type MakairaGetUser<
 >
 //#endregion
 
+//#region type definition: forgotPassword
+export type MakairaForgotPasswordInput<AdditionalInput = unknown> = {
+  username: string
+} & AdditionalInput
+
+export type MakairaForgotPasswordResData<RawResponse = unknown> = {
+  raw: RawResponse
+}
+
+export type MakairaForgotPassword<
+  AdditionalInput = unknown,
+  RawResponse = unknown,
+  ResError extends Error = Error
+> = MakairaShopProviderInteractor<
+  MakairaForgotPasswordInput<AdditionalInput>,
+  MakairaForgotPasswordResData<RawResponse>,
+  ResError
+>
+//#endregion
+
 //#region type definition: provider user
 export type MakairaShopProviderUser = {
   login: MakairaLogin
