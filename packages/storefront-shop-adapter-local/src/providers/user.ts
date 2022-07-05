@@ -101,7 +101,7 @@ export class StorefrontShopAdapterLocalUser implements MakairaShopProviderUser {
     const userStore = this.getStore()
 
     if (!userStore.user) {
-      return { data: undefined, error: new Error('no user signed in') }
+      return { data: undefined, error: undefined }
     }
 
     return { data: { user: userStore.user, raw: userStore }, error: undefined }
