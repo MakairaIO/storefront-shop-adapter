@@ -2,9 +2,9 @@ import { MakairaAddItemToCartResData } from '../../providers'
 
 export class CartRemoveItemEvent<
   EventData extends MakairaAddItemToCartResData = MakairaAddItemToCartResData
-> extends CustomEvent<EventData> {
+> extends MessageEvent<EventData> {
   static eventName = 'cart:remove-item'
   constructor(data: EventData) {
-    super(CartRemoveItemEvent.eventName, { detail: data })
+    super(CartRemoveItemEvent.eventName, { data })
   }
 }

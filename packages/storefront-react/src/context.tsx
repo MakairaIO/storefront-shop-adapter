@@ -4,6 +4,8 @@ import {
   UserLoginEvent,
   UserLogoutEvent,
   UserSignupEvent,
+  CartRemoveItemEvent,
+  CartUpdateItemEvent,
 } from '@makaira/storefront-types'
 import React, { useEffect, useRef, useState } from 'react'
 import { StorefrontReactCustomClient, StorefrontReactTypes } from './types'
@@ -109,8 +111,14 @@ const ShopProvider: React.FC<ShopProviderProps> = ({
   // register shop event handlers to update internal state to be reactive
   useEffect(() => {
     client.addEventListener(CartAddItemEvent.eventName, reloadCartAfterUpdate)
-    client.addEventListener(CartAddItemEvent.eventName, reloadCartAfterUpdate)
-    client.addEventListener(CartAddItemEvent.eventName, reloadCartAfterUpdate)
+    client.addEventListener(
+      CartRemoveItemEvent.eventName,
+      reloadCartAfterUpdate
+    )
+    client.addEventListener(
+      CartUpdateItemEvent.eventName,
+      reloadCartAfterUpdate
+    )
 
     client.addEventListener(UserSignupEvent.eventName, reloadUserAfterUpdate)
     client.addEventListener(UserLoginEvent.eventName, reloadUserAfterUpdate)
@@ -122,11 +130,11 @@ const ShopProvider: React.FC<ShopProviderProps> = ({
         reloadCartAfterUpdate
       )
       client.removeEventListener(
-        CartAddItemEvent.eventName,
+        CartRemoveItemEvent.eventName,
         reloadCartAfterUpdate
       )
       client.removeEventListener(
-        CartAddItemEvent.eventName,
+        CartUpdateItemEvent.eventName,
         reloadCartAfterUpdate
       )
 
