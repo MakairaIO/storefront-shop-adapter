@@ -64,7 +64,9 @@ jobs:
           LOG_LEVEL: debug
 
       - name: Fetch latest version
-        run: git pull
+        run: |
+          git restore .
+          git pull
 
       - name: Semantic release
         run: ./node_modules/.bin/turbo run release --filter="!@makaira/storefront-types" --concurrency=1 --continue=false
