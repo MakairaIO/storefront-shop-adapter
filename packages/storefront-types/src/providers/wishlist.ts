@@ -10,8 +10,8 @@ export type MakairaGetWishlistResData<RawResponse = unknown> = {
 }
 
 export type MakairaGetWishlist<
-  AdditionalInput = unknown,
-  RawResponse = unknown,
+  AdditionalInput = any,
+  RawResponse = any,
   ResError extends Error = Error
 > = MakairaShopProviderInteractor<
   MakairaGetWishlistInput<AdditionalInput>,

@@ -13,8 +13,8 @@ export type MakairaAddItemToCartResData<RawResponse = unknown> = {
 }
 
 export type MakairaAddItemToCart<
-  AdditionalInput = unknown,
-  RawResponse = unknown,
+  AdditionalInput = any,
+  RawResponse = any,
   ResError extends Error = Error
 > = MakairaShopProviderInteractor<
   MakairaAddItemToCartInput<AdditionalInput>,
@@ -32,8 +32,8 @@ export type MakairaGetCartResData<RawResponse = unknown> = {
 }
 
 export type MakairaGetCart<
-  AdditionalInput = unknown,
-  RawResponse = unknown,
+  AdditionalInput = any,
+  RawResponse = any,
   ResError extends Error = Error
 > = MakairaShopProviderInteractor<
   MakairaGetCartInput<AdditionalInput>,
@@ -44,7 +44,7 @@ export type MakairaGetCart<
 
 //#region type definition: remove-item-from-cart
 export type MakairaRemoveItemFromCartInput<AdditionalInput = unknown> = {
-  product: MakairaProduct
+  product: { id: string; attributes?: { key: string; value: string }[] }
 } & AdditionalInput
 
 export type MakairaRemoveItemFromCartResData<RawResponse = unknown> = {
@@ -53,8 +53,8 @@ export type MakairaRemoveItemFromCartResData<RawResponse = unknown> = {
 }
 
 export type MakairaRemoveItemFromCart<
-  AdditionalInput = unknown,
-  RawResponse = unknown,
+  AdditionalInput = any,
+  RawResponse = any,
   ResError extends Error = Error
 > = MakairaShopProviderInteractor<
   MakairaRemoveItemFromCartInput<AdditionalInput>,
@@ -65,7 +65,7 @@ export type MakairaRemoveItemFromCart<
 
 //#region type definition: update-item
 export type MakairaUpdateItemFromCartInput<AdditionalInput = unknown> = {
-  product: MakairaProduct
+  product: { id: string; attributes?: { key: string; value: string }[] }
   quantity: number
 } & AdditionalInput
 
@@ -74,8 +74,8 @@ export type MakairaUpdateItemFromCartResData<RawResponse = unknown> = {
 }
 
 export type MakairaUpdateItemFromCart<
-  AdditionalInput = unknown,
-  RawResponse = unknown,
+  AdditionalInput = any,
+  RawResponse = any,
   ResError extends Error = Error
 > = MakairaShopProviderInteractor<
   MakairaUpdateItemFromCartInput<AdditionalInput>,
