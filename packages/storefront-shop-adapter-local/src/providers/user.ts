@@ -16,7 +16,7 @@ import { StorefrontShopAdapterLocal } from './main'
 import { ShopAdapterLocalStorageVersioned } from '../types'
 
 type UserStore = {
-  user?: { id: string }
+  user?: { id: string; email: string; firstname: string; lastname: string }
 }
 
 type UserStoreVersioned = ShopAdapterLocalStorageVersioned<'v1', UserStore>
@@ -38,7 +38,12 @@ export class StorefrontShopAdapterLocalUser implements MakairaShopProviderUser {
       }
     }
 
-    userStore.user = { id: faker.datatype.uuid() }
+    userStore.user = {
+      id: faker.datatype.uuid(),
+      firstname: 'test',
+      lastname: 'test',
+      email: 'test',
+    }
 
     this.setStore(userStore)
 
@@ -84,7 +89,12 @@ export class StorefrontShopAdapterLocalUser implements MakairaShopProviderUser {
       }
     }
 
-    userStore.user = { id: faker.datatype.uuid() }
+    userStore.user = {
+      id: faker.datatype.uuid(),
+      firstname: 'test',
+      lastname: 'test',
+      email: 'test',
+    }
 
     this.setStore(userStore)
 

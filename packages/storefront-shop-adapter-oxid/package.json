@@ -35,7 +35,8 @@
   },
   "homepage": "https://github.com/MakairaIO/storefront-shop-adapter#readme",
   "devDependencies": {
-    "@makaira/storefront-types": "1.0.0"
+    "@makaira/storefront-types": "1.0.0",
+    "msw": "^0.43.0"
   },
   "jest": {
     "preset": "ts-jest",
@@ -51,5 +52,8 @@
         "diagnostics": false
       }
     }
+  },
+  "dependencies": {
+    "isomorphic-unfetch": "^3.1.0"
   }
 }

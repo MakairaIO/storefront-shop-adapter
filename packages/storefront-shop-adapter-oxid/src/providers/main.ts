@@ -11,14 +11,8 @@ import { StorefrontShopAdapterOxidCheckout } from './checkout'
 import { StorefrontShopAdapterOxidUser } from './user'
 import { StorefrontShopAdapterOxidWishlist } from './wishlist'
 
-type AdditionalOxidOptions = {
-  url?: string
-}
-
-type FetchParameters = {
-  path: string
-  body: object
-}
+import fetch from 'isomorphic-unfetch'
+import { AdditionalOxidOptions, FetchParameters, FetchResponse } from '../types'
 
 export class StorefrontShopAdapterOxid<
     CartProviderType extends MakairaShopProviderCart = StorefrontShopAdapterOxidCart,
@@ -83,14 +77,23 @@ export class StorefrontShopAdapterOxid<
   public async fetchFromShop({
     path,
     body = {},
-  }: FetchParameters): Promise<Response> {
-    const requestUrl = `${this.additionalOptions.url}${
-      !path.startsWith('/') && '/'
-    }${path}`
+  }: FetchParameters): Promise<FetchResponse> {
+    let requestUrl = this.additionalOptions.url ?? ''
 
-    return fetch(requestUrl, {
+    if (!requestUrl?.endsWith('/') && !path.startsWith('/')) {
+      requestUrl += '/'
+    }
+
+    requestUrl += path
+
+    const response = await fetch(requestUrl, {
       method: 'POST',
       body: JSON.stringify(body),
     })
+
+    return {
+      response: await response.json(),
+      status: response.status,
+    }
   }
 }

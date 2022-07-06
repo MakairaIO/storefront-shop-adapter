@@ -7,13 +7,13 @@ export type MakairaLoginInput<AdditionalInput = unknown> = {
 } & AdditionalInput
 
 export type MakairaLoginResData<RawResponse = unknown> = {
-  user: { id: string }
+  user: { id: string; firstname: string; lastname: string } | undefined
   raw: RawResponse
 }
 
 export type MakairaLogin<
-  AdditionalInput = unknown,
-  RawResponse = unknown,
+  AdditionalInput = any,
+  RawResponse = any,
   ResError extends Error = Error
 > = MakairaShopProviderInteractor<
   MakairaLoginInput<AdditionalInput>,
@@ -30,8 +30,8 @@ export type MakairaLogoutResData<RawResponse = unknown> = {
 }
 
 export type MakairaLogout<
-  AdditionalInput = unknown,
-  RawResponse = unknown,
+  AdditionalInput = any,
+  RawResponse = any,
   ResError extends Error = Error
 > = MakairaShopProviderInteractor<
   MakairaLogoutInput<AdditionalInput>,
@@ -47,7 +47,7 @@ export type MakairaSignupInput<AdditionalInput = unknown> = {
 } & AdditionalInput
 
 export type MakairaSignupResData<RawResponse = unknown> = {
-  user: { id: string }
+  user: { id: string } | undefined
   raw: RawResponse
 }
 
@@ -66,7 +66,7 @@ export type MakairaSignup<
 export type MakairaGetUserInput<AdditionalInput = unknown> = AdditionalInput
 
 export type MakairaGetUserResData<RawResponse = unknown> = {
-  user?: { id: string }
+  user?: { id: string; firstname: string; lastname: string; email: string }
   raw: RawResponse
 }
 
