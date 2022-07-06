@@ -3,7 +3,7 @@ import { MakairaProduct } from '../product'
 
 //#region type definition: add-to-cart
 export type MakairaAddItemToCartInput<AdditionalInput = unknown> = {
-  product: MakairaProduct
+  product: { id: string; attributes?: { key: string; value: string }[] }
   quantity: number
 } & AdditionalInput
 

@@ -32,19 +32,37 @@ export class StorefrontShopAdapterLocalCart implements MakairaShopProviderCart {
     return { data: { items: cart.items, raw: cart }, error: undefined }
   }
 
-  addItem: MakairaAddItemToCart<unknown, CartStoreVersioned, Error> = async ({
-    input: { product, quantity },
-  }) => {
+  addItem: MakairaAddItemToCart<
+    {
+      title: string
+      url: string
+      price: string
+      images: string[]
+      attributes: []
+    },
+    CartStoreVersioned,
+    Error
+  > = async ({ input: { product, quantity, images, price, title, url } }) => {
     const cart = this.getStore()
 
     const itemExistsIndex = cart.items.findIndex(
-      (item) => item.product.ean === product.ean
+      (item) => item.product.id === product.id
     )
 
     if (itemExistsIndex > -1) {
       cart.items[itemExistsIndex].quantity += quantity
     } else {
-      cart.items.push({ product, quantity })
+      cart.items.push({
+        product: {
+          id: product.id,
+          attributes: product.attributes,
+          images,
+          price,
+          title,
+          url,
+        },
+        quantity,
+      })
     }
 
     this.setStore(cart)
@@ -65,7 +83,7 @@ export class StorefrontShopAdapterLocalCart implements MakairaShopProviderCart {
       const cart = this.getStore()
 
       const itemExistsIndex = cart.items.findIndex(
-        (item) => item.product.ean === product.ean
+        (item) => item.product.id === product.id
       )
 
       if (itemExistsIndex > -1) {
@@ -95,7 +113,7 @@ export class StorefrontShopAdapterLocalCart implements MakairaShopProviderCart {
       const cart = this.getStore()
 
       const itemExistsIndex = cart.items.findIndex(
-        (item) => item.product.ean === product.ean
+        (item) => item.product.id === product.id
       )
 
       if (itemExistsIndex > -1) {
