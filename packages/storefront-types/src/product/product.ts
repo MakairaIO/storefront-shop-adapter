@@ -1,5 +1,5 @@
 export type MakairaProduct<AdditionalProductData = unknown> = {
-  ean: string
+  id: string
   name: string
   price: number
 } & AdditionalProductData

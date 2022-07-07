@@ -6,7 +6,7 @@ import {
   MakairaUpdateItemFromCart,
 } from '@makaira/storefront-types'
 import { StorefrontShopAdapterOxid } from './main'
-import { CART_GET } from '../paths'
+import { CART_ADD, CART_GET } from '../paths'
 
 type OxidProduct = {
   cart_item_id: string
@@ -37,12 +37,14 @@ export class StorefrontShopAdapterOxidCart implements MakairaShopProviderCart {
 
       const items = response.map((item: OxidProduct) => ({
         quantity: item.quantity,
-        ean: item.cart_item_id,
-        price: item.price,
-        name: item.name,
+        product: {
+          id: item.cart_item_id,
+          price: item.price,
+          name: item.name,
+        },
       }))
 
-      return { data: { items, raw: response }, error: undefined }
+      return { data: { items: items, raw: response }, error: undefined }
     } catch (e) {
       return { data: { items: [], raw: undefined }, error: e as Error }
     }
@@ -51,7 +53,60 @@ export class StorefrontShopAdapterOxidCart implements MakairaShopProviderCart {
   addItem: MakairaAddItemToCart<unknown, unknown, Error> = async ({
     input: { product, quantity },
   }) => {
-    return { data: { items: [], raw: undefined }, error: undefined }
+    try {
+      const { response, status } = await this.mainAdapter.fetchFromShop({
+        path: CART_ADD,
+        body: {
+          product_id: product.id,
+          amount: quantity,
+        },
+      })
+
+      if (status !== 200) {
+        return {
+          data: {
+            items: [],
+            raw: {
+              add: response,
+              cart: undefined,
+            },
+          },
+          error: new Error(
+            response.message ?? 'API responded with status != 200'
+          ),
+        }
+      }
+
+      const {
+        // Not quite sure why we need this fallback object here but otherwise TS is unhappy :(
+        data: getCartData = { items: [], raw: {} },
+        error: getCartError,
+      } = await this.getCart({
+        input: {},
+      })
+
+      return {
+        data: {
+          items: getCartData?.items,
+          raw: {
+            add: response,
+            cart: getCartData?.raw,
+          },
+        },
+        error: getCartError,
+      }
+    } catch (e) {
+      return {
+        data: {
+          items: [],
+          raw: {
+            add: undefined,
+            cart: undefined,
+          },
+        },
+        error: e as Error,
+      }
+    }
   }
 
   removeItem: MakairaRemoveItemFromCart<unknown, unknown, Error> = async ({
