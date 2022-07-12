@@ -4,14 +4,16 @@ import {
   UserLoginEvent,
   UserLogoutEvent,
   UserSignupEvent,
+  CartRemoveItemEvent,
+  CartUpdateItemEvent,
 } from '@makaira/storefront-types'
 import React, { useEffect, useRef, useState } from 'react'
-import { StorefrontReactCustomClient, StorefrontReactTypes } from './types'
+import { StorefrontReactClient, StorefrontReactTypes } from './types'
 
 export type ShopProviderProps = React.PropsWithChildren<{
   /*  The shop adapter client.
    */
-  client: StorefrontReactCustomClient
+  client: StorefrontReactClient['client']
   /*  With this parameters the loading strategy while bootstrapping can be adjusted.
       By default the cart, the user and the wishlist are loaded using each get method
       in the provider. By setting one to false loading is disabled.
@@ -47,7 +49,7 @@ export type ShopProviderProps = React.PropsWithChildren<{
 export type ShopContextData = {
   /*  The shop adapter client provided as prop to the ShopProvider.
    */
-  client: undefined | StorefrontReactCustomClient
+  client: undefined | StorefrontReactClient['client']
   /*  The current cart if it is loaded without any error. 
       Is null when an error occurred while bootstrapping.
       Is undefined when not loaded during bootstrapping.
@@ -109,8 +111,14 @@ const ShopProvider: React.FC<ShopProviderProps> = ({
   // register shop event handlers to update internal state to be reactive
   useEffect(() => {
     client.addEventListener(CartAddItemEvent.eventName, reloadCartAfterUpdate)
-    client.addEventListener(CartAddItemEvent.eventName, reloadCartAfterUpdate)
-    client.addEventListener(CartAddItemEvent.eventName, reloadCartAfterUpdate)
+    client.addEventListener(
+      CartRemoveItemEvent.eventName,
+      reloadCartAfterUpdate
+    )
+    client.addEventListener(
+      CartUpdateItemEvent.eventName,
+      reloadCartAfterUpdate
+    )
 
     client.addEventListener(UserSignupEvent.eventName, reloadUserAfterUpdate)
     client.addEventListener(UserLoginEvent.eventName, reloadUserAfterUpdate)
@@ -122,11 +130,11 @@ const ShopProvider: React.FC<ShopProviderProps> = ({
         reloadCartAfterUpdate
       )
       client.removeEventListener(
-        CartAddItemEvent.eventName,
+        CartRemoveItemEvent.eventName,
         reloadCartAfterUpdate
       )
       client.removeEventListener(
-        CartAddItemEvent.eventName,
+        CartUpdateItemEvent.eventName,
         reloadCartAfterUpdate
       )
 

@@ -1,4 +1,5 @@
 {
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:base",
     ":semanticCommitTypeAll(fix)",
@@ -12,7 +13,9 @@
       "matchPackageNames": ["@makaira/storefront-types"],
       "matchUpdateTypes": ["minor", "patch"],
       "automergeType": "branch",
-      "automerge": true
+      "automerge": true,
+      "ignoreTests": true,
+      "commitMessageSuffix": "[skip ci]"
     },
     {
       "matchUpdateTypes": ["major"],

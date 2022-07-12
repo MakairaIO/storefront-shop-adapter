@@ -22,7 +22,9 @@
       ],
       "@makaira/storefront-shop-adapter-oxid": [
         "../storefront-shop-adapter-oxid/src"
-      ]
+      ],
+      "@makaira/storefront-react": ["../storefront-react/src"],
+      "@makaira/storefront-react/*": ["../storefront-react/src/*"]
     }
   }
 }

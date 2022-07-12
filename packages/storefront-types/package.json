@@ -1,6 +1,6 @@
 {
   "name": "@makaira/storefront-types",
-  "version": "1.2.1",
+  "version": "1.4.0",
   "description": "Contains the makaira shop adapter typescript type definitions",
   "main": "./dist/esm/index.js",
   "typings": "./dist/types/index.d.ts",
@@ -8,6 +8,12 @@
     "import": "./dist/esm/index.js",
     "require": "./dist/cjs/index.js",
     "default": "./dist/esm/index.js"
+  },
+  "files": [
+    "./dist"
+  ],
+  "engines": {
+    "node": ">=15.0.0"
   },
   "scripts": {
     "clean": "rimraf ./dist",

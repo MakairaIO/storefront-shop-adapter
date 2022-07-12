@@ -27,29 +27,49 @@ export class StorefrontShopAdapterLocalCart implements MakairaShopProviderCart {
   constructor(private mainAdapter: StorefrontShopAdapterLocal) {}
 
   getCart: MakairaGetCart<unknown, CartStoreVersioned, Error> = async () => {
-    const cart = this.getStore()
+    const cartStore = this.getStore()
 
-    return { data: { items: cart.items, raw: cart }, error: undefined }
+    return {
+      data: { items: cartStore.items, raw: cartStore },
+      error: undefined,
+    }
   }
 
-  addItem: MakairaAddItemToCart<unknown, CartStoreVersioned, Error> = async ({
-    input: { product, quantity },
-  }) => {
-    const cart = this.getStore()
+  addItem: MakairaAddItemToCart<
+    {
+      title: string
+      url: string
+      price: number
+      images: string[]
+    },
+    CartStoreVersioned,
+    Error
+  > = async ({ input: { product, quantity, images, price, title, url } }) => {
+    const cartStore = this.getStore()
 
-    const itemExistsIndex = cart.items.findIndex(
-      (item) => item.product.ean === product.ean
+    const itemExistsIndex = cartStore.items.findIndex(
+      (item) => item.product.id === product.id
     )
 
     if (itemExistsIndex > -1) {
-      cart.items[itemExistsIndex].quantity += quantity
+      cartStore.items[itemExistsIndex].quantity += quantity
     } else {
-      cart.items.push({ product, quantity })
+      cartStore.items.push({
+        product: {
+          id: product.id,
+          attributes: product.attributes,
+          images,
+          price,
+          title,
+          url,
+        },
+        quantity,
+      })
     }
 
-    this.setStore(cart)
+    this.setStore(cartStore)
 
-    const data = { items: cart.items, raw: cart }
+    const data = { items: cartStore.items, raw: cartStore }
 
     this.mainAdapter.dispatchEvent(
       new CartAddItemEvent<MakairaAddItemToCartResData<CartStoreVersioned>>(
@@ -62,10 +82,10 @@ export class StorefrontShopAdapterLocalCart implements MakairaShopProviderCart {
 
   removeItem: MakairaRemoveItemFromCart<unknown, CartStoreVersioned, Error> =
     async ({ input: { product } }) => {
-      const cart = this.getStore()
+      const cartStore = this.getStore()
 
-      const itemExistsIndex = cart.items.findIndex(
-        (item) => item.product.ean === product.ean
+      const itemExistsIndex = cartStore.items.findIndex(
+        (item) => item.product.id === product.id
       )
 
       if (itemExistsIndex > -1) {
@@ -75,11 +95,11 @@ export class StorefrontShopAdapterLocalCart implements MakairaShopProviderCart {
         }
       }
 
-      cart.items.splice(itemExistsIndex, 1)
+      cartStore.items.splice(itemExistsIndex, 1)
 
-      this.setStore(cart)
+      this.setStore(cartStore)
 
-      const data = { items: cart.items, raw: cart }
+      const data = { items: cartStore.items, raw: cartStore }
 
       this.mainAdapter.dispatchEvent(
         new CartRemoveItemEvent<
@@ -92,10 +112,10 @@ export class StorefrontShopAdapterLocalCart implements MakairaShopProviderCart {
 
   updateItem: MakairaUpdateItemFromCart<unknown, CartStoreVersioned, Error> =
     async ({ input: { product, quantity } }) => {
-      const cart = this.getStore()
+      const cartStore = this.getStore()
 
-      const itemExistsIndex = cart.items.findIndex(
-        (item) => item.product.ean === product.ean
+      const itemExistsIndex = cartStore.items.findIndex(
+        (item) => item.product.id === product.id
       )
 
       if (itemExistsIndex > -1) {
@@ -105,11 +125,11 @@ export class StorefrontShopAdapterLocalCart implements MakairaShopProviderCart {
         }
       }
 
-      cart.items[itemExistsIndex].quantity = quantity
+      cartStore.items[itemExistsIndex].quantity = quantity
 
-      this.setStore(cart)
+      this.setStore(cartStore)
 
-      const data = { items: cart.items, raw: cart }
+      const data = { items: cartStore.items, raw: cartStore }
 
       this.mainAdapter.dispatchEvent(
         new CartUpdateItemEvent<
@@ -117,7 +137,10 @@ export class StorefrontShopAdapterLocalCart implements MakairaShopProviderCart {
         >(data)
       )
 
-      return { data: { items: cart.items, raw: cart }, error: undefined }
+      return {
+        data: { items: cartStore.items, raw: cartStore },
+        error: undefined,
+      }
     }
 
   private getStore(): CartStoreVersioned {

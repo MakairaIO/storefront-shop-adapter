@@ -52,8 +52,8 @@ export type MakairaSignupResData<RawResponse = unknown> = {
 }
 
 export type MakairaSignup<
-  AdditionalInput = unknown,
-  RawResponse = unknown,
+  AdditionalInput = any,
+  RawResponse = any,
   ResError extends Error = Error
 > = MakairaShopProviderInteractor<
   MakairaSignupInput<AdditionalInput>,
@@ -71,12 +71,32 @@ export type MakairaGetUserResData<RawResponse = unknown> = {
 }
 
 export type MakairaGetUser<
-  AdditionalInput = unknown,
-  RawResponse = unknown,
+  AdditionalInput = any,
+  RawResponse = any,
   ResError extends Error = Error
 > = MakairaShopProviderInteractor<
   MakairaGetUserInput<AdditionalInput>,
   MakairaGetUserResData<RawResponse>,
+  ResError
+>
+//#endregion
+
+//#region type definition: forgotPassword
+export type MakairaForgotPasswordInput<AdditionalInput = unknown> = {
+  username: string
+} & AdditionalInput
+
+export type MakairaForgotPasswordResData<RawResponse = unknown> = {
+  raw: RawResponse
+}
+
+export type MakairaForgotPassword<
+  AdditionalInput = any,
+  RawResponse = any,
+  ResError extends Error = Error
+> = MakairaShopProviderInteractor<
+  MakairaForgotPasswordInput<AdditionalInput>,
+  MakairaForgotPasswordResData<RawResponse>,
   ResError
 >
 //#endregion

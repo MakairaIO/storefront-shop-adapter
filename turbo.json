@@ -9,7 +9,14 @@
       "dependsOn": []
     },
     "clean": { "outputs": ["dist/**"], "dependsOn": [] },
-    "build": { "outputs": ["dist/**"], "dependsOn": ["clean"] },
+    "@makaira/storefront-types#build": {
+      "outputs": ["dist/**"],
+      "dependsOn": ["clean"]
+    },
+    "build": {
+      "outputs": ["dist/**"],
+      "dependsOn": ["@makaira/storefront-types#build", "clean"]
+    },
     "release": {
       "outputs": ["package.json"],
       "dependsOn": ["build"]

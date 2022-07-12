@@ -1,13 +1,19 @@
 import {
+  MakairaAddItemToWishlist,
+  MakairaAddItemToWishlistResData,
   MakairaGetWishlist,
   MakairaProduct,
+  MakairaRemoveItemFromWishlist,
+  MakairaRemoveItemFromWishlistResData,
   MakairaShopProviderWishlist,
+  WishlistAddItemEvent,
+  WishlistRemoveItemEvent,
 } from '@makaira/storefront-types'
 import { ShopAdapterLocalStorageVersioned } from '../types'
 import { StorefrontShopAdapterLocal } from './main'
 
 type WishlistStore = {
-  items: Array<{ product: MakairaProduct; quantity: number }>
+  items: Array<{ product: MakairaProduct }>
 }
 
 type WishlistStoreVersioned = ShopAdapterLocalStorageVersioned<
@@ -29,6 +35,81 @@ export class StorefrontShopAdapterLocalWishlist
       data: { items: wishlistStore.items, raw: wishlistStore },
       error: undefined,
     }
+  }
+
+  addItem: MakairaAddItemToWishlist<
+    {
+      title: string
+      url: string
+      price: number
+      images: string[]
+    },
+    WishlistStoreVersioned,
+    Error
+  > = async ({ input: { product, images, price, title, url } }) => {
+    const wishlistStore = this.getStore()
+
+    const itemExistsIndex = wishlistStore.items.findIndex(
+      (item) => item.product.id === product.id
+    )
+
+    if (itemExistsIndex === -1) {
+      wishlistStore.items.push({
+        product: {
+          id: product.id,
+          attributes: product.attributes,
+          images,
+          price,
+          title,
+          url,
+        },
+      })
+    }
+
+    this.setStore(wishlistStore)
+
+    const data = { items: wishlistStore.items, raw: wishlistStore }
+
+    this.mainAdapter.dispatchEvent(
+      new WishlistAddItemEvent<
+        MakairaAddItemToWishlistResData<WishlistStoreVersioned>
+      >(data)
+    )
+
+    return { data, error: undefined }
+  }
+
+  removeItem: MakairaRemoveItemFromWishlist<
+    unknown,
+    WishlistStoreVersioned,
+    Error
+  > = async ({ input: { product } }) => {
+    const wishlistStore = this.getStore()
+
+    const itemExistsIndex = wishlistStore.items.findIndex(
+      (item) => item.product.id === product.id
+    )
+
+    if (itemExistsIndex > -1) {
+      return {
+        data: undefined,
+        error: new Error('product not found in wishlist'),
+      }
+    }
+
+    wishlistStore.items.splice(itemExistsIndex, 1)
+
+    this.setStore(wishlistStore)
+
+    const data = { items: wishlistStore.items, raw: wishlistStore }
+
+    this.mainAdapter.dispatchEvent(
+      new WishlistRemoveItemEvent<
+        MakairaRemoveItemFromWishlistResData<WishlistStoreVersioned>
+      >(data)
+    )
+
+    return { data, error: undefined }
   }
 
   private getStore(): WishlistStoreVersioned {
