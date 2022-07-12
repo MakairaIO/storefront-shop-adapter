@@ -3,21 +3,26 @@ import { MakairaShopProvider } from '@makaira/storefront-types'
 type MergeBy<T, K> = Omit<T, keyof K> & K
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export type StorefrontReactCustomClient = MakairaShopProvider
+export interface StorefrontReactCustomClient {}
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface StorefrontReactCustomTypes {}
 
+export type StorefrontReactClient = MergeBy<
+  { client: MakairaShopProvider },
+  StorefrontReactCustomClient
+>
+
 export type StorefrontReactTypes = MergeBy<
   {
     cart: Awaited<
-      ReturnType<StorefrontReactCustomClient['cart']['getCart']>
+      ReturnType<StorefrontReactClient['client']['cart']['getCart']>
     >['data']
     user: Awaited<
-      ReturnType<StorefrontReactCustomClient['user']['getUser']>
+      ReturnType<StorefrontReactClient['client']['user']['getUser']>
     >['data']
     wishlist: Awaited<
-      ReturnType<StorefrontReactCustomClient['wishlist']['getWishlist']>
+      ReturnType<StorefrontReactClient['client']['wishlist']['getWishlist']>
     >['data']
   },
   StorefrontReactCustomTypes
