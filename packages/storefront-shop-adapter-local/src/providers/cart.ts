@@ -39,7 +39,7 @@ export class StorefrontShopAdapterLocalCart implements MakairaShopProviderCart {
     {
       title: string
       url: string
-      price: string
+      price: number
       images: string[]
     },
     CartStoreVersioned,

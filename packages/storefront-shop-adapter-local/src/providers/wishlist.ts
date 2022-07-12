@@ -41,7 +41,7 @@ export class StorefrontShopAdapterLocalWishlist
     {
       title: string
       url: string
-      price: string
+      price: number
       images: string[]
     },
     WishlistStoreVersioned,
