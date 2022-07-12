@@ -23,6 +23,11 @@ export type UseShopCartData = {
    * have a quantity set to 3 is, quantityInCart will 6.
    */
   quantityInCart: number
+  /**
+   * The current total price of all products in the cart
+   * including their quantities.
+   */
+  totalPriceInCart: number
 }
 
 export function useShopCart(): UseShopCartData {
@@ -34,5 +39,12 @@ export function useShopCart(): UseShopCartData {
     cart?.items.reduce((quantity, product) => quantity + product.quantity, 0) ??
     0
 
-  return { cart, productsInCart, quantityInCart }
+  const totalPriceInCart =
+    cart?.items.reduce(
+      (totalPrice, product) =>
+        totalPrice + product.quantity * product.product.price,
+      0
+    ) ?? 0
+
+  return { cart, productsInCart, quantityInCart, totalPriceInCart }
 }
