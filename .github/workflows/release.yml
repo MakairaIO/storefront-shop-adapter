@@ -68,6 +68,9 @@ jobs:
           git restore .
           git pull
 
+      - name: Install dependencies
+        run: npm ci
+
       - name: Semantic release
         run: ./node_modules/.bin/turbo run release --filter="!@makaira/storefront-types" --concurrency=1 --continue=false
         env:
