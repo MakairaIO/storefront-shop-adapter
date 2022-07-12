@@ -1,4 +1,5 @@
 import {
+  MakairaForgotPassword,
   MakairaGetUser,
   MakairaLogin,
   MakairaLoginResData,
@@ -101,11 +102,16 @@ export class StorefrontShopAdapterLocalUser implements MakairaShopProviderUser {
     const userStore = this.getStore()
 
     if (!userStore.user) {
-      return { data: undefined, error: new Error('no user signed in') }
+      return { data: undefined, error: undefined }
     }
 
     return { data: { user: userStore.user, raw: userStore }, error: undefined }
   }
+
+  forgotPassword: MakairaForgotPassword<unknown, undefined, Error> =
+    async () => {
+      return { data: { raw: undefined }, error: undefined }
+    }
 
   private getStore(): UserStoreVersioned {
     const rawStore = localStorage.getItem(this.LOCAL_STORAGE_STORE)

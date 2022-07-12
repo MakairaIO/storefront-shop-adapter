@@ -1,3 +1,8 @@
 export type MakairaProduct<AdditionalProductData = unknown> = {
-  ean: string
+  id: string
+  title: string
+  url: string
+  price: string
+  images: string[]
+  attributes?: { key: string; value: string }[]
 } & AdditionalProductData

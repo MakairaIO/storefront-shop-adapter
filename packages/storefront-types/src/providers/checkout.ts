@@ -8,8 +8,8 @@ export type MakairaGetCheckoutResData<RawResponse = unknown> = {
 }
 
 export type MakairaGetCheckout<
-  AdditionalInput = unknown,
-  RawResponse = unknown,
+  AdditionalInput = any,
+  RawResponse = any,
   ResError extends Error = Error
 > = MakairaShopProviderInteractor<
   MakairaGetCheckoutInput<AdditionalInput>,
@@ -27,8 +27,8 @@ export type MakairaSubmitCheckoutResData<RawResponse = unknown> = {
 }
 
 export type MakairaSubmitCheckout<
-  AdditionalInput = unknown,
-  RawResponse = unknown,
+  AdditionalInput = any,
+  RawResponse = any,
   ResError extends Error = Error
 > = MakairaShopProviderInteractor<
   MakairaSubmitCheckoutInput<AdditionalInput>,
