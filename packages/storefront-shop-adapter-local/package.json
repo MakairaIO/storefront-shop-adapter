@@ -43,6 +43,6 @@
   "homepage": "https://github.com/MakairaIO/storefront-shop-adapter#readme",
   "dependencies": {
     "@faker-js/faker": "7.3.0",
-    "@makaira/storefront-types": "1.4.0"
+    "@makaira/storefront-types": "1.5.0"
   }
 }
