@@ -17,6 +17,12 @@
       "@makaira/storefront-shop-adapter-local": [
         "../storefront-shop-adapter-local/src"
       ],
+      "@makaira/storefront-shop-adapter-oxid/*": [
+        "../storefront-shop-adapter-oxid/src/*"
+      ],
+      "@makaira/storefront-shop-adapter-oxid": [
+        "../storefront-shop-adapter-oxid/src"
+      ],
       "@makaira/storefront-react": ["../storefront-react/src"],
       "@makaira/storefront-react/*": ["../storefront-react/src/*"]
     }

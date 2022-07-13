@@ -4,12 +4,12 @@ import {
   MakairaSubmitCheckout,
   NotImplementedError,
 } from '@makaira/storefront-types'
-import { StorefrontShopAdapterLocal } from './main'
+import { StorefrontShopAdapterOxid } from './main'
 
-export class StorefrontShopAdapterLocalCheckout
+export class StorefrontShopAdapterOxidCheckout
   implements MakairaShopProviderCheckout
 {
-  constructor(private mainAdapter: StorefrontShopAdapterLocal) {}
+  constructor(private mainAdapter: StorefrontShopAdapterOxid) {}
 
   getCheckout: MakairaGetCheckout<unknown, undefined, Error> = async () => {
     return { error: new NotImplementedError() }

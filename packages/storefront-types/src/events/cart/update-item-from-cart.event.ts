@@ -1,10 +1,14 @@
 import { MakairaUpdateItemFromCartResData } from '../../providers'
 
 export class CartUpdateItemEvent<
-  EventData extends MakairaUpdateItemFromCartResData = MakairaUpdateItemFromCartResData
-> extends MessageEvent<EventData> {
+  EventDataRaw = undefined
+> extends MessageEvent<{
+  data: MakairaUpdateItemFromCartResData
+  raw?: EventDataRaw
+}> {
   static eventName = 'cart:update-item'
-  constructor(data: EventData) {
-    super(CartUpdateItemEvent.eventName, { data })
+
+  constructor(data: MakairaUpdateItemFromCartResData, raw?: EventDataRaw) {
+    super(CartUpdateItemEvent.eventName, { data: { data, raw } })
   }
 }

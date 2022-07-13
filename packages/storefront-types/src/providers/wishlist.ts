@@ -4,18 +4,18 @@ import { MakairaShopProviderInteractor } from '../general'
 //#region type definition: getWishlist
 export type MakairaGetWishlistInput<AdditionalInput = unknown> = AdditionalInput
 
-export type MakairaGetWishlistResData<RawResponse = unknown> = {
+export type MakairaGetWishlistResData = {
   items: { product: MakairaProduct }[]
-  raw: RawResponse
 }
 
 export type MakairaGetWishlist<
   AdditionalInput = any,
-  RawResponse = any,
+  ResRawData = any,
   ResError extends Error = Error
 > = MakairaShopProviderInteractor<
   MakairaGetWishlistInput<AdditionalInput>,
-  MakairaGetWishlistResData<RawResponse>,
+  MakairaGetWishlistResData,
+  ResRawData,
   ResError
 >
 //#endregion
@@ -25,18 +25,18 @@ export type MakairaAddItemToWishlistInput<AdditionalInput = unknown> = {
   product: { id: string; attributes?: { key: string; value: string }[] }
 } & AdditionalInput
 
-export type MakairaAddItemToWishlistResData<RawResponse = unknown> = {
+export type MakairaAddItemToWishlistResData = {
   items: { product: MakairaProduct }[]
-  raw: RawResponse
 }
 
 export type MakairaAddItemToWishlist<
   AdditionalInput = any,
-  RawResponse = any,
+  ResRawData = any,
   ResError extends Error = Error
 > = MakairaShopProviderInteractor<
   MakairaAddItemToWishlistInput<AdditionalInput>,
-  MakairaAddItemToWishlistResData<RawResponse>,
+  MakairaAddItemToWishlistResData,
+  ResRawData,
   ResError
 >
 //#endregion
@@ -46,18 +46,18 @@ export type MakairaRemoveItemFromWishlistInput<AdditionalInput = unknown> = {
   product: { id: string; attributes?: { key: string; value: string }[] }
 } & AdditionalInput
 
-export type MakairaRemoveItemFromWishlistResData<RawResponse = unknown> = {
+export type MakairaRemoveItemFromWishlistResData = {
   items: { product: MakairaProduct }[]
-  raw: RawResponse
 }
 
 export type MakairaRemoveItemFromWishlist<
   AdditionalInput = any,
-  RawResponse = any,
+  ResRawData = any,
   ResError extends Error = Error
 > = MakairaShopProviderInteractor<
   MakairaRemoveItemFromWishlistInput<AdditionalInput>,
-  MakairaRemoveItemFromWishlistResData<RawResponse>,
+  MakairaRemoveItemFromWishlistResData,
+  ResRawData,
   ResError
 >
 //#endregion

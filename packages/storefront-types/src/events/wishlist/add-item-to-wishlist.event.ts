@@ -1,10 +1,14 @@
 import { MakairaAddItemToWishlistResData } from '../../providers'
 
 export class WishlistAddItemEvent<
-  EventData extends MakairaAddItemToWishlistResData = MakairaAddItemToWishlistResData
-> extends MessageEvent<EventData> {
+  EventDataRaw = undefined
+> extends MessageEvent<{
+  data: MakairaAddItemToWishlistResData
+  raw?: EventDataRaw
+}> {
   static eventName = 'wishlist:add-item'
-  constructor(data: EventData) {
-    super(WishlistAddItemEvent.eventName, { data })
+
+  constructor(data: MakairaAddItemToWishlistResData, raw?: EventDataRaw) {
+    super(WishlistAddItemEvent.eventName, { data: { data, raw } })
   }
 }

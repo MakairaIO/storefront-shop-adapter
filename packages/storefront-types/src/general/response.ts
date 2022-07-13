@@ -1,4 +1,5 @@
-export type MakairaResponse<ResData, ResError extends Error> = {
+export type MakairaResponse<ResData, ResRawData, ResError extends Error> = {
   data?: ResData
+  raw?: ResRawData
   error?: ResError
 }

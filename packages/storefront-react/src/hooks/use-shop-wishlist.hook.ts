@@ -10,14 +10,16 @@ export type UseShopWishlistData = {
   /**
    *
    */
-  isProductInWishlist: (id: string) => MakairaResponse<boolean, Error>
+  isProductInWishlist: (
+    id: string
+  ) => MakairaResponse<boolean, undefined, Error>
 }
 
 export function useShopWishlist(): UseShopWishlistData {
   const { wishlist } = useContext(ShopContext)
 
   const isProductInWishlist = useCallback(
-    (id: string): MakairaResponse<boolean, Error> => {
+    (id: string): MakairaResponse<boolean, undefined, Error> => {
       if (wishlist?.items) {
         return {
           data: wishlist.items.some(({ product }) => product.id === id),
