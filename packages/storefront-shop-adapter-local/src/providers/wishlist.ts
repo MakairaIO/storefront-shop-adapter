@@ -1,10 +1,8 @@
 import {
   MakairaAddItemToWishlist,
-  MakairaAddItemToWishlistResData,
   MakairaGetWishlist,
   MakairaProduct,
   MakairaRemoveItemFromWishlist,
-  MakairaRemoveItemFromWishlistResData,
   MakairaShopProviderWishlist,
   WishlistAddItemEvent,
   WishlistRemoveItemEvent,
@@ -32,7 +30,8 @@ export class StorefrontShopAdapterLocalWishlist
     const wishlistStore = this.getStore()
 
     return {
-      data: { items: wishlistStore.items, raw: wishlistStore },
+      data: { items: wishlistStore.items },
+      raw: wishlistStore,
       error: undefined,
     }
   }
@@ -68,15 +67,13 @@ export class StorefrontShopAdapterLocalWishlist
 
     this.setStore(wishlistStore)
 
-    const data = { items: wishlistStore.items, raw: wishlistStore }
+    const data = { items: wishlistStore.items }
 
     this.mainAdapter.dispatchEvent(
-      new WishlistAddItemEvent<
-        MakairaAddItemToWishlistResData<WishlistStoreVersioned>
-      >(data)
+      new WishlistAddItemEvent<WishlistStoreVersioned>(data, wishlistStore)
     )
 
-    return { data, error: undefined }
+    return { data, raw: wishlistStore, error: undefined }
   }
 
   removeItem: MakairaRemoveItemFromWishlist<
@@ -101,15 +98,13 @@ export class StorefrontShopAdapterLocalWishlist
 
     this.setStore(wishlistStore)
 
-    const data = { items: wishlistStore.items, raw: wishlistStore }
+    const data = { items: wishlistStore.items }
 
     this.mainAdapter.dispatchEvent(
-      new WishlistRemoveItemEvent<
-        MakairaRemoveItemFromWishlistResData<WishlistStoreVersioned>
-      >(data)
+      new WishlistRemoveItemEvent<WishlistStoreVersioned>(data, wishlistStore)
     )
 
-    return { data, error: undefined }
+    return { data, raw: wishlistStore, error: undefined }
   }
 
   private getStore(): WishlistStoreVersioned {

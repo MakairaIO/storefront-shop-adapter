@@ -1,4 +1,8 @@
 import {
+  BadHttpStatusError,
+  CartAddItemEvent,
+  CartRemoveItemEvent,
+  CartUpdateItemEvent,
   MakairaAddItemToCart,
   MakairaGetCart,
   MakairaRemoveItemFromCart,
@@ -6,118 +10,208 @@ import {
   MakairaUpdateItemFromCart,
 } from '@makaira/storefront-types'
 import { StorefrontShopAdapterOxid } from './main'
-import { CART_ADD, CART_GET } from '../paths'
-
-type OxidProduct = {
-  cart_item_id: string
-  name: string
-  price: number
-  base_price: string
-  quantity: number
-  image_path: string
-}
+import { CART_ADD, CART_GET, CART_REMOVE, CART_UPDATE } from '../paths'
+import {
+  OxidAddItemRaw,
+  OxidAddItemRes,
+  OxidGetCartRaw,
+  OxidGetCartRes,
+  OxidRemoveItemRaw,
+  OxidRemoveItemRes,
+  OxidUpdateItemRaw,
+  OxidUpdateItemRes,
+} from '../types'
 
 export class StorefrontShopAdapterOxidCart implements MakairaShopProviderCart {
   constructor(private mainAdapter: StorefrontShopAdapterOxid) {}
 
-  getCart: MakairaGetCart<unknown, unknown, Error> = async () => {
+  getCart: MakairaGetCart<unknown, OxidGetCartRaw, Error> = async () => {
     try {
-      const { response, status } = await this.mainAdapter.fetchFromShop({
-        path: CART_GET,
-      })
+      const { response, status } =
+        await this.mainAdapter.fetchFromShop<OxidGetCartRes>({
+          path: CART_GET,
+        })
 
-      if (status !== 200) {
+      if (status !== 200 || !Array.isArray(response)) {
         return {
-          data: { items: [], raw: undefined },
-          error: new Error(
-            response.message ?? 'API responded with status != 200'
-          ),
+          data: undefined,
+          raw: { getCart: response },
+          error: !Array.isArray(response)
+            ? new Error(response.message)
+            : new BadHttpStatusError(),
         }
       }
 
-      const items = response.map((item: OxidProduct) => ({
+      const items = response.map((item) => ({
         quantity: item.quantity,
         product: {
           id: item.cart_item_id,
           price: item.price,
-          name: item.name,
+          title: item.name,
+          images: [item.image_path],
+          url: '',
         },
       }))
 
-      return { data: { items: items, raw: response }, error: undefined }
+      return { data: { items }, raw: { getCart: response }, error: undefined }
     } catch (e) {
-      return { data: { items: [], raw: undefined }, error: e as Error }
+      return { data: undefined, error: e as Error }
     }
   }
 
-  addItem: MakairaAddItemToCart<unknown, unknown, Error> = async ({
+  addItem: MakairaAddItemToCart<unknown, OxidAddItemRaw, Error> = async ({
     input: { product, quantity },
   }) => {
     try {
-      const { response, status } = await this.mainAdapter.fetchFromShop({
-        path: CART_ADD,
-        body: {
-          product_id: product.id,
-          amount: quantity,
-        },
-      })
-
-      if (status !== 200) {
-        return {
-          data: {
-            items: [],
-            raw: {
-              add: response,
-              cart: undefined,
-            },
+      const { response, status } =
+        await this.mainAdapter.fetchFromShop<OxidAddItemRes>({
+          path: CART_ADD,
+          body: {
+            product_id: product.id,
+            amount: quantity,
           },
-          error: new Error(
-            response.message ?? 'API responded with status != 200'
-          ),
+        })
+
+      if (status !== 200 || response.success === false) {
+        return {
+          data: undefined,
+          raw: { addItem: response },
+          error:
+            response.success === false
+              ? new Error(response.message)
+              : new BadHttpStatusError(),
         }
       }
 
       const {
-        // Not quite sure why we need this fallback object here but otherwise TS is unhappy :(
-        data: getCartData = { items: [], raw: {} },
-        error: getCartError,
+        data: dataGetCart,
+        raw: rawGetCart,
+        error: errorGetCart,
       } = await this.getCart({
         input: {},
       })
 
-      return {
-        data: {
-          items: getCartData?.items,
-          raw: {
-            add: response,
-            cart: getCartData?.raw,
-          },
-        },
-        error: getCartError,
+      const raw: OxidAddItemRaw = {
+        addItem: response,
+        getCart: rawGetCart?.getCart,
       }
+
+      if (dataGetCart) {
+        const data = { items: dataGetCart.items }
+
+        this.mainAdapter.dispatchEvent(
+          new CartAddItemEvent<OxidAddItemRaw>(data, raw)
+        )
+
+        return { data, raw, error: undefined }
+      }
+
+      return { data: undefined, raw, error: errorGetCart }
     } catch (e) {
-      return {
-        data: {
-          items: [],
-          raw: {
-            add: undefined,
-            cart: undefined,
-          },
-        },
-        error: e as Error,
-      }
+      return { data: undefined, error: e as Error }
     }
   }
 
-  removeItem: MakairaRemoveItemFromCart<unknown, unknown, Error> = async ({
-    input: { product },
-  }) => {
-    return { data: { items: [], raw: undefined }, error: undefined }
-  }
+  removeItem: MakairaRemoveItemFromCart<unknown, OxidRemoveItemRaw, Error> =
+    async ({ input: { product } }) => {
+      try {
+        const { response, status } =
+          await this.mainAdapter.fetchFromShop<OxidRemoveItemRes>({
+            path: CART_REMOVE,
+            body: {
+              cart_item_id: product.id,
+            },
+          })
 
-  updateItem: MakairaUpdateItemFromCart<unknown, unknown, Error> = async ({
-    input: { product, quantity },
-  }) => {
-    return { data: { items: [], raw: undefined }, error: undefined }
-  }
+        if (status !== 200 || response.success === false) {
+          return {
+            data: undefined,
+            raw: { removeItem: response },
+            error:
+              response.success === false
+                ? new Error(response.message)
+                : new BadHttpStatusError(),
+          }
+        }
+
+        const {
+          data: dataGetCart,
+          raw: rawGetCart,
+          error: errorGetCart,
+        } = await this.getCart({
+          input: {},
+        })
+
+        const raw: OxidRemoveItemRaw = {
+          removeItem: response,
+          getCart: rawGetCart?.getCart,
+        }
+
+        if (dataGetCart) {
+          const data = { items: dataGetCart.items }
+
+          this.mainAdapter.dispatchEvent(
+            new CartRemoveItemEvent<OxidRemoveItemRaw>(data, raw)
+          )
+
+          return { data, raw, error: undefined }
+        }
+
+        return { data: undefined, raw, error: errorGetCart }
+      } catch (e) {
+        return { data: undefined, error: e as Error }
+      }
+    }
+
+  updateItem: MakairaUpdateItemFromCart<unknown, OxidUpdateItemRaw, Error> =
+    async ({ input: { product, quantity } }) => {
+      try {
+        const { response, status } =
+          await this.mainAdapter.fetchFromShop<OxidUpdateItemRes>({
+            path: CART_UPDATE,
+            body: {
+              cart_item_id: product.id,
+              amount: quantity,
+            },
+          })
+
+        if (status !== 200 || response.success === false) {
+          return {
+            data: undefined,
+            raw: { updateItem: response },
+            error:
+              response.success === false
+                ? new Error(response.message)
+                : new BadHttpStatusError(),
+          }
+        }
+
+        const {
+          data: dataGetCart,
+          raw: rawGetCart,
+          error: errorGetCart,
+        } = await this.getCart({
+          input: {},
+        })
+
+        const raw: OxidUpdateItemRaw = {
+          updateItem: response,
+          getCart: rawGetCart?.getCart,
+        }
+
+        if (dataGetCart) {
+          const data = { items: dataGetCart.items }
+
+          this.mainAdapter.dispatchEvent(
+            new CartUpdateItemEvent<OxidUpdateItemRaw>(data, raw)
+          )
+
+          return { data, raw, error: undefined }
+        }
+
+        return { data: undefined, raw, error: errorGetCart }
+      } catch (e) {
+        return { data: undefined, error: e as Error }
+      }
+    }
 }

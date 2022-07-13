@@ -1,42 +1,52 @@
 import {
+  BadHttpStatusError,
   MakairaGetUser,
   MakairaLogin,
   MakairaLogout,
   MakairaShopProviderUser,
   MakairaSignup,
+  NotImplementedError,
+  UserLoginEvent,
+  UserLogoutEvent,
 } from '@makaira/storefront-types'
 import { StorefrontShopAdapterOxid } from './main'
 import { USER_GET_CURRENT, USER_LOGIN, USER_LOGOUT } from '../paths'
-import { AdditionalInputLoginOxid } from '../types'
+import {
+  AdditionalInputLoginOxid,
+  OxidGetUserRaw,
+  OxidGetUserRes,
+  OxidLoginRaw,
+  OxidLoginRes,
+  OxidLogoutRaw,
+  OxidLogoutRes,
+  OxidUser,
+} from '../types'
 
 export class StorefrontShopAdapterOxidUser implements MakairaShopProviderUser {
   constructor(private mainAdapter: StorefrontShopAdapterOxid) {}
 
-  login: MakairaLogin<AdditionalInputLoginOxid, unknown, Error> = async ({
+  login: MakairaLogin<AdditionalInputLoginOxid, OxidLoginRaw, Error> = async ({
     input: { password, username, rememberLogin },
   }) => {
     try {
-      const { response, status } = await this.mainAdapter.fetchFromShop({
-        path: USER_LOGIN,
-        body: {
-          password,
-          username,
-          rememberLogin,
-        },
-      })
-
-      if (!response.success || status !== 200) {
-        return {
-          data: {
-            user: undefined,
-            raw: {
-              login: response,
-              user: undefined,
-            },
+      const { response, status } =
+        await this.mainAdapter.fetchFromShop<OxidLoginRes>({
+          path: USER_LOGIN,
+          body: {
+            password,
+            username,
+            rememberLogin,
           },
-          error: new Error(
-            response.message ?? 'API responded with status != 200'
-          ),
+        })
+
+      if (status !== 200 || response.success === false) {
+        return {
+          data: undefined,
+          raw: { login: response },
+          error:
+            response.success === false
+              ? new Error(response.message)
+              : new BadHttpStatusError(),
         }
       }
 
@@ -44,69 +54,58 @@ export class StorefrontShopAdapterOxidUser implements MakairaShopProviderUser {
        * But the login function should always return this, so we have to additionally
        * fetch it after successful login.
        */
-      const { error: userError, data: userData } = await this.getUser({
+      const {
+        error: errorGetUser,
+        raw: rawGetUser,
+        data: dataGetUser,
+      } = await this.getUser({
         input: {},
       })
 
-      if (userError) {
-        return {
-          data: {
-            user: undefined,
-            raw: {
-              user: userData?.raw,
-              login: response,
-            },
-          },
-          error: userError,
-        }
+      const raw: OxidLoginRaw = {
+        login: response,
+        getUser: rawGetUser?.getUser,
       }
 
-      return {
-        data: {
-          user: userData?.user,
-          raw: {
-            user: userData?.raw,
-            login: response,
-          },
-        },
-        error: undefined,
+      if (dataGetUser) {
+        const data = { user: dataGetUser.user }
+
+        this.mainAdapter.dispatchEvent(
+          new UserLoginEvent<OxidLoginRaw>(data, raw)
+        )
+
+        return { data, raw, error: undefined }
       }
+
+      return { data: undefined, raw, error: errorGetUser }
     } catch (e) {
-      return {
-        data: {
-          user: undefined,
-          raw: {
-            user: undefined,
-            login: undefined,
-          },
-        },
-        error: e as Error,
-      }
+      return { data: undefined, error: e as Error }
     }
   }
 
-  logout: MakairaLogout<unknown, unknown, Error> = async () => {
+  logout: MakairaLogout<unknown, OxidLogoutRaw, Error> = async () => {
     try {
-      const { response, status } = await this.mainAdapter.fetchFromShop({
-        path: USER_LOGOUT,
-      })
+      const { response, status } =
+        await this.mainAdapter.fetchFromShop<OxidLogoutRes>({
+          path: USER_LOGOUT,
+        })
 
-      if (!response.success || status !== 200) {
+      if (status !== 200) {
         return {
-          data: {
-            user: undefined,
-            raw: response,
-          },
-          error: new Error(
-            response.message ?? 'API responded with status != 200'
-          ),
+          data: undefined,
+          raw: { logout: response },
+          error: new BadHttpStatusError(),
         }
       }
 
-      return { data: { raw: response }, error: undefined }
+      this.mainAdapter.dispatchEvent(
+        new UserLogoutEvent<OxidLogoutRaw>(undefined, { logout: response })
+      )
+
+      return { data: undefined, raw: { logout: response }, error: undefined }
     } catch (e) {
       return {
-        data: { user: undefined, raw: undefined },
+        data: undefined,
         error: e as Error,
       }
     }
@@ -117,40 +116,42 @@ export class StorefrontShopAdapterOxidUser implements MakairaShopProviderUser {
    */
   signup: MakairaSignup<unknown, unknown, Error> = async () => {
     return {
-      data: { user: undefined, raw: undefined },
-      error: new Error('not yet implemented'),
+      data: undefined,
+      error: new NotImplementedError(),
     }
   }
 
-  getUser: MakairaGetUser<unknown, unknown, Error> = async () => {
+  getUser: MakairaGetUser<unknown, OxidGetUserRaw, Error> = async () => {
     try {
-      const { response, status } = await this.mainAdapter.fetchFromShop({
-        path: USER_GET_CURRENT,
-      })
+      const { response, status } =
+        await this.mainAdapter.fetchFromShop<OxidGetUserRes>({
+          path: USER_GET_CURRENT,
+        })
 
-      if (status !== 200) {
+      if (status !== 200 || (response as { message: string }).message) {
         return {
-          data: { user: undefined, raw: response },
-          error: new Error(
-            response.message ?? 'API responded with status != 200'
-          ),
+          data: undefined,
+          raw: { getUser: response },
+          error: (response as { message: string }).message
+            ? new Error((response as { message: string }).message)
+            : new BadHttpStatusError(),
         }
       }
 
       return {
         data: {
           user: {
-            id: response.id,
-            firstname: response.firstname,
-            lastname: response.lastname,
-            email: response.email,
+            id: (response as OxidUser).id,
+            firstname: (response as OxidUser).firstname,
+            lastname: (response as OxidUser).lastname,
+            email: (response as OxidUser).email,
           },
-          raw: response,
         },
+        raw: { getUser: response },
         error: undefined,
       }
     } catch (e) {
-      return { data: { user: undefined, raw: undefined }, error: e as Error }
+      return { data: undefined, error: e as Error }
     }
   }
 }

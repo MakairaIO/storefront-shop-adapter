@@ -2,32 +2,30 @@ import {
   MakairaForgotPassword,
   MakairaGetUser,
   MakairaLogin,
-  MakairaLoginResData,
   MakairaLogout,
-  MakairaLogoutResData,
   MakairaShopProviderUser,
   MakairaSignup,
-  MakairaSignupResData,
+  NotImplementedError,
   UserLoginEvent,
   UserLogoutEvent,
   UserSignupEvent,
 } from '@makaira/storefront-types'
 import { faker } from '@faker-js/faker'
 import { StorefrontShopAdapterLocal } from './main'
-import { ShopAdapterLocalStorageVersioned } from '../types'
-
-type UserStore = {
-  user?: { id: string; email: string; firstname: string; lastname: string }
-}
-
-type UserStoreVersioned = ShopAdapterLocalStorageVersioned<'v1', UserStore>
+import {
+  LocalGetUserRaw,
+  LocalLoginRaw,
+  LocalLogoutRaw,
+  LocalSignupRaw,
+  UserStoreVersioned,
+} from '../types'
 
 export class StorefrontShopAdapterLocalUser implements MakairaShopProviderUser {
   LOCAL_STORAGE_STORE = 'makaira-shop-local-user'
 
   constructor(private mainAdapter: StorefrontShopAdapterLocal) {}
 
-  login: MakairaLogin<unknown, UserStoreVersioned, Error> = async ({
+  login: MakairaLogin<unknown, LocalLoginRaw, Error> = async ({
     input: { password, username },
   }) => {
     const userStore = this.getStore()
@@ -48,19 +46,15 @@ export class StorefrontShopAdapterLocalUser implements MakairaShopProviderUser {
 
     this.setStore(userStore)
 
-    const data = { user: userStore.user, raw: userStore }
+    const data = { user: userStore.user }
+    const raw: LocalLoginRaw = { store: userStore }
 
-    this.mainAdapter.dispatchEvent(
-      new UserLoginEvent<MakairaLoginResData<UserStoreVersioned>>(data)
-    )
+    this.mainAdapter.dispatchEvent(new UserLoginEvent<LocalLoginRaw>(data, raw))
 
-    return {
-      data,
-      error: undefined,
-    }
+    return { data, raw, error: undefined }
   }
 
-  logout: MakairaLogout<unknown, UserStoreVersioned, Error> = async () => {
+  logout: MakairaLogout<unknown, LocalLogoutRaw, Error> = async () => {
     const userStore = this.getStore()
 
     if (!userStore.user) {
@@ -71,16 +65,16 @@ export class StorefrontShopAdapterLocalUser implements MakairaShopProviderUser {
 
     this.setStore(userStore)
 
-    const data = { raw: userStore }
+    const raw: LocalLogoutRaw = { store: userStore }
 
     this.mainAdapter.dispatchEvent(
-      new UserLogoutEvent<MakairaLogoutResData<UserStoreVersioned>>(data)
+      new UserLogoutEvent<LocalLogoutRaw>(undefined, raw)
     )
 
-    return { data, error: undefined }
+    return { data: undefined, raw, error: undefined }
   }
 
-  signup: MakairaSignup<unknown, UserStoreVersioned, Error> = async () => {
+  signup: MakairaSignup<unknown, LocalSignupRaw, Error> = async () => {
     const userStore = this.getStore()
 
     if (!userStore.user) {
@@ -99,28 +93,37 @@ export class StorefrontShopAdapterLocalUser implements MakairaShopProviderUser {
 
     this.setStore(userStore)
 
-    const data = { user: userStore.user, raw: userStore }
+    const data = { user: userStore.user }
+    const raw: LocalSignupRaw = { store: userStore }
 
     this.mainAdapter.dispatchEvent(
-      new UserSignupEvent<MakairaSignupResData<UserStoreVersioned>>(data)
+      new UserSignupEvent<LocalSignupRaw>(data, raw)
     )
 
-    return { data, error: undefined }
+    return { data, raw, error: undefined }
   }
 
-  getUser: MakairaGetUser<unknown, UserStoreVersioned, Error> = async () => {
+  getUser: MakairaGetUser<unknown, LocalGetUserRaw, Error> = async () => {
     const userStore = this.getStore()
 
     if (!userStore.user) {
-      return { data: undefined, error: undefined }
+      return { data: undefined, raw: { store: userStore }, error: undefined }
     }
 
-    return { data: { user: userStore.user, raw: userStore }, error: undefined }
+    return {
+      data: { user: userStore.user },
+      raw: { store: userStore },
+      error: undefined,
+    }
   }
 
   forgotPassword: MakairaForgotPassword<unknown, undefined, Error> =
     async () => {
-      return { data: { raw: undefined }, error: undefined }
+      return {
+        data: undefined,
+        raw: undefined,
+        error: new NotImplementedError(),
+      }
     }
 
   private getStore(): UserStoreVersioned {

@@ -2,16 +2,23 @@
   "name": "@makaira/storefront-shop-adapter-oxid",
   "version": "1.0.0",
   "description": "Contains the makaira oxid shop adapter to connect your storefront with your oxid shop",
-  "main": "dist/esm/index.js",
-  "typings": "dist/types/index.d.ts",
+  "main": "./dist/esm/index.js",
+  "typings": "./dist/types/index.d.ts",
   "exports": {
-    "import": "dist/esm/index.js",
-    "require": "dist/cjs/index.js",
-    "default": "dist/esm/index.js"
+    "import": "./dist/esm/index.js",
+    "require": "./dist/cjs/index.js",
+    "default": "./dist/esm/index.js"
+  },
+  "files": [
+    "./dist"
+  ],
+  "engines": {
+    "node": ">=15.0.0"
   },
   "scripts": {
     "clean": "rimraf ./dist",
-    "lint": "eslint src --fix",
+    "lint:eslint": "eslint src --fix",
+    "lint:tsc": "tsc --project tsconfig.json --noEmit --skipLibCheck",
     "build": "tsc --project tsconfig.build.esm.json & tsc --project tsconfig.build.cjs.json",
     "release": "semantic-release",
     "test": "jest --passWithNoTests"
@@ -34,26 +41,26 @@
     "url": "https://github.com/MakairaIO/storefront-shop-adapter/issues"
   },
   "homepage": "https://github.com/MakairaIO/storefront-shop-adapter#readme",
+  "dependencies": {
+    "@makaira/storefront-types": "^1.4.0",
+    "isomorphic-unfetch": "^3.1.0"
+  },
   "devDependencies": {
-    "@makaira/storefront-types": "1.0.0",
     "msw": "^0.43.0"
   },
   "jest": {
     "preset": "ts-jest",
-    "testEnvironment": "node",
+    "testEnvironment": "jest-environment-jsdom",
     "transform": {
       "^.+\\\\.ts?$": "ts-jest"
     },
     "transformIgnorePatterns": [
-      "./node_modules/"
+      "./node_modules/(?!(storefront-.*)/)"
     ],
     "globals": {
       "ts-jest": {
         "diagnostics": false
       }
     }
-  },
-  "dependencies": {
-    "isomorphic-unfetch": "^3.1.0"
   }
 }

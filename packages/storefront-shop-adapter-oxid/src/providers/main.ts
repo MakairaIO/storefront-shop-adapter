@@ -46,7 +46,7 @@ export class StorefrontShopAdapterOxid<
       UserProviderType,
       WishlistProviderType,
       AdditionalOxidOptions
-    > = {}
+    >
   ) {
     super()
 
@@ -74,11 +74,11 @@ export class StorefrontShopAdapterOxid<
     this.wishlist = new WishlistProvider(this)
   }
 
-  public async fetchFromShop({
+  public async fetchFromShop<Response = any>({
     path,
     body = {},
-  }: FetchParameters): Promise<FetchResponse> {
-    let requestUrl = this.additionalOptions.url ?? ''
+  }: FetchParameters): Promise<FetchResponse<Response>> {
+    let requestUrl = this.additionalOptions.url
 
     if (!requestUrl?.endsWith('/') && !path.startsWith('/')) {
       requestUrl += '/'

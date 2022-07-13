@@ -2,7 +2,11 @@ import { rest } from 'msw'
 import { setupServer } from 'msw/node'
 import { StorefrontShopAdapterOxid } from './'
 import { USER_GET_CURRENT, USER_LOGIN, USER_LOGOUT } from '../paths'
-import { MakairaResponse } from '@makaira/storefront-types'
+import {
+  BadHttpStatusError,
+  MakairaResponse,
+  NotImplementedError,
+} from '@makaira/storefront-types'
 
 const TARGET_HOST = 'https://example.com'
 // Will answer all requests with an error and correct error message
@@ -63,7 +67,9 @@ const failureOxidClient = new StorefrontShopAdapterOxid({
 })
 
 // eslint-disable-next-line
-const checkForCorrectErrorHandling = (response: MakairaResponse<any, any>) => {
+const checkForCorrectErrorHandling = (
+  response: MakairaResponse<any, any, any>
+) => {
   expect(response.data?.user).toBeUndefined()
   expect(response.data?.raw?.user).toBeUndefined()
   expect(response.data?.raw?.login).toBeUndefined()
@@ -92,11 +98,11 @@ describe('User functions (login/logout/getUser)', function () {
     expect(res.error).toBeUndefined()
 
     expect(res.data?.user).toEqual(USER_OBJECT)
-    expect(res.data?.raw).toEqual({
+    expect(res.raw).toEqual({
       login: {
         success: true,
       },
-      user: {
+      getUser: {
         ...USER_OBJECT,
         additionalParameter: 'test123',
       },
@@ -116,8 +122,8 @@ describe('User functions (login/logout/getUser)', function () {
 
     expect(res.error).toEqual(new Error('ERROR_MESSAGE_USER_NOVALIDLOGIN'))
     expect(res.data?.user).toBeUndefined()
-    expect(res.data?.raw).toEqual({
-      user: undefined,
+    expect(res.raw).toEqual({
+      getUser: undefined,
       login: {
         success: false,
         message: 'ERROR_MESSAGE_USER_NOVALIDLOGIN',
@@ -131,9 +137,8 @@ describe('User functions (login/logout/getUser)', function () {
     expect(res.error).toBeUndefined()
 
     expect(res.data?.user).toEqual(USER_OBJECT)
-    expect(res.data?.raw).toEqual({
-      ...USER_OBJECT,
-      additionalParameter: 'test123',
+    expect(res.raw).toEqual({
+      getUser: { ...USER_OBJECT, additionalParameter: 'test123' },
     })
   })
 
@@ -144,8 +149,8 @@ describe('User functions (login/logout/getUser)', function () {
 
     expect(res.error).toEqual(new Error('Forbidden'))
     expect(res.data?.user).toBeUndefined()
-    expect(res.data?.raw).toEqual({
-      message: 'Forbidden',
+    expect(res.raw).toEqual({
+      getUser: { message: 'Forbidden' },
     })
   })
 
@@ -162,11 +167,11 @@ describe('User functions (login/logout/getUser)', function () {
 
     expect(res.error).toEqual(new Error('Forbidden'))
     expect(res.data?.user).toBeUndefined()
-    expect(res.data?.raw).toEqual({
+    expect(res.raw).toEqual({
       login: {
         success: true,
       },
-      user: {
+      getUser: {
         message: 'Forbidden',
       },
     })
@@ -178,9 +183,9 @@ describe('User functions (login/logout/getUser)', function () {
     })
 
     expect(res.data?.user).toBeUndefined()
-    expect(res.data?.raw).toBeUndefined()
+    expect(res.raw).toBeUndefined()
 
-    expect(res.error).toEqual(new Error('not yet implemented'))
+    expect(res.error).toBeInstanceOf(NotImplementedError)
   })
 
   it('should correctly logout user', async () => {
@@ -188,8 +193,8 @@ describe('User functions (login/logout/getUser)', function () {
       input: {},
     })
 
-    expect(res.data?.raw).toEqual({
-      success: true,
+    expect(res.raw).toEqual({
+      logout: { success: true },
     })
     expect(res.error).toBeUndefined()
   })
@@ -197,12 +202,14 @@ describe('User functions (login/logout/getUser)', function () {
   it('should correctly return error if logout fails', async () => {
     const res = await failureOxidClient.user.logout({ input: {} })
 
-    expect(res.data?.raw).toEqual({})
-    expect(res.error).toEqual(new Error('API responded with status != 200'))
+    expect(res.raw).toBeUndefined()
+    expect(res.error).toBeInstanceOf(BadHttpStatusError)
   })
 
   it('should return error if fetch throws error', async () => {
-    const oxidClientWithRelativeURLs = new StorefrontShopAdapterOxid()
+    const oxidClientWithRelativeURLs = new StorefrontShopAdapterOxid({
+      url: '',
+    })
 
     const loginRes = await oxidClientWithRelativeURLs.user.login({
       input: { username: 'a', password: 'b', rememberLogin: false },

@@ -26,14 +26,18 @@ export type ShopProviderProps = React.PropsWithChildren<{
     */
     cart?:
       | boolean
-      | (() => Promise<MakairaResponse<StorefrontReactTypes['cart'], Error>>)
+      | (() => Promise<
+          MakairaResponse<StorefrontReactTypes['cart'], any, Error>
+        >)
     /*  Define the bootstrapping strategy for the cuserart. Set it to true for loading user
           by the provider get method. Set it to false for disabled loading at boot time.
           Set it to an async function for custom loading strategy
       */
     user?:
       | boolean
-      | (() => Promise<MakairaResponse<StorefrontReactTypes['user'], Error>>)
+      | (() => Promise<
+          MakairaResponse<StorefrontReactTypes['user'], any, Error>
+        >)
     /*  Define the bootstrapping strategy for the wishlist. Set it to true for loading wishlist
           by the provider get method. Set it to false for disabled loading at boot time.
           Set it to an async function for custom loading strategy
@@ -41,7 +45,7 @@ export type ShopProviderProps = React.PropsWithChildren<{
     wishlist?:
       | boolean
       | (() => Promise<
-          MakairaResponse<StorefrontReactTypes['wishlist'], Error>
+          MakairaResponse<StorefrontReactTypes['wishlist'], any, Error>
         >)
   }
 }>

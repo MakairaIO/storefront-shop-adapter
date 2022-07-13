@@ -3,17 +3,16 @@ import { MakairaShopProviderInteractor } from '../general/shop-provider-interact
 //#region type definition: get-checkout
 export type MakairaGetCheckoutInput<AdditionalInput = unknown> = AdditionalInput
 
-export type MakairaGetCheckoutResData<RawResponse = unknown> = {
-  raw: RawResponse
-}
+export type MakairaGetCheckoutResData = undefined
 
 export type MakairaGetCheckout<
   AdditionalInput = any,
-  RawResponse = any,
+  ResRawData = any,
   ResError extends Error = Error
 > = MakairaShopProviderInteractor<
   MakairaGetCheckoutInput<AdditionalInput>,
-  MakairaGetCheckoutResData<RawResponse>,
+  MakairaGetCheckoutResData,
+  ResRawData,
   ResError
 >
 //#endregion
@@ -22,17 +21,16 @@ export type MakairaGetCheckout<
 export type MakairaSubmitCheckoutInput<AdditionalInput = unknown> =
   AdditionalInput
 
-export type MakairaSubmitCheckoutResData<RawResponse = unknown> = {
-  raw: RawResponse
-}
+export type MakairaSubmitCheckoutResData = undefined
 
 export type MakairaSubmitCheckout<
   AdditionalInput = any,
-  RawResponse = any,
+  ResRawData = any,
   ResError extends Error = Error
 > = MakairaShopProviderInteractor<
   MakairaSubmitCheckoutInput<AdditionalInput>,
-  { raw: RawResponse },
+  MakairaSubmitCheckoutResData,
+  ResRawData,
   ResError
 >
 //#endregion
