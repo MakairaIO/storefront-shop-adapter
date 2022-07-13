@@ -6,6 +6,8 @@ import {
   UserSignupEvent,
   CartRemoveItemEvent,
   CartUpdateItemEvent,
+  WishlistAddItemEvent,
+  WishlistRemoveItemEvent,
 } from '@makaira/storefront-types'
 import React, { useEffect, useRef, useState } from 'react'
 import { StorefrontReactClient, StorefrontReactTypes } from './types'
@@ -128,6 +130,15 @@ const ShopProvider: React.FC<ShopProviderProps> = ({
     client.addEventListener(UserLoginEvent.eventName, reloadUserAfterUpdate)
     client.addEventListener(UserLogoutEvent.eventName, reloadUserAfterUpdate)
 
+    client.addEventListener(
+      WishlistAddItemEvent.eventName,
+      reloadWishlistAfterUpdate
+    )
+    client.addEventListener(
+      WishlistRemoveItemEvent.eventName,
+      reloadWishlistAfterUpdate
+    )
+
     return () => {
       client.removeEventListener(
         CartAddItemEvent.eventName,
@@ -153,6 +164,15 @@ const ShopProvider: React.FC<ShopProviderProps> = ({
       client.removeEventListener(
         UserLogoutEvent.eventName,
         reloadUserAfterUpdate
+      )
+
+      client.removeEventListener(
+        WishlistAddItemEvent.eventName,
+        reloadWishlistAfterUpdate
+      )
+      client.removeEventListener(
+        WishlistRemoveItemEvent.eventName,
+        reloadWishlistAfterUpdate
       )
     }
   }, [])
@@ -285,6 +305,17 @@ const ShopProvider: React.FC<ShopProviderProps> = ({
 
     if (res.data) {
       setUser(res.data)
+    }
+  }
+
+  /**
+   *  method to reload the user after a shop user event fires that the user has a change
+   */
+  async function reloadWishlistAfterUpdate() {
+    const res = await client.wishlist.getWishlist({ input: {} })
+
+    if (res.data) {
+      setWishlist(res.data)
     }
   }
 
