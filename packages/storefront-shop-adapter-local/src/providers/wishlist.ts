@@ -87,7 +87,7 @@ export class StorefrontShopAdapterLocalWishlist
       (item) => item.product.id === product.id
     )
 
-    if (itemExistsIndex > -1) {
+    if (itemExistsIndex === -1) {
       return {
         data: undefined,
         error: new Error('product not found in wishlist'),
