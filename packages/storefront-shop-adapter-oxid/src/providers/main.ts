@@ -3,6 +3,7 @@ import {
   MakairaShopProviderCart,
   MakairaShopProviderCheckout,
   MakairaShopProviderOptions,
+  MakairaShopProviderReview,
   MakairaShopProviderUser,
   MakairaShopProviderWishlist,
 } from '@makaira/storefront-types'
@@ -13,12 +14,14 @@ import { StorefrontShopAdapterOxidWishlist } from './wishlist'
 
 import fetch from 'isomorphic-unfetch'
 import { AdditionalOxidOptions, FetchParameters, FetchResponse } from '../types'
+import { StorefrontShopAdapterOxidReview } from './review'
 
 export class StorefrontShopAdapterOxid<
     CartProviderType extends MakairaShopProviderCart = StorefrontShopAdapterOxidCart,
     CheckoutProviderType extends MakairaShopProviderCheckout = StorefrontShopAdapterOxidCheckout,
     UserProviderType extends MakairaShopProviderUser = StorefrontShopAdapterOxidUser,
-    WishlistProviderType extends MakairaShopProviderWishlist = StorefrontShopAdapterOxidWishlist
+    WishlistProviderType extends MakairaShopProviderWishlist = StorefrontShopAdapterOxidWishlist,
+    ReviewProviderType extends MakairaShopProviderReview = StorefrontShopAdapterOxidReview
   >
   extends EventTarget
   implements
@@ -26,7 +29,8 @@ export class StorefrontShopAdapterOxid<
       CartProviderType,
       CheckoutProviderType,
       UserProviderType,
-      WishlistProviderType
+      WishlistProviderType,
+      ReviewProviderType
     >
 {
   cart: CartProviderType
@@ -37,6 +41,8 @@ export class StorefrontShopAdapterOxid<
 
   wishlist: WishlistProviderType
 
+  review: ReviewProviderType
+
   additionalOptions: AdditionalOxidOptions
 
   constructor(
@@ -45,6 +51,7 @@ export class StorefrontShopAdapterOxid<
       CheckoutProviderType,
       UserProviderType,
       WishlistProviderType,
+      ReviewProviderType,
       AdditionalOxidOptions
     >
   ) {
@@ -55,6 +62,7 @@ export class StorefrontShopAdapterOxid<
       checkout: CheckoutProvider = StorefrontShopAdapterOxidCheckout,
       user: UserProvider = StorefrontShopAdapterOxidUser,
       wishlist: WishlistProvider = StorefrontShopAdapterOxidWishlist,
+      review: ReviewProvider = StorefrontShopAdapterOxidReview,
     } = options.providers ?? {}
 
     this.additionalOptions = {
@@ -72,6 +80,9 @@ export class StorefrontShopAdapterOxid<
 
     // @ts-expect-error https://stackoverflow.com/questions/56505560/how-to-fix-ts2322-could-be-instantiated-with-a-different-subtype-of-constraint
     this.wishlist = new WishlistProvider(this)
+
+    // @ts-expect-error https://stackoverflow.com/questions/56505560/how-to-fix-ts2322-could-be-instantiated-with-a-different-subtype-of-constraint
+    this.review = new ReviewProvider(this)
   }
 
   public async fetchFromShop<Response = any>({

@@ -39,9 +39,9 @@ export class StorefrontShopAdapterLocalUser implements MakairaShopProviderUser {
 
     userStore.user = {
       id: faker.datatype.uuid(),
-      firstname: 'test',
-      lastname: 'test',
-      email: 'test',
+      firstname: faker.name.firstName(),
+      lastname: faker.name.lastName(),
+      email: faker.internet.email(),
     }
 
     this.setStore(userStore)
@@ -86,9 +86,9 @@ export class StorefrontShopAdapterLocalUser implements MakairaShopProviderUser {
 
     userStore.user = {
       id: faker.datatype.uuid(),
-      firstname: 'test',
-      lastname: 'test',
-      email: 'test',
+      firstname: faker.name.firstName(),
+      lastname: faker.name.lastName(),
+      email: faker.internet.email(),
     }
 
     this.setStore(userStore)
