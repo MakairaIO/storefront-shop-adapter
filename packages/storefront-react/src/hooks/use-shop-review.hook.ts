@@ -1,6 +1,8 @@
-import { StorefrontReactClient, useShopClient } from '@makaira/storefront-react'
 import { ReviewCreateEvent } from '@makaira/storefront-types'
 import { useCallback, useEffect, useState } from 'react'
+import { StorefrontReactClient } from '../types'
+
+import { useShopClient } from './use-shop-client.hook'
 
 export type UseShopUserInput = {
   /**
