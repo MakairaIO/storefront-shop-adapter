@@ -15,6 +15,12 @@ export type OxidUser = {
   email: string
 }
 
+export type OxidReview = {
+  id: string
+  text: string
+  rating: number
+}
+
 //#endregion
 
 //#region cart provider
@@ -97,6 +103,34 @@ export type OxidLoginRes =
 export type OxidLoginRaw = {
   login: OxidRemoveItemRes
   getUser?: OxidGetUserRaw['getUser']
+}
+
+//#endregion
+
+//#endregion
+
+//#endregion
+
+//#region review provider
+
+//#region getReviews method
+
+export type OxidGetReviewsRes =
+  | OxidReview[]
+  | { success: false; message: string }
+
+export type OxidGetReviewsRaw = { getReviews: OxidGetReviewsRes }
+
+//#endregion
+
+//#region createReview method
+
+export type OxidCreateReviewRes =
+  | { success: true }
+  | { success: false; message: string }
+
+export type OxidCreateReviewRaw = {
+  createReview: OxidCreateReviewRes
 }
 
 //#endregion
