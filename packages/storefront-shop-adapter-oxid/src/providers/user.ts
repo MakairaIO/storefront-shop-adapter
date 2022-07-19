@@ -128,6 +128,19 @@ export class StorefrontShopAdapterOxidUser implements MakairaShopProviderUser {
           path: USER_GET_CURRENT,
         })
 
+      // oxid returns an 403 if no user is logged in. Therefore
+      // return an empty user without error
+      if (
+        status === 403 &&
+        (response as { message: string }).message === 'Forbidden'
+      ) {
+        return {
+          data: undefined,
+          raw: { getUser: response },
+          error: undefined,
+        }
+      }
+
       if (status !== 200 || (response as { message: string }).message) {
         return {
           data: undefined,
