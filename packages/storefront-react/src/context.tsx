@@ -303,7 +303,7 @@ const ShopProvider: React.FC<ShopProviderProps> = ({
   async function reloadUserAfterUpdate() {
     const res = await client.user.getUser({ input: {} })
 
-    if (res.data) {
+    if (!res.error) {
       setUser(res.data)
     }
   }
