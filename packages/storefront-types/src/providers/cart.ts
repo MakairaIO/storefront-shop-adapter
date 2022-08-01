@@ -3,22 +3,22 @@ import { MakairaProduct } from '../product'
 
 //#region type definition: add-to-cart
 export type MakairaAddItemToCartInput<AdditionalInput = unknown> = {
-  product: MakairaProduct
+  product: { id: string; attributes?: { key: string; value: string }[] }
   quantity: number
 } & AdditionalInput
 
-export type MakairaAddItemToCartResData<RawResponse = unknown> = {
+export type MakairaAddItemToCartResData = {
   items: { product: MakairaProduct; quantity: number }[]
-  raw: RawResponse
 }
 
 export type MakairaAddItemToCart<
-  AdditionalInput = unknown,
-  RawResponse = unknown,
+  AdditionalInput = any,
+  ResRawData = any,
   ResError extends Error = Error
 > = MakairaShopProviderInteractor<
   MakairaAddItemToCartInput<AdditionalInput>,
-  MakairaAddItemToCartResData<RawResponse>,
+  MakairaAddItemToCartResData,
+  ResRawData,
   ResError
 >
 //#endregion
@@ -26,60 +26,61 @@ export type MakairaAddItemToCart<
 //#region type definition: get-cart
 export type MakairaGetCartInput<AdditionalInput = unknown> = AdditionalInput
 
-export type MakairaGetCartResData<RawResponse = unknown> = {
+export type MakairaGetCartResData = {
   items: { product: MakairaProduct; quantity: number }[]
-  raw: RawResponse
 }
 
 export type MakairaGetCart<
-  AdditionalInput = unknown,
-  RawResponse = unknown,
+  AdditionalInput = any,
+  ResRawData = any,
   ResError extends Error = Error
 > = MakairaShopProviderInteractor<
   MakairaGetCartInput<AdditionalInput>,
-  MakairaGetCartResData<RawResponse>,
+  MakairaGetCartResData,
+  ResRawData,
   ResError
 >
 //#endregion
 
 //#region type definition: remove-item-from-cart
 export type MakairaRemoveItemFromCartInput<AdditionalInput = unknown> = {
-  product: MakairaProduct
+  product: { id: string; attributes?: { key: string; value: string }[] }
 } & AdditionalInput
 
-export type MakairaRemoveItemFromCartResData<RawResponse = unknown> = {
+export type MakairaRemoveItemFromCartResData = {
   items: { product: MakairaProduct; quantity: number }[]
-  raw: RawResponse
 }
 
 export type MakairaRemoveItemFromCart<
-  AdditionalInput = unknown,
-  RawResponse = unknown,
+  AdditionalInput = any,
+  ResRawData = any,
   ResError extends Error = Error
 > = MakairaShopProviderInteractor<
   MakairaRemoveItemFromCartInput<AdditionalInput>,
-  MakairaRemoveItemFromCartResData<RawResponse>,
+  MakairaRemoveItemFromCartResData,
+  ResRawData,
   ResError
 >
 //#endregion
 
 //#region type definition: update-item
 export type MakairaUpdateItemFromCartInput<AdditionalInput = unknown> = {
-  product: MakairaProduct
+  product: { id: string; attributes?: { key: string; value: string }[] }
   quantity: number
 } & AdditionalInput
 
-export type MakairaUpdateItemFromCartResData<RawResponse = unknown> = {
-  raw: RawResponse
+export type MakairaUpdateItemFromCartResData = {
+  items: { product: MakairaProduct; quantity: number }[]
 }
 
 export type MakairaUpdateItemFromCart<
-  AdditionalInput = unknown,
-  RawResponse = unknown,
+  AdditionalInput = any,
+  ResRawData = any,
   ResError extends Error = Error
 > = MakairaShopProviderInteractor<
   MakairaUpdateItemFromCartInput<AdditionalInput>,
-  MakairaUpdateItemFromCartResData<RawResponse>,
+  MakairaUpdateItemFromCartResData,
+  ResRawData,
   ResError
 >
 //#endregion

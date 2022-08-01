@@ -43,7 +43,7 @@ jobs:
         run: npm ci
 
       - name: Semantic release storefront-types
-        run: ./node_modules/.bin/turbo run release --filter=@makaira/storefront-types
+        run: ./node_modules/.bin/turbo run release --filter=@makaira/storefront-types --continue=false
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
@@ -61,9 +61,18 @@ jobs:
           token: ${{ secrets.RENOVATE_TOKEN }}
         env:
           GIT_AUTHOR: ${{ secrets.GIT_AUTHOR }}
+          LOG_LEVEL: debug
+
+      - name: Fetch latest version
+        run: |
+          git restore .
+          git pull
+
+      - name: Install dependencies
+        run: npm ci
 
       - name: Semantic release
-        run: ./node_modules/.bin/turbo run release --filter=!@makaira/storefront-types
+        run: ./node_modules/.bin/turbo run release --filter="!@makaira/storefront-types" --concurrency=1 --continue=false
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 

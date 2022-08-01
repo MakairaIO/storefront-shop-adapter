@@ -5,7 +5,9 @@
     "allowJs": false,
     "noImplicitAny": true,
     "moduleResolution": "Node",
+    "esModuleInterop": true,
     "lib": ["dom", "es6"],
+    "jsx": "react",
     "paths": {
       "@makaira/storefront-types": ["../storefront-types/src"],
       "@makaira/storefront-types/*": ["../storefront-types/src/*"],
@@ -14,7 +16,15 @@
       ],
       "@makaira/storefront-shop-adapter-local": [
         "../storefront-shop-adapter-local/src"
-      ]
+      ],
+      "@makaira/storefront-shop-adapter-oxid/*": [
+        "../storefront-shop-adapter-oxid/src/*"
+      ],
+      "@makaira/storefront-shop-adapter-oxid": [
+        "../storefront-shop-adapter-oxid/src"
+      ],
+      "@makaira/storefront-react": ["../storefront-react/src"],
+      "@makaira/storefront-react/*": ["../storefront-react/src/*"]
     }
   }
 }

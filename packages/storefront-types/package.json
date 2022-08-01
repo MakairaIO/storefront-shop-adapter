@@ -1,20 +1,27 @@
 {
   "name": "@makaira/storefront-types",
-  "version": "1.0.0",
+  "version": "1.6.0",
   "description": "Contains the makaira shop adapter typescript type definitions",
-  "main": "dist/esm/index.js",
-  "typings": "dist/types/index.d.ts",
+  "main": "./dist/esm/index.js",
+  "typings": "./dist/types/index.d.ts",
   "exports": {
-    "import": "dist/esm/index.js",
-    "require": "dist/cjs/index.js",
-    "default": "dist/esm/index.js"
+    "import": "./dist/esm/index.js",
+    "require": "./dist/cjs/index.js",
+    "default": "./dist/esm/index.js"
+  },
+  "files": [
+    "./dist"
+  ],
+  "engines": {
+    "node": ">=15.0.0"
   },
   "scripts": {
     "clean": "rimraf ./dist",
-    "lint": "eslint src --fix",
+    "lint:eslint": "eslint src --fix",
+    "lint:tsc": "tsc --project tsconfig.json --noEmit --skipLibCheck",
     "build": "tsc --project tsconfig.build.esm.json & tsc --project tsconfig.build.cjs.json",
     "release": "semantic-release",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --passWithNoTests"
   },
   "repository": {
     "type": "git",

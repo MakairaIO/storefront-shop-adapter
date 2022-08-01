@@ -1,4 +1,5 @@
 src
 .turbo
 tsconfig.json
-tsconfig.build.json
+tsconfig.build.cjs.json
+tsconfig.build.esm.json

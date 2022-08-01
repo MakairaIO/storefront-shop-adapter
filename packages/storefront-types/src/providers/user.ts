@@ -6,18 +6,18 @@ export type MakairaLoginInput<AdditionalInput = unknown> = {
   password: string
 } & AdditionalInput
 
-export type MakairaLoginResData<RawResponse = unknown> = {
-  user: { id: string }
-  raw: RawResponse
+export type MakairaLoginResData = {
+  user: { id: string; firstname: string; lastname: string } | undefined
 }
 
 export type MakairaLogin<
-  AdditionalInput = unknown,
-  RawResponse = unknown,
+  AdditionalInput = any,
+  ResRawData = any,
   ResError extends Error = Error
 > = MakairaShopProviderInteractor<
   MakairaLoginInput<AdditionalInput>,
-  MakairaLoginResData<RawResponse>,
+  MakairaLoginResData,
+  ResRawData,
   ResError
 >
 //#endregion
@@ -25,17 +25,16 @@ export type MakairaLogin<
 //#region type definition: logout
 export type MakairaLogoutInput<AdditionalInput = unknown> = AdditionalInput
 
-export type MakairaLogoutResData<RawResponse = unknown> = {
-  raw: RawResponse
-}
+export type MakairaLogoutResData = undefined
 
 export type MakairaLogout<
-  AdditionalInput = unknown,
-  RawResponse = unknown,
+  AdditionalInput = any,
+  ResRawData = any,
   ResError extends Error = Error
 > = MakairaShopProviderInteractor<
   MakairaLogoutInput<AdditionalInput>,
-  MakairaLogoutResData<RawResponse>,
+  MakairaLogoutResData,
+  ResRawData,
   ResError
 >
 //#endregion
@@ -46,18 +45,56 @@ export type MakairaSignupInput<AdditionalInput = unknown> = {
   password: string
 } & AdditionalInput
 
-export type MakairaSignupResData<RawResponse = unknown> = {
-  user: { id: string }
-  raw: RawResponse
+export type MakairaSignupResData = {
+  user: { id: string } | undefined
 }
 
 export type MakairaSignup<
-  AdditionalInput = unknown,
-  RawResponse = unknown,
+  AdditionalInput = any,
+  ResRawData = any,
   ResError extends Error = Error
 > = MakairaShopProviderInteractor<
   MakairaSignupInput<AdditionalInput>,
-  MakairaSignupResData<RawResponse>,
+  MakairaSignupResData,
+  ResRawData,
+  ResError
+>
+//#endregion
+
+//#region type definition: getUser
+export type MakairaGetUserInput<AdditionalInput = unknown> = AdditionalInput
+
+export type MakairaGetUserResData = {
+  user?: { id: string; firstname: string; lastname: string; email: string }
+}
+
+export type MakairaGetUser<
+  AdditionalInput = any,
+  ResRawData = any,
+  ResError extends Error = Error
+> = MakairaShopProviderInteractor<
+  MakairaGetUserInput<AdditionalInput>,
+  MakairaGetUserResData,
+  ResRawData,
+  ResError
+>
+//#endregion
+
+//#region type definition: forgotPassword
+export type MakairaForgotPasswordInput<AdditionalInput = unknown> = {
+  username: string
+} & AdditionalInput
+
+export type MakairaForgotPasswordResData = undefined
+
+export type MakairaForgotPassword<
+  AdditionalInput = any,
+  ResRawData = any,
+  ResError extends Error = Error
+> = MakairaShopProviderInteractor<
+  MakairaForgotPasswordInput<AdditionalInput>,
+  MakairaForgotPasswordResData,
+  ResRawData,
   ResError
 >
 //#endregion
@@ -67,4 +104,5 @@ export type MakairaShopProviderUser = {
   login: MakairaLogin
   logout: MakairaLogout
   signup: MakairaSignup
+  getUser: MakairaGetUser
 }

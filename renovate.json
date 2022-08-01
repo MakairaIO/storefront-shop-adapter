@@ -1,12 +1,21 @@
 {
-  "extends": ["config:base", ":semanticCommitTypeAll(fix)"],
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:base",
+    ":semanticCommitTypeAll(fix)",
+    ":disableRateLimiting"
+  ],
   "dependencyDashboard": true,
+  "updateInternalDeps": true,
+  "prHourlyLimit": 0,
   "packageRules": [
     {
       "matchPackageNames": ["@makaira/storefront-types"],
       "matchUpdateTypes": ["minor", "patch"],
       "automergeType": "branch",
-      "automerge": true
+      "automerge": true,
+      "ignoreTests": true,
+      "commitMessageSuffix": "[skip ci]"
     },
     {
       "matchUpdateTypes": ["major"],

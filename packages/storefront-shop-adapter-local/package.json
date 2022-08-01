@@ -1,20 +1,27 @@
 {
   "name": "@makaira/storefront-shop-adapter-local",
-  "version": "1.0.0",
+  "version": "1.5.0",
   "description": "Contains the makaira local shop adapter to connect your storefront with a localstorage",
-  "main": "dist/esm/index.js",
-  "typings": "dist/types/index.d.ts",
+  "main": "./dist/esm/index.js",
+  "typings": "./dist/types/index.d.ts",
   "exports": {
-    "import": "dist/esm/index.js",
-    "require": "dist/cjs/index.js",
-    "default": "dist/esm/index.js"
+    "import": "./dist/esm/index.js",
+    "require": "./dist/cjs/index.js",
+    "default": "./dist/esm/index.js"
+  },
+  "files": [
+    "./dist"
+  ],
+  "engines": {
+    "node": ">=15.0.0"
   },
   "scripts": {
     "clean": "rimraf ./dist",
-    "lint": "eslint src --fix",
+    "lint:eslint": "eslint src --fix",
+    "lint:tsc": "tsc --project tsconfig.json --noEmit --skipLibCheck",
     "build": "tsc --project tsconfig.build.esm.json & tsc --project tsconfig.build.cjs.json",
     "release": "semantic-release",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --passWithNoTests"
   },
   "repository": {
     "type": "git",
@@ -34,8 +41,8 @@
     "url": "https://github.com/MakairaIO/storefront-shop-adapter/issues"
   },
   "homepage": "https://github.com/MakairaIO/storefront-shop-adapter#readme",
-  "devDependencies": {
-    "@faker-js/faker": "^7.2.0",
-    "@makaira/storefront-types": "1.0.0"
+  "dependencies": {
+    "@faker-js/faker": "7.3.0",
+    "@makaira/storefront-types": "1.6.0"
   }
 }

@@ -7,7 +7,8 @@ export type MakairaShopProviderInteractorContext<Input> = {
 export type MakairaShopProviderInteractor<
   Input = unknown,
   ResData = unknown,
+  ResRawData = unknown,
   ResError extends Error = Error
 > = (
   context: MakairaShopProviderInteractorContext<Input>
-) => Promise<MakairaResponse<ResData, ResError>>
+) => Promise<MakairaResponse<ResData, ResRawData, ResError>>
