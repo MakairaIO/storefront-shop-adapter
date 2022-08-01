@@ -1,3 +1,4 @@
+import { MakairaUser } from '../user'
 import { MakairaShopProviderInteractor } from '../general/shop-provider-interactor'
 
 //#region type definition: login
@@ -7,7 +8,7 @@ export type MakairaLoginInput<AdditionalInput = unknown> = {
 } & AdditionalInput
 
 export type MakairaLoginResData = {
-  user: { id: string; firstname: string; lastname: string } | undefined
+  user: MakairaUser
 }
 
 export type MakairaLogin<
@@ -46,7 +47,7 @@ export type MakairaSignupInput<AdditionalInput = unknown> = {
 } & AdditionalInput
 
 export type MakairaSignupResData = {
-  user: { id: string } | undefined
+  user: MakairaUser
 }
 
 export type MakairaSignup<
@@ -65,7 +66,7 @@ export type MakairaSignup<
 export type MakairaGetUserInput<AdditionalInput = unknown> = AdditionalInput
 
 export type MakairaGetUserResData = {
-  user?: { id: string; firstname: string; lastname: string; email: string }
+  user: MakairaUser
 }
 
 export type MakairaGetUser<

@@ -33,6 +33,7 @@ export class StorefrontShopAdapterLocalUser implements MakairaShopProviderUser {
     if (userStore.user) {
       return {
         data: undefined,
+        raw: { store: userStore },
         error: new Error('a user is already signed in'),
       }
     }
@@ -58,7 +59,11 @@ export class StorefrontShopAdapterLocalUser implements MakairaShopProviderUser {
     const userStore = this.getStore()
 
     if (!userStore.user) {
-      return { data: undefined, error: new Error('no user signed in') }
+      return {
+        data: undefined,
+        raw: { store: userStore },
+        error: new Error('no user signed in'),
+      }
     }
 
     userStore.user = undefined
@@ -80,6 +85,7 @@ export class StorefrontShopAdapterLocalUser implements MakairaShopProviderUser {
     if (!userStore.user) {
       return {
         data: undefined,
+        raw: { store: userStore },
         error: new Error('a user is already signed in'),
       }
     }

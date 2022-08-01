@@ -79,7 +79,7 @@ export class StorefrontShopAdapterOxidUser implements MakairaShopProviderUser {
 
       return { data: undefined, raw, error: errorGetUser }
     } catch (e) {
-      return { data: undefined, error: e as Error }
+      return { data: undefined, raw: {}, error: e as Error }
     }
   }
 
@@ -104,21 +104,15 @@ export class StorefrontShopAdapterOxidUser implements MakairaShopProviderUser {
 
       return { data: undefined, raw: { logout: response }, error: undefined }
     } catch (e) {
-      return {
-        data: undefined,
-        error: e as Error,
-      }
+      return { data: undefined, raw: {}, error: e as Error }
     }
   }
 
   /**
    * Not yet implemented/existing endpoint for OXID-Abstraction.
    */
-  signup: MakairaSignup<unknown, unknown, Error> = async () => {
-    return {
-      data: undefined,
-      error: new NotImplementedError(),
-    }
+  signup: MakairaSignup<unknown, undefined, Error> = async () => {
+    return { data: undefined, raw: undefined, error: new NotImplementedError() }
   }
 
   getUser: MakairaGetUser<unknown, OxidGetUserRaw, Error> = async () => {
@@ -164,7 +158,7 @@ export class StorefrontShopAdapterOxidUser implements MakairaShopProviderUser {
         error: undefined,
       }
     } catch (e) {
-      return { data: undefined, error: e as Error }
+      return { data: undefined, raw: {}, error: e as Error }
     }
   }
 }

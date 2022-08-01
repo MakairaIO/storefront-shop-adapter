@@ -87,6 +87,7 @@ export class StorefrontShopAdapterLocalCart implements MakairaShopProviderCart {
       if (itemExistsIndex === -1) {
         return {
           data: undefined,
+          raw: { store: cartStore },
           error: new Error('product not found in cart'),
         }
       }
@@ -116,6 +117,7 @@ export class StorefrontShopAdapterLocalCart implements MakairaShopProviderCart {
       if (itemExistsIndex === -1) {
         return {
           data: undefined,
+          raw: { store: cartStore },
           error: new Error('product not found in cart'),
         }
       }

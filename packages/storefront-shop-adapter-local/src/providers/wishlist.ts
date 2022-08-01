@@ -7,17 +7,13 @@ import {
   WishlistAddItemEvent,
   WishlistRemoveItemEvent,
 } from '@makaira/storefront-types'
-import { ShopAdapterLocalStorageVersioned } from '../types'
+import {
+  LocalGetWishlistRaw,
+  LocalWishlistAddItemRaw,
+  LocalWishlistRemoveItemRaw,
+  WishlistStoreVersioned,
+} from '../types'
 import { StorefrontShopAdapterLocal } from './main'
-
-type WishlistStore = {
-  items: Array<{ product: MakairaProduct }>
-}
-
-type WishlistStoreVersioned = ShopAdapterLocalStorageVersioned<
-  'v1',
-  WishlistStore
->
 
 export class StorefrontShopAdapterLocalWishlist
   implements MakairaShopProviderWishlist
@@ -26,15 +22,16 @@ export class StorefrontShopAdapterLocalWishlist
 
   constructor(private mainAdapter: StorefrontShopAdapterLocal) {}
 
-  getWishlist: MakairaGetWishlist<unknown, WishlistStore, Error> = async () => {
-    const wishlistStore = this.getStore()
+  getWishlist: MakairaGetWishlist<unknown, LocalGetWishlistRaw, Error> =
+    async () => {
+      const wishlistStore = this.getStore()
 
-    return {
-      data: { items: wishlistStore.items },
-      raw: wishlistStore,
-      error: undefined,
+      return {
+        data: { items: wishlistStore.items },
+        raw: { store: wishlistStore },
+        error: undefined,
+      }
     }
-  }
 
   addItem: MakairaAddItemToWishlist<
     {
@@ -43,7 +40,7 @@ export class StorefrontShopAdapterLocalWishlist
       price: number
       images: string[]
     },
-    WishlistStoreVersioned,
+    LocalWishlistAddItemRaw,
     Error
   > = async ({ input: { product, images, price, title, url } }) => {
     const wishlistStore = this.getStore()
@@ -73,12 +70,12 @@ export class StorefrontShopAdapterLocalWishlist
       new WishlistAddItemEvent<WishlistStoreVersioned>(data, wishlistStore)
     )
 
-    return { data, raw: wishlistStore, error: undefined }
+    return { data, raw: { store: wishlistStore }, error: undefined }
   }
 
   removeItem: MakairaRemoveItemFromWishlist<
     unknown,
-    WishlistStoreVersioned,
+    LocalWishlistRemoveItemRaw,
     Error
   > = async ({ input: { product } }) => {
     const wishlistStore = this.getStore()
@@ -90,6 +87,7 @@ export class StorefrontShopAdapterLocalWishlist
     if (itemExistsIndex === -1) {
       return {
         data: undefined,
+        raw: { store: wishlistStore },
         error: new Error('product not found in wishlist'),
       }
     }
@@ -104,7 +102,7 @@ export class StorefrontShopAdapterLocalWishlist
       new WishlistRemoveItemEvent<WishlistStoreVersioned>(data, wishlistStore)
     )
 
-    return { data, raw: wishlistStore, error: undefined }
+    return { data, raw: { store: wishlistStore }, error: undefined }
   }
 
   private getStore(): WishlistStoreVersioned {

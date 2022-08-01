@@ -23,11 +23,16 @@ export function useShopWishlist(): UseShopWishlistData {
       if (wishlist?.items) {
         return {
           data: wishlist.items.some(({ product }) => product.id === id),
+          raw: undefined,
           error: undefined,
         }
       }
 
-      return { data: undefined, error: new Error('Wishlist is not loaded') }
+      return {
+        data: undefined,
+        raw: undefined,
+        error: new Error('Wishlist is not loaded'),
+      }
     },
     [wishlist]
   )

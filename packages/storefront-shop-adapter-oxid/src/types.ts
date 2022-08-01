@@ -29,7 +29,7 @@ export type OxidReview = {
 
 export type OxidGetCartRes = OxidProduct[] | { success: false; message: string }
 
-export type OxidGetCartRaw = { getCart: OxidGetCartRes }
+export type OxidGetCartRaw = { getCart?: OxidGetCartRes }
 
 //#endregion
 
@@ -40,7 +40,7 @@ export type OxidAddItemRes =
   | { success: false; message: string }
 
 export type OxidAddItemRaw = {
-  addItem: OxidAddItemRes
+  addItem?: OxidAddItemRes
   getCart?: OxidGetCartRaw['getCart']
 }
 
@@ -53,7 +53,7 @@ export type OxidRemoveItemRes =
   | { success: false; message: string }
 
 export type OxidRemoveItemRaw = {
-  removeItem: OxidRemoveItemRes
+  removeItem?: OxidRemoveItemRes
   getCart?: OxidGetCartRaw['getCart']
 }
 
@@ -66,7 +66,7 @@ export type OxidUpdateItemRes =
   | { success: false; message: string }
 
 export type OxidUpdateItemRaw = {
-  updateItem: OxidUpdateItemRes
+  updateItem?: OxidUpdateItemRes
   getCart?: OxidGetCartRaw['getCart']
 }
 
@@ -80,7 +80,7 @@ export type OxidUpdateItemRaw = {
 
 export type OxidGetUserRes = OxidUser | { message: string }
 
-export type OxidGetUserRaw = { getUser: OxidGetUserRes }
+export type OxidGetUserRaw = { getUser?: OxidGetUserRes }
 
 //#endregion
 
@@ -89,7 +89,7 @@ export type OxidGetUserRaw = { getUser: OxidGetUserRes }
 export type OxidLogoutRes = { success: true }
 
 export type OxidLogoutRaw = {
-  logout: OxidAddItemRes
+  logout?: OxidAddItemRes
 }
 
 //#endregion
@@ -101,7 +101,7 @@ export type OxidLoginRes =
   | { success: false; message: string }
 
 export type OxidLoginRaw = {
-  login: OxidRemoveItemRes
+  login?: OxidRemoveItemRes
   getUser?: OxidGetUserRaw['getUser']
 }
 
@@ -119,7 +119,7 @@ export type OxidGetReviewsRes =
   | OxidReview[]
   | { success: false; message: string }
 
-export type OxidGetReviewsRaw = { getReviews: OxidGetReviewsRes }
+export type OxidGetReviewsRaw = { getReviews?: OxidGetReviewsRes }
 
 //#endregion
 
@@ -130,7 +130,7 @@ export type OxidCreateReviewRes =
   | { success: false; message: string }
 
 export type OxidCreateReviewRaw = {
-  createReview: OxidCreateReviewRes
+  createReview?: OxidCreateReviewRes
 }
 
 //#endregion
