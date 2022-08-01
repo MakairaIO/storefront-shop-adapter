@@ -1,32 +1,138 @@
 import {
+  BadHttpStatusError,
+  MakairaGetUser,
   MakairaLogin,
   MakairaLogout,
   MakairaShopProviderUser,
   MakairaSignup,
+  NotImplementedError,
+  UserLoginEvent,
+  UserLogoutEvent,
 } from '@makaira/storefront-types'
-import { StorefrontShopAdapterPlentymarket } from './main'
+import { StorefrontShopAdapterPlentymarkets } from './main'
+import {
+  PlentymarketsGetUserRes,
+  PlentymarketsLoginRaw,
+  PlentymarketsLoginRes,
+  PlentymarketsLogoutRaw,
+  PlentymarketsLogoutRes,
+} from '../types'
+import { USER_GET, USER_LOGIN, USER_LOGOUT } from '../paths'
 
-export class StorefrontShopAdapterPlentymarketUser
+export class StorefrontShopAdapterPlentymarketsUser
   implements MakairaShopProviderUser
 {
-  constructor(private mainAdapter: StorefrontShopAdapterPlentymarket) {}
+  constructor(private mainAdapter: StorefrontShopAdapterPlentymarkets) {}
 
-  login: MakairaLogin<unknown, unknown, Error> = async ({
+  login: MakairaLogin<unknown, PlentymarketsLoginRaw, Error> = async ({
     input: { password, username },
   }) => {
-    return {
-      data: { user: { id: 'demo' }, raw: undefined },
-      error: undefined,
+    try {
+      const { response, status } =
+        await this.mainAdapter.fetchFromShop<PlentymarketsLoginRes>({
+          path: USER_LOGIN,
+          body: {
+            password,
+            email: username,
+          },
+        })
+
+      const plentyUser =
+        response?.events?.AfterAccountAuthentication?.accountContact
+
+      if (status !== 200 || response?.error || !plentyUser) {
+        return {
+          data: undefined,
+          raw: { login: response },
+          error: response?.error
+            ? new Error(response?.error.message)
+            : new BadHttpStatusError(),
+        }
+      }
+
+      const user = {
+        id: plentyUser.id,
+        firstname: plentyUser.firstName,
+        lastname: plentyUser.lastName,
+        email: plentyUser.email,
+      }
+
+      const data = { user }
+      const raw = { login: response }
+
+      this.mainAdapter.dispatchEvent(
+        new UserLoginEvent<PlentymarketsLoginRaw>(data, raw)
+      )
+
+      return { data, raw, error: undefined }
+    } catch (e) {
+      return { data: undefined, error: e as Error }
     }
   }
 
-  logout: MakairaLogout<unknown, unknown, Error> = async () => {
-    return { data: { raw: undefined }, error: undefined }
+  logout: MakairaLogout<unknown, PlentymarketsLogoutRaw, Error> = async () => {
+    try {
+      const { response, status } =
+        await this.mainAdapter.fetchFromShop<PlentymarketsLogoutRes>({
+          path: USER_LOGOUT,
+        })
+
+      if (status !== 200 || response.data !== 200) {
+        return {
+          data: undefined,
+          raw: { logout: response },
+          error: new BadHttpStatusError(),
+        }
+      }
+
+      const raw = { logout: response }
+
+      this.mainAdapter.dispatchEvent(
+        new UserLogoutEvent<PlentymarketsLogoutRaw>(undefined, raw)
+      )
+
+      return { data: undefined, raw, error: undefined }
+    } catch (e) {
+      return { data: undefined, raw: undefined, error: e as Error }
+    }
   }
 
-  signup: MakairaSignup<unknown, unknown, Error> = async ({
-    input: { username, password },
-  }) => {
-    return { data: { user: { id: 'demo' }, raw: undefined }, error: undefined }
+  signup: MakairaSignup<unknown, unknown, Error> = async () => {
+    return {
+      data: undefined,
+      error: new NotImplementedError(),
+    }
+  }
+
+  getUser: MakairaGetUser<unknown, unknown, Error> = async () => {
+    try {
+      const { response, status } =
+        await this.mainAdapter.fetchFromShop<PlentymarketsGetUserRes>({
+          path: USER_GET,
+          method: 'GET',
+        })
+
+      if (status !== 200 || !response.data) {
+        return {
+          data: undefined,
+          raw: { getUser: response },
+          error: new BadHttpStatusError(),
+        }
+      }
+
+      const user = {
+        id: response.data.id,
+        firstname: response.data.firstName,
+        lastname: response.data.lastName,
+        email: response.data.email,
+      }
+
+      const data = { user }
+      const raw = { getUser: response }
+
+      return { data, raw, error: undefined }
+    } catch (e) {
+      return { data: undefined, raw: undefined, error: e as Error }
+    }
   }
 }

@@ -3,19 +3,27 @@ import {
   MakairaShopProviderCart,
   MakairaShopProviderCheckout,
   MakairaShopProviderOptions,
+  MakairaShopProviderReview,
   MakairaShopProviderUser,
   MakairaShopProviderWishlist,
 } from '@makaira/storefront-types'
-import { StorefrontShopAdapterPlentymarketCart } from './cart'
-import { StorefrontShopAdapterPlentymarketCheckout } from './checkout'
-import { StorefrontShopAdapterPlentymarketUser } from './user'
-import { StorefrontShopAdapterPlentymarketWishlist } from './wishlist'
+import { StorefrontShopAdapterPlentymarketsCart } from './cart'
+import { StorefrontShopAdapterPlentymarketsCheckout } from './checkout'
+import { StorefrontShopAdapterPlentymarketsUser } from './user'
+import { StorefrontShopAdapterPlentymarketsWishlist } from './wishlist'
+import { StorefrontShopAdapterPlentymarketsReview } from './review'
+import {
+  AdditionalPlentymarketsOptions,
+  FetchParameters,
+  FetchResponse,
+} from '../types'
 
-export class StorefrontShopAdapterPlentymarket<
-    CartProviderType extends MakairaShopProviderCart = StorefrontShopAdapterPlentymarketCart,
-    CheckoutProviderType extends MakairaShopProviderCheckout = StorefrontShopAdapterPlentymarketCheckout,
-    UserProviderType extends MakairaShopProviderUser = StorefrontShopAdapterPlentymarketUser,
-    WishlistProviderType extends MakairaShopProviderWishlist = StorefrontShopAdapterPlentymarketWishlist
+export class StorefrontShopAdapterPlentymarkets<
+    CartProviderType extends MakairaShopProviderCart = StorefrontShopAdapterPlentymarketsCart,
+    CheckoutProviderType extends MakairaShopProviderCheckout = StorefrontShopAdapterPlentymarketsCheckout,
+    UserProviderType extends MakairaShopProviderUser = StorefrontShopAdapterPlentymarketsUser,
+    WishlistProviderType extends MakairaShopProviderWishlist = StorefrontShopAdapterPlentymarketsWishlist,
+    ReviewProviderType extends MakairaShopProviderReview = StorefrontShopAdapterPlentymarketsReview
   >
   extends EventTarget
   implements
@@ -34,22 +42,33 @@ export class StorefrontShopAdapterPlentymarket<
 
   wishlist: WishlistProviderType
 
+  review: ReviewProviderType
+
+  additionalOptions: AdditionalPlentymarketsOptions
+
   constructor(
     options: MakairaShopProviderOptions<
       CartProviderType,
       CheckoutProviderType,
       UserProviderType,
-      WishlistProviderType
-    > = {}
+      WishlistProviderType,
+      ReviewProviderType,
+      AdditionalPlentymarketsOptions
+    >
   ) {
     super()
 
     const {
-      cart: CartProvider = StorefrontShopAdapterPlentymarketCart,
-      checkout: CheckoutProvider = StorefrontShopAdapterPlentymarketCheckout,
-      user: UserProvider = StorefrontShopAdapterPlentymarketUser,
-      wishlist: WishlistProvider = StorefrontShopAdapterPlentymarketWishlist,
+      cart: CartProvider = StorefrontShopAdapterPlentymarketsCart,
+      checkout: CheckoutProvider = StorefrontShopAdapterPlentymarketsCheckout,
+      user: UserProvider = StorefrontShopAdapterPlentymarketsUser,
+      wishlist: WishlistProvider = StorefrontShopAdapterPlentymarketsWishlist,
+      review: ReviewProvider = StorefrontShopAdapterPlentymarketsReview,
     } = options.providers ?? {}
+
+    this.additionalOptions = {
+      url: options.url,
+    }
 
     // @ts-expect-error https://stackoverflow.com/questions/56505560/how-to-fix-ts2322-could-be-instantiated-with-a-different-subtype-of-constraint
     this.cart = new CartProvider(this)
@@ -62,5 +81,32 @@ export class StorefrontShopAdapterPlentymarket<
 
     // @ts-expect-error https://stackoverflow.com/questions/56505560/how-to-fix-ts2322-could-be-instantiated-with-a-different-subtype-of-constraint
     this.wishlist = new WishlistProvider(this)
+
+    // @ts-expect-error https://stackoverflow.com/questions/56505560/how-to-fix-ts2322-could-be-instantiated-with-a-different-subtype-of-constraint
+    this.review = new ReviewProvider(this)
+  }
+
+  public async fetchFromShop<Response = any>({
+    path,
+    body = {},
+    method = 'POST',
+  }: FetchParameters): Promise<FetchResponse<Response>> {
+    let requestUrl = this.additionalOptions.url
+
+    if (!requestUrl?.endsWith('/') && !path.startsWith('/')) {
+      requestUrl += '/'
+    }
+
+    requestUrl += path
+
+    const response = await fetch(requestUrl, {
+      method: 'POST',
+      body: JSON.stringify(body),
+    })
+
+    return {
+      response: await response.json(),
+      status: response.status,
+    }
   }
 }
