@@ -112,11 +112,19 @@ export class StorefrontShopAdapterPlentymarketsUser
           method: 'GET',
         })
 
-      if (status !== 200 || !response.data) {
+      if (status !== 200) {
         return {
           data: undefined,
           raw: { getUser: response },
           error: new BadHttpStatusError(),
+        }
+      }
+
+      if (!response.data) {
+        return {
+          data: undefined,
+          raw: { getUser: response },
+          error: undefined,
         }
       }
 

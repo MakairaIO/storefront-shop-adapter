@@ -99,10 +99,22 @@ export class StorefrontShopAdapterPlentymarkets<
 
     requestUrl += path
 
-    const response = await fetch(requestUrl, {
-      method: 'POST',
-      body: JSON.stringify(body),
-    })
+    const options: {
+      method: string
+      body?: string
+      headers: { 'Content-Type': string }
+    } = {
+      method,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }
+
+    if (method === 'POST' || method === 'PUT') {
+      options.body = JSON.stringify(body)
+    }
+
+    const response = await fetch(requestUrl, options)
 
     return {
       response: await response.json(),

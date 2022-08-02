@@ -29,6 +29,7 @@ export class StorefrontShopAdapterPlentymarketsWishlist
         const { response, status } =
           await this.mainAdapter.fetchFromShop<PlentymarketsGetWishlistRes>({
             path: WISHLIST_GET,
+            method: 'GET',
           })
 
         if (status !== 200) {
@@ -73,7 +74,7 @@ export class StorefrontShopAdapterPlentymarketsWishlist
           },
         })
 
-      if (status !== 200) {
+      if (status !== 201) {
         return {
           data: undefined,
           raw: { getWishlist: response },
@@ -119,6 +120,7 @@ export class StorefrontShopAdapterPlentymarketsWishlist
       const { response, status } =
         await this.mainAdapter.fetchFromShop<PlentymarketsRemoveWishlistRes>({
           path: `${WISHLIST_REMOVE}/${id}`,
+          method: 'DELETE',
         })
 
       if (status !== 200 || !response.data) {

@@ -33,6 +33,7 @@ export class StorefrontShopAdapterPlentymarketsCart
         const { response, status } =
           await this.mainAdapter.fetchFromShop<PlentymarketsGetCartRes>({
             path: CART_GET,
+            method: 'GET',
           })
 
         if (status !== 200) {
