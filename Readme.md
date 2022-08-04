@@ -14,7 +14,7 @@ Our goal while the development where three points:
 
 1. **Consistency**
 
-   All of our costumers have different shop systems and our partner agencies have to support all of them. To keep adopting different shop systems as simple as possible we focused on developing a standardized framework. To archive this each adapter has the same base signature. If one of them requires additional information these can be added. In addition we also unified the response data to the basics that an storefront requires to run. But we know if a project is getting more complex it requires more data. Therefore we expose the raw api request responses.
+   All of our costumers have different shop systems and our partner agencies have to support all of them. To keep adopting different shop systems as simple as possible we focused on developing a standardized framework. To achieve this, each adapter has the same base signature. If one of them requires additional information these can be added. In addition we also unified the response data to the basics that a storefront requires to run. But we know if a project is getting more complex it requires more data. Therefore we expose the raw api request responses.
 
 2. **Frontend Stack Independency**
 
@@ -24,7 +24,7 @@ Our goal while the development where three points:
 
 3. **Customizability**
 
-   At some point the dependency that was added to a project doesn't fit anymore the need and you have to develop it on your own. That is what we don't wan't for you. Our goal was to get everything that you have in mind could also be implement. You are able to extend or overwrite each of the functionalities by defining the parts that you need without having to implement everything from scratch.
+   At some point the dependency that was added to a project doesn't fit anymore the need and you have to develop it on your own. That is what we don't want for you. Our goal was to get everything that you have in mind could also be implemented. You are able to extend or overwrite each of the functionalities by defining the parts that you need without having to implement everything from scratch.
 
 # Basic usage of a shop adapter
 
@@ -36,7 +36,7 @@ import { StorefrontShopAdapterLocal } from '@makaira/storefront-shop-adapter-loc
 const client = new StorefrontShopAdapterLocal()
 ```
 
-To accomplish a reactivity of the shop adapters each of them implements the `EventTarget`. By this you can register event listener to let your app reactive to changes in the storefront. You can attach an event listener like in the following example. The events are associated with an action that a shop adapter is possible to perform like _login_. The events are only triggered in a case of success.
+To accomplish a reactivity of the shop adapters, each of them implements the `EventTarget`. By this you can register event listener to let your app react to changes in the storefront. You can attach an event listener like in the following example. The events are associated with an action that a shop adapter is possible to perform like _login_. The events are only triggered in a case of success.
 
 ```typescript
 import { UserLoginEvent } from '@makaira/storefront-types'
@@ -937,7 +937,7 @@ export type MakairaDeleteUser<
 //#endregion
 ```
 
-After we have added our unified signature for _deleteUser_ we know have to add it to the definition of the feature methods. At the end of each type definition feature file (`packages/storefront-types/src/providers/<FEATURE>.ts`) is the definition. Add to this the following:
+After we have added our unified signature for _deleteUser_ we now have to add it to the definition of the feature methods. At the end of each type definition feature file (`packages/storefront-types/src/providers/<FEATURE>.ts`) is the definition. Add to this the following:
 
 ```typescript
 export type MakairaShopProviderUser = {
