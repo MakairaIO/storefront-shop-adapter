@@ -10,7 +10,8 @@
     "test": "turbo run test",
     "prepare": "husky install",
     "lint-staged": "lint-staged",
-    "commitlint": "commitlint"
+    "commitlint": "commitlint",
+    "create-new-shop-provider": "node ./cli/create-new-shop-provider/index.js"
   },
   "repository": {
     "type": "git",

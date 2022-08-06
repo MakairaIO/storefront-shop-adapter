@@ -128,7 +128,7 @@ const { data, error, raw } = result
 
 #### Unified Input Parameters
 
-| Parameters     | Required/Optional | Description                                                                                                                  |
+| Parameters     | Required/Optional | Description                                                                                                                  |            |
 | -------------- | ----------------- | ---------------------------------------------------------------------------------------------------------------------------- | ---------- |
 | product        | required          | The product to add to the cart.                                                                                              | `object`   |
 | - id           | required          | The id of the product. For most shop adapters this is the `productId`. But for Shopify for example might be the `variantId`. | `string`   |
@@ -986,53 +986,118 @@ Adding a complete new feature is a little bit more work to be done.
 
 In the following we add a new feature called _order_ to all shop adapters.
 
-To add new feature first we have to create a new feature class. This file should be located in the `src/providers/<NEW-PROVIDER>.ts` of the shop adapter. The minimal file content must look like this:
+At first we have to create the unified type definition for our new _order_ feature. To do so create the file `src/providers/order.ts` in `@makaira/storefront-types`. Like in the section [how to add new feature for all shop adapters](#how-to-add-new-feature-for-all-shop-adapters) we create the unified type definition.
+
+```typescript
+import { MakairaShopProviderInteractor } from '../general/shop-provider-interactor'
+
+//#region type definition: getOrders
+export type MakairaGetOrdersInput<AdditionalInput = unknown> = {
+  user: { id: string }
+} & AdditionalInput
+
+export type MakairaGetOrdersResData = {
+  orders: { id: string; products: MakairaProduct[] }
+}
+
+export type MakairaGetOrders<
+  AdditionalInput = any,
+  ResRawData = any,
+  ResError extends Error = Error
+> = MakairaShopProviderInteractor<
+  MakairaGetOrdersInput<AdditionalInput>,
+  MakairaGetOrdersResData,
+  ResRawData,
+  ResError
+>
+//#endregion
+
+//#region type definition: provider order
+export type MakairaShopProviderOrder = {
+  getOrders: MakairaGetOrders
+}
+```
+
+Next you have to add the feature to the main interface that is located in the `src/providers/main.ts` in `@makaira/storefront-types`. We extend our generic types `MakairaShopProviderOptions` and `MakairaShopProvider` to accept the new feature. This leads to a BREAKING CHANGE, since AdditionalOptions should stay at the last position of the generic types.
+
+```typescript
+export type MakairaShopProviderOptions<
+  CartProviderType = MakairaShopProviderCart,
+  // ... other features/providers defined
+  // ...
+  OrderProviderType = MakairaShopProviderOrder, // <- add this here
+  AdditionalOptions = unknown
+> = {
+  providers?: {
+    cart?: Constructor<CartProviderType>
+    // ... other features/providers defined
+    // ...
+    order?: Constructor<OrderProviderType> // <- add this here
+  }
+} & AdditionalOptions
+
+export interface MakairaShopProvider<
+  CartProviderType extends MakairaShopProviderCart = MakairaShopProviderCart,
+  // ... other features/providers defined
+  // ...
+  OrderProviderType extends MakairaShopProviderOrder = MakairaShopProviderOrder // <- add this here
+> extends EventTarget {
+  cart: CartProviderType
+
+  // ... other features/providers defined
+  // ...
+
+  order: OrderProviderType // <- add this here
+}
+```
+
+In the following we get for each shop adapter a typescript error that we now fix by adding the new _order_ feature specific implementation to each shop adapter.
+
+Therefore create in each shop adapter the file `src/providers/order.ts`. For simplicity we don't show how to add the enforced feature methods here. You can read about it in the section [how to add new feature for all shop adapters](#how-to-add-new-feature-for-all-shop-adapters).
 
 ```typescript
 import { StorefrontShopAdapterLocal } from './main'
 
-export class StorefrontShopAdapterLocalOrder {
+export class StorefrontShopAdapterLocalOrder
+  implements MakairaShopProviderOrder
+{
   constructor(private mainAdapter: StorefrontShopAdapterLocal) {}
+
+  // ... shop adapter specific feature method implementations
 }
 ```
 
-After you have done this you have to adjust the `src/providers/main.ts` file to load the new feature. For simplicity some lines of code are left out.
+At the last step we have to adjust our `main.ts` file in each shop adapter that is located at `src/providers/main.ts`. Their we have to adjust the generics and have to initialize the new feature.
 
 ```typescript
 export class StorefrontShopAdapterLocal<
     CartProviderType extends MakairaShopProviderCart = StorefrontShopAdapterLocalCart,
-    CheckoutProviderType extends MakairaShopProviderCheckout = StorefrontShopAdapterLocalCheckout,
-    UserProviderType extends MakairaShopProviderUser = StorefrontShopAdapterLocalUser,
-    WishlistProviderType extends MakairaShopProviderWishlist = StorefrontShopAdapterLocalWishlist,
-    ReviewProviderType extends MakairaShopProviderReview = StorefrontShopAdapterLocalReview
+    // ... other features/providers defined
+    // ...
+    OrderProviderType extends MakairaShopProviderOrder = StorefrontShopAdapterLocalOrder // <- add this here
   >
   extends EventTarget
   implements
     MakairaShopProvider<
       CartProviderType,
-      CheckoutProviderType,
-      UserProviderType,
-      WishlistProviderType,
-      ReviewProviderType
+      // ... other features/providers defined
+      // ...
+      OrderProviderType // <- add this here
     >
 {
   cart: CartProviderType
 
-  checkout: CheckoutProviderType
+  // ... other features/providers defined
+  // ...
 
-  user: UserProviderType
-
-  wishlist: WishlistProviderType
-
-  review: ReviewProviderType
+  order: OrderProviderType // <- add this here
 
   constructor(
     options: MakairaShopProviderOptions<
       CartProviderType,
-      CheckoutProviderType,
-      UserProviderType,
-      WishlistProviderType,
-      ReviewProviderType
+      // ... other features/providers defined
+      // ...
+      OrderProviderType // <- add this here
     > = {}
   ) {
     super()
@@ -1040,18 +1105,118 @@ export class StorefrontShopAdapterLocal<
     // Here are all other providers to destructed.
     // Because of our goal to make everything customizable as much as possible we assign here a default value instead of directly initializing our new created feature. So in the future feature overwriting by passing a custom provider is possible.
     const {
+      cart: CartProvider = StorefrontShopAdapterLocalCart,
+      // ... other features/providers defined
       // ...
-      // ...
-      order: OrderProvider = StorefrontShopAdapterLocalOrder,
+      order: OrderProvider = StorefrontShopAdapterLocalOrder, // <- add this here
     } = options.providers ?? {}
 
-    // Here are all other providers initialized.
-    // ...
-    // ...
+    // @ts-expect-error https://stackoverflow.com/questions/56505560/how-to-fix-ts2322-could-be-instantiated-with-a-different-subtype-of-constraint
+    this.cart = new CartProvider(this)
+
+    // ... other features/providers defined
     // ...
 
     // @ts-expect-error https://stackoverflow.com/questions/56505560/how-to-fix-ts2322-could-be-instantiated-with-a-different-subtype-of-constraint
-    this.order = new OrderProvider(this)
+    this.order = new OrderProvider(this) // <- add this here
   }
 }
 ```
+
+Finally we added our new feature _order_.
+
+## How to create a new shop adapter
+
+Creating a new shop adapter is beside its specific implementation really simple. To do so we created a script that can be run from the root of this repository to create a new shop adapter. Just run the following command:
+
+`npm run create-new-shop-provider <NEW-SHOP-ADAPTER-NAME> `
+
+or
+
+`yarn create-new-shop-provider <NEW-SHOP-ADAPTER-NAME> `
+
+This will create a new folder in the packages folder with the naming convention `storefront-shop-adapter-<NEW-SHOP-ADAPTER-NAME>`.
+
+The script automatically set up for you:
+
+- creating an npm package that will be published under: `@makaira/storefront-shop-adapter-<NEW-SHOP-ADAPTER-NAME>`
+- versioning the package
+- validating the typescript configuration on each commit
+- validating the code quality using eslint on each commit
+- creating empty main adapter and feature classes
+- build command
+
+After you run the create command you have to implement the feature methods. If you finished it you can commit it and create a PR.
+
+## How to add additional arguments to the constructor of an shop adapter
+
+Sometimes a shop adapter needs some arguments to work. For example most adapters require a api url. We know that and this is why we added an option for this.
+
+To add additional arguments to have to adjust the type definition of the main shop adapter class. The last argument of the generic type `MakairaShopProviderOptions` allows you to add a type definition for your additional arguments.
+
+```typescript
+class StorefrontShopAdapterDemo {
+  constructor(
+    options: MakairaShopProviderOptions<
+      CartProviderType,
+      CheckoutProviderType,
+      UserProviderType,
+      WishlistProviderType,
+      ReviewProviderType,
+      { apiUrl: string } // <-- add this here
+    >
+  ) {
+    super()
+
+    // custom code
+    // ...
+  }
+}
+```
+
+## Enforced standards
+
+To archive a high standard and consistency for the monorepo we added some checks to ensure them. Currently on each commit theses standards are enforced. If their is any problem the commit will fail and reports you what has to be adjusted. The checks are:
+
+- each commit message must follow the [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/)
+- on each commit the type safety will be validated. If their is a problem the commit will fail.
+- on each commit the code quality will be checked using eslint. If their is any problem the commit will fail.
+- on each commit the formatting is adjusted to the standards using prettier.
+
+## Testing
+
+This monorepo allows you to run testing manually or automated.
+
+### Manual testing
+
+To run testing manually you can link your local npm package with your storefront or any other package that depends on one of the packages. To test it you have to do two steps:
+
+1. Install the package using a relative path. Just edit the `package.json` and find the package you are editing and testing and replace the version with the path to the file. For example it looks like this:
+
+```json
+{
+  "dependencies": {
+    "@makaira/storefront-shop-adapter-oxid": "file:../../storefront-shop-adapter/packages/storefront-shop-adapter-oxid"
+  }
+}
+```
+
+2. On each change you made to the shop adapter you have to rebuild it. Just go into the shop adapter package folder and run `npm run build`. Feel free to add an implementation to run it in a watch mode to automatically rebuild on file changes.
+
+### Automatic testing
+
+The hole monorepo supports automated testing using jest tests. Feel free to add new jest test. They will be automatically detected. To run the test execute the command `npm run test` on the root of the monorepo or in each package.
+
+# Good to know
+
+1. When you are locally developing each package accesses the current implementation of code instead of the builded code. So if you for example add a new feature method for all shop adapters each of them will directly create a typescript error because they access the newly added code. It means that the version that stands in the dependencies does not matter.
+
+2. The release of the packages is done automatically in the ci. To ensure that each package has the correct referenced version between them at first the `@makaira/storefront-types` will be published and then each package that requires `@makaira/storefront-types` will get the newly released version set.
+
+3. The versions for each package will automatically calculated using [`semantic-release`](https://semantic-release.gitbook.io/semantic-release/) in the ci. So you don't have to worry about setting the correct versions.
+
+4. The monorepo orchestration is done by [`turborepo`](https://turborepo.org/)
+
+# Known issues
+
+1. In some cases after a commit files seems to be changed. This comes by prettier we think. Prettier sets another file permissions that will be recorded by git. Just discard these changes.
