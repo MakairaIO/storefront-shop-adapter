@@ -7,6 +7,7 @@ import {
   CartAddItemEvent,
   CartRemoveItemEvent,
   CartUpdateItemEvent,
+  LocalStorageSsrSafe,
 } from '@makaira/storefront-types'
 import {
   CartStoreVersioned,
@@ -137,7 +138,7 @@ export class StorefrontShopAdapterLocalCart implements MakairaShopProviderCart {
     }
 
   private getStore(): CartStoreVersioned {
-    const rawStore = localStorage.getItem(this.LOCAL_STORAGE_STORE)
+    const rawStore = LocalStorageSsrSafe.getItem(this.LOCAL_STORAGE_STORE)
 
     if (!rawStore) {
       return { version: 'v1', items: [] }
@@ -147,6 +148,6 @@ export class StorefrontShopAdapterLocalCart implements MakairaShopProviderCart {
   }
 
   private async setStore(store: CartStoreVersioned) {
-    localStorage.setItem(this.LOCAL_STORAGE_STORE, JSON.stringify(store))
+    LocalStorageSsrSafe.setItem(this.LOCAL_STORAGE_STORE, JSON.stringify(store))
   }
 }

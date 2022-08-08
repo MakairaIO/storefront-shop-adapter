@@ -1,4 +1,5 @@
 import {
+  LocalStorageSsrSafe,
   MakairaForgotPassword,
   MakairaGetUser,
   MakairaLogin,
@@ -133,7 +134,7 @@ export class StorefrontShopAdapterLocalUser implements MakairaShopProviderUser {
     }
 
   private getStore(): UserStoreVersioned {
-    const rawStore = localStorage.getItem(this.LOCAL_STORAGE_STORE)
+    const rawStore = LocalStorageSsrSafe.getItem(this.LOCAL_STORAGE_STORE)
 
     if (!rawStore) {
       return { version: 'v1', user: undefined }
@@ -143,6 +144,6 @@ export class StorefrontShopAdapterLocalUser implements MakairaShopProviderUser {
   }
 
   private async setStore(store: UserStoreVersioned) {
-    localStorage.setItem(this.LOCAL_STORAGE_STORE, JSON.stringify(store))
+    LocalStorageSsrSafe.setItem(this.LOCAL_STORAGE_STORE, JSON.stringify(store))
   }
 }
