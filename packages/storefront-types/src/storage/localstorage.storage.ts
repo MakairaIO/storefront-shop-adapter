@@ -8,7 +8,6 @@ export const LocalStorageSsrSafe: MakairaStorage = {
     return null
   },
   setItem: (key, value) => {
-    console.log(key, value)
     if (typeof window !== 'undefined') {
       return localStorage.setItem(key, value)
     }
