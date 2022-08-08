@@ -122,7 +122,7 @@ export type CustomerAccessTokenDeleteMutationData = {
 
 //#endregion
 
-//#region getUser
+//#region signup
 
 export const CustomerCreateMutation = ({
   customerFragment,
@@ -179,6 +179,35 @@ export type CustomerQueryVariables = {
 
 export type CustomerQueryData = {
   customer: StorefrontShopifyFragments['customerFragment']
+}
+
+//#endregion
+
+//#region signup
+
+export const CustomerRecoverMutation = ({
+  customerUserErrorFragment,
+}: {
+  customerUserErrorFragment: string
+}) => `
+    mutation customerRecover($email: String!){
+      customerRecover(email: $email) {
+            customerUserErrors {
+                ...CustomerUserErrorFragment
+            }
+        }
+    }
+    ${customerUserErrorFragment}
+`
+
+export type CustomerRecoverMutationVariables = {
+  email: string
+}
+
+export type CustomerRecoverMutationData = {
+  customerRecover: {
+    customerUserErrors: StorefrontShopifyFragments['customerUserErrorFragment'][]
+  }
 }
 
 //#endregion

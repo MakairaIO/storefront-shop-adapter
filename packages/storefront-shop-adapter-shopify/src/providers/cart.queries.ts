@@ -10,17 +10,18 @@ export type LineItemInput = {
 
 export const CheckoutFragment = `
     fragment CheckoutFragment on Checkout {
+        id
         lineItems(first: 50) {
             edges {
                 node {
                     id
                     title
                     quantity
-                    unitPrice {
-                        amount
-                        currencyCode
-                    }
                     variant {
+                        priceV2 {
+                            amount
+                            currencyCode
+                        }
                         product {
                             featuredImage {
                                 url
@@ -47,11 +48,11 @@ export type CheckoutFragmentData = {
         id: string
         title: string
         quantity: number
-        unitPrice?: {
-          amount: number
-          currencyCode: number
-        }
         variant?: {
+          priceV2: {
+            amount: number
+            currencyCode: number
+          }
           product: {
             featuredImage: {
               url: string
@@ -126,7 +127,7 @@ export const CheckoutGetQuery = ({
 }: {
   checkoutFragment: string
 }) => `
-    mutation node($id: ID!) {
+    query node($id: ID!) {
         node(id: $id) {
             ...CheckoutFragment
         }

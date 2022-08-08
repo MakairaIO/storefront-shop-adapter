@@ -1,4 +1,5 @@
 import {
+  LocalStorageSsrSafe,
   MakairaShopProvider,
   MakairaShopProviderCart,
   MakairaShopProviderCheckout,
@@ -80,7 +81,7 @@ export class StorefrontShopAdapterShopify<
     this.additionalOptions = {
       url: options.url,
       accessToken: options.accessToken,
-      storage: options.storage ?? localStorage,
+      storage: options.storage ?? LocalStorageSsrSafe,
       fragments: {
         checkoutFragment:
           options.fragments?.checkoutFragment ?? CheckoutFragment,

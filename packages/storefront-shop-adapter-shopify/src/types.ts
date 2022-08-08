@@ -14,6 +14,7 @@ import {
   CustomerCreateMutationData,
   CustomerFragmentData,
   CustomerQueryData,
+  CustomerRecoverMutationData,
   CustomerUserErrorFragmentData,
   UserErrorFragmentData,
 } from './providers/user.queries'
@@ -35,7 +36,8 @@ export type StorefrontShopifyFragments = MergeBy<
 >
 
 //#region general shopify types
-export type GraphqlResWithError<GraphqlData> = Partial<GraphqlData> & {
+export type GraphqlResWithError<GraphqlData> = {
+  data?: GraphqlData
   errors?: { message: string }[]
 }
 
@@ -120,6 +122,14 @@ export type ShopifySignupRaw = {
 export type ShopifyLoginRaw = {
   login?: GraphqlResWithError<CustomerAccessTokenCreateMutationData>
   getUser?: GraphqlResWithError<CustomerQueryData>
+}
+
+//#endregion
+
+//#region getUser method
+
+export type ShopifyForgotPasswordRaw = {
+  forgotPassword?: GraphqlResWithError<CustomerRecoverMutationData>
 }
 
 //#endregion

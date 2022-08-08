@@ -1,4 +1,5 @@
 import {
+  MakairaForgotPassword,
   MakairaGetUser,
   MakairaLogin,
   MakairaLogout,
@@ -12,6 +13,7 @@ import {
 import { StorefrontShopAdapterShopify } from './main'
 import {
   GraphqlResWithError,
+  ShopifyForgotPasswordRaw,
   ShopifyGetUserRaw,
   ShopifyLoginRaw,
   ShopifyLogoutRaw,
@@ -30,6 +32,9 @@ import {
   CustomerQuery,
   CustomerQueryData,
   CustomerQueryVariables,
+  CustomerRecoverMutation,
+  CustomerRecoverMutationData,
+  CustomerRecoverMutationVariables,
 } from './user.queries'
 
 export class StorefrontShopAdapterShopifyUser
@@ -132,18 +137,18 @@ export class StorefrontShopAdapterShopifyUser
         }
       }
 
-      if (!responseLogout.customerAccessTokenDelete) {
+      if (!responseLogout.data) {
         return {
           raw: { logout: responseLogout },
           error: new Error('customerAccessTokenDelete is not defined'),
         }
       }
 
-      if (responseLogout.customerAccessTokenDelete.userErrors.length > 0) {
+      if (responseLogout.data.customerAccessTokenDelete.userErrors.length > 0) {
         return {
           raw: { logout: responseLogout },
           error: new Error(
-            responseLogout.customerAccessTokenDelete.userErrors[0].message
+            responseLogout.data.customerAccessTokenDelete.userErrors[0].message
           ),
         }
       }
@@ -185,18 +190,18 @@ export class StorefrontShopAdapterShopifyUser
         }
       }
 
-      if (!responseSignup.customerCreate) {
+      if (!responseSignup.data) {
         return {
           raw: { signup: responseSignup },
           error: new Error('customerCreate is not defined'),
         }
       }
 
-      if (responseSignup.customerCreate.customerUserErrors.length > 0) {
+      if (responseSignup.data.customerCreate.customerUserErrors.length > 0) {
         return {
           raw: { signup: responseSignup },
           error: new Error(
-            responseSignup.customerCreate.customerUserErrors[0].message
+            responseSignup.data.customerCreate.customerUserErrors[0].message
           ),
         }
       }
@@ -239,10 +244,11 @@ export class StorefrontShopAdapterShopifyUser
 
       const data: MakairaSignupResData = {
         user: {
-          id: responseSignup.customerCreate.customer.id,
-          firstname: responseSignup.customerCreate.customer.firstName ?? '',
-          lastname: responseSignup.customerCreate.customer.lastName ?? '',
-          email: responseSignup.customerCreate.customer.email ?? '',
+          id: responseSignup.data.customerCreate.customer.id,
+          firstname:
+            responseSignup.data.customerCreate.customer.firstName ?? '',
+          lastname: responseSignup.data.customerCreate.customer.lastName ?? '',
+          email: responseSignup.data.customerCreate.customer.email ?? '',
         },
       }
 
@@ -275,7 +281,7 @@ export class StorefrontShopAdapterShopifyUser
         variables: { customerAccessToken },
       })
 
-      if (responseGetUser.errors || !responseGetUser.customer) {
+      if (responseGetUser.errors || !responseGetUser.data) {
         return {
           raw: { getUser: responseGetUser },
           error: responseGetUser.errors
@@ -287,13 +293,67 @@ export class StorefrontShopAdapterShopifyUser
       return {
         data: {
           user: {
-            id: responseGetUser.customer.id,
-            firstname: responseGetUser.customer.firstName ?? '',
-            lastname: responseGetUser.customer.lastName ?? '',
-            email: responseGetUser.customer.email ?? '',
+            id: responseGetUser.data.customer.id,
+            firstname: responseGetUser.data.customer.firstName ?? '',
+            lastname: responseGetUser.data.customer.lastName ?? '',
+            email: responseGetUser.data.customer.email ?? '',
           },
         },
         raw: { getUser: responseGetUser },
+        error: undefined,
+      }
+    } catch (e) {
+      return { data: undefined, raw: {}, error: e as Error }
+    }
+  }
+
+  forgotPassword: MakairaForgotPassword<
+    unknown,
+    ShopifyForgotPasswordRaw,
+    Error
+  > = async ({ input: { username } }) => {
+    try {
+      const responseCustomerRecover = await this.mainAdapter.fetchFromShop<
+        CustomerRecoverMutationData,
+        CustomerRecoverMutationVariables
+      >({
+        query: CustomerRecoverMutation({
+          customerUserErrorFragment:
+            this.mainAdapter.additionalOptions.fragments
+              .customerUserErrorFragment,
+        }),
+        variables: { email: username },
+      })
+
+      if (responseCustomerRecover.errors?.length) {
+        return {
+          raw: { forgotPassword: responseCustomerRecover },
+          error: new Error(responseCustomerRecover.errors[0].message),
+        }
+      }
+
+      if (!responseCustomerRecover.data) {
+        return {
+          raw: { forgotPassword: responseCustomerRecover },
+          error: new Error('customerRecover is not defined'),
+        }
+      }
+
+      if (
+        responseCustomerRecover.data.customerRecover.customerUserErrors.length >
+        0
+      ) {
+        return {
+          raw: { forgotPassword: responseCustomerRecover },
+          error: new Error(
+            responseCustomerRecover.data.customerRecover.customerUserErrors[0].message
+          ),
+        }
+      }
+
+      return {
+        raw: { forgotPassword: responseCustomerRecover },
+        data: undefined,
         error: undefined,
       }
     } catch (e) {
@@ -373,7 +433,7 @@ export class StorefrontShopAdapterShopifyUser
         }
       }
 
-      if (!responseCustomerAccessToken.customerAccessTokenCreate) {
+      if (!responseCustomerAccessToken.data) {
         return {
           raw: { customerAccessToken: responseCustomerAccessToken },
           error: new Error('customerAccessTokenCreate is not defined'),
@@ -381,33 +441,33 @@ export class StorefrontShopAdapterShopifyUser
       }
 
       if (
-        responseCustomerAccessToken.customerAccessTokenCreate.customerUserErrors
-          .length > 0
+        responseCustomerAccessToken.data.customerAccessTokenCreate
+          .customerUserErrors.length > 0
       ) {
         return {
           raw: { customerAccessToken: responseCustomerAccessToken },
           error: new Error(
-            responseCustomerAccessToken.customerAccessTokenCreate.customerUserErrors[0].message
+            responseCustomerAccessToken.data.customerAccessTokenCreate.customerUserErrors[0].message
           ),
         }
       }
 
       this.setCustomerAccessToken({
         customerAccessToken:
-          responseCustomerAccessToken.customerAccessTokenCreate
+          responseCustomerAccessToken.data.customerAccessTokenCreate
             .customerAccessToken.accessToken,
         expiresAt:
-          responseCustomerAccessToken.customerAccessTokenCreate
+          responseCustomerAccessToken.data.customerAccessTokenCreate
             .customerAccessToken.expiresAt,
       })
 
       return {
         data: {
           customerAccessToken:
-            responseCustomerAccessToken.customerAccessTokenCreate
+            responseCustomerAccessToken.data.customerAccessTokenCreate
               .customerAccessToken.accessToken,
           expiresAt:
-            responseCustomerAccessToken.customerAccessTokenCreate
+            responseCustomerAccessToken.data.customerAccessTokenCreate
               .customerAccessToken.expiresAt,
         },
         raw: { customerAccessToken: responseCustomerAccessToken },
