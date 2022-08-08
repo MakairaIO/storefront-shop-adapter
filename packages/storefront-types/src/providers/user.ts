@@ -106,4 +106,5 @@ export type MakairaShopProviderUser = {
   logout: MakairaLogout
   signup: MakairaSignup
   getUser: MakairaGetUser
+  forgotPassword: MakairaForgotPassword
 }

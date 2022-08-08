@@ -1,5 +1,6 @@
 import {
   BadHttpStatusError,
+  MakairaForgotPassword,
   MakairaGetUser,
   MakairaLogin,
   MakairaLogout,
@@ -160,5 +161,12 @@ export class StorefrontShopAdapterOxidUser implements MakairaShopProviderUser {
     } catch (e) {
       return { data: undefined, raw: {}, error: e as Error }
     }
+  }
+
+  /**
+   * Not yet implemented/existing endpoint for OXID-Abstraction.
+   */
+  forgotPassword: MakairaForgotPassword<any, any, Error> = async () => {
+    return { data: undefined, raw: undefined, error: new NotImplementedError() }
   }
 }
