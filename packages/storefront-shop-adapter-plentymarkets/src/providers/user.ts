@@ -11,6 +11,7 @@ import {
 } from '@makaira/storefront-types'
 import { StorefrontShopAdapterPlentymarkets } from './main'
 import {
+  PlentymarketsGetUserRaw,
   PlentymarketsGetUserRes,
   PlentymarketsLoginRaw,
   PlentymarketsLoginRes,
@@ -104,43 +105,44 @@ export class StorefrontShopAdapterPlentymarketsUser
     }
   }
 
-  getUser: MakairaGetUser<unknown, unknown, Error> = async () => {
-    try {
-      const { response, status } =
-        await this.mainAdapter.fetchFromShop<PlentymarketsGetUserRes>({
-          path: USER_GET,
-          method: 'GET',
-        })
+  getUser: MakairaGetUser<unknown, PlentymarketsGetUserRaw, Error> =
+    async () => {
+      try {
+        const { response, status } =
+          await this.mainAdapter.fetchFromShop<PlentymarketsGetUserRes>({
+            path: USER_GET,
+            method: 'GET',
+          })
 
-      if (status !== 200) {
-        return {
-          data: undefined,
-          raw: { getUser: response },
-          error: new BadHttpStatusError(),
+        if (status !== 200) {
+          return {
+            data: undefined,
+            raw: { getUser: response },
+            error: new BadHttpStatusError(),
+          }
         }
-      }
 
-      if (!response.data) {
-        return {
-          data: undefined,
-          raw: { getUser: response },
-          error: undefined,
+        if (!response.data) {
+          return {
+            data: undefined,
+            raw: { getUser: response },
+            error: undefined,
+          }
         }
+
+        const user = {
+          id: response.data.id,
+          firstname: response.data.firstName,
+          lastname: response.data.lastName,
+          email: response.data.email,
+        }
+
+        const data = { user }
+        const raw = { getUser: response }
+
+        return { data, raw, error: undefined }
+      } catch (e) {
+        return { data: undefined, raw: undefined, error: e as Error }
       }
-
-      const user = {
-        id: response.data.id,
-        firstname: response.data.firstName,
-        lastname: response.data.lastName,
-        email: response.data.email,
-      }
-
-      const data = { user }
-      const raw = { getUser: response }
-
-      return { data, raw, error: undefined }
-    } catch (e) {
-      return { data: undefined, raw: undefined, error: e as Error }
     }
-  }
 }

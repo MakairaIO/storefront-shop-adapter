@@ -60,7 +60,11 @@ export class StorefrontShopAdapterPlentymarketsWishlist
       }
     }
 
-  addItem: MakairaAddItemToWishlist<unknown, unknown, Error> = async ({
+  addItem: MakairaAddItemToWishlist<
+    unknown,
+    PlentymarketsAddWishlistRaw,
+    Error
+  > = async ({
     input: {
       product: { id },
     },
@@ -77,7 +81,7 @@ export class StorefrontShopAdapterPlentymarketsWishlist
       if (status !== 201) {
         return {
           data: undefined,
-          raw: { getWishlist: response },
+          raw: { addWishlist: response },
           error: new BadHttpStatusError(),
         }
       }
@@ -111,7 +115,11 @@ export class StorefrontShopAdapterPlentymarketsWishlist
     }
   }
 
-  removeItem: MakairaRemoveItemFromWishlist<unknown, unknown, Error> = async ({
+  removeItem: MakairaRemoveItemFromWishlist<
+    unknown,
+    PlentymarketsRemoveWishlistRaw,
+    Error
+  > = async ({
     input: {
       product: { id },
     },
