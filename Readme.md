@@ -30,7 +30,7 @@ Hello and welcome to the Makaira shop adapters. These well tested and in product
       - [Unified Input Parameters](#unified-input-parameters-4)
       - [Unified Data Response](#unified-data-response-4)
       - [Event Listener](#event-listener-4)
-      - [Create Review](#create-review)
+    - [Create Review](#create-review)
       - [Unified Input Parameters](#unified-input-parameters-5)
       - [Unified Data Response](#unified-data-response-5)
       - [Event Listener](#event-listener-5)
@@ -72,7 +72,7 @@ Hello and welcome to the Makaira shop adapters. These well tested and in product
     - [MakairaUser](#makairauser)
     - [MakairaProduct](#makairaproduct)
     - [MakairaReview](#makairareview)
-  - [How to add a shop adapter to your project](#how-to-add-a-shop-adapter-to-your-project)
+- [How to add a shop adapter to your project](#how-to-add-a-shop-adapter-to-your-project)
 - [How to extend the shop adapter functionality in the storefront](#how-to-extend-the-shop-adapter-functionality-in-the-storefront)
 - [Contributing](#contributing)
   - [Understanding the MakairaShopProviderInteractor](#understanding-the-makairashopproviderinteractor)
@@ -769,6 +769,10 @@ class CustomUserProvider
   extends StorefrontShopAdapterLocalUser
   implements MakairaShopProviderUser
 {
+  // This is required because super only works on prototype members.
+  // Look for more details here: https://basarat.gitbook.io/typescript/future-javascript/arrow-functions#tip-arrow-functions-and-inheritance
+  private superLogout = this.logout
+
   constructor(mainAdapter: StorefrontShopAdapterLocal) {
     super(mainAdapter)
   }
@@ -805,7 +809,9 @@ class CustomUserProvider
     { additionalInput1: string },
     { customRawData1: string }
   > = async ({ input: { additionalInput1 } }) => {
-    const response = await parent.logout({ input: {} })
+    // The super only works on prototype members. Therefore we need to create a copy.
+    // Look for more details here: https://basarat.gitbook.io/typescript/future-javascript/arrow-functions#tip-arrow-functions-and-inheritance
+    const response = await this.superLogout({ input: {} })
 
     return {
       data: response.data,
