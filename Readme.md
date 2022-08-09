@@ -727,11 +727,12 @@ _The data property is equivalent to the unified data response_
 
 Each of our adapters share the base signature. But some of the requires more parameters like shopify requires an access token. Therefore select your adapter and follow the specific documentation how to add them.
 
-| Shop Adapter | Documentation                                                        |
-| ------------ | -------------------------------------------------------------------- |
-| Shopify      | [Documentation](/packages/storefront-shop-adapter-shopify/Readme.md) |
-| Oxid         | [Documentation](/packages/storefront-shop-adapter-oxid/Readme.md)    |
-| Local        | [Documentation](/packages/storefront-shop-adapter-local/Readme.md)   |
+| Shop Adapter  | Documentation                                                              |
+| ------------- | -------------------------------------------------------------------------- |
+| Shopify       | [Documentation](/packages/storefront-shop-adapter-shopify/Readme.md)       |
+| Oxid          | [Documentation](/packages/storefront-shop-adapter-oxid/Readme.md)          |
+| Plentymarkets | [Documentation](/packages/storefront-shop-adapter-plentymarkets/Readme.md) |
+| Local         | [Documentation](/packages/storefront-shop-adapter-local/Readme.md)         |
 
 # How to extend the shop adapter functionality in the storefront
 
