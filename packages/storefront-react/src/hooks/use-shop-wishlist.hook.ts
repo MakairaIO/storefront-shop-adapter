@@ -8,6 +8,10 @@ export type UseShopWishlistData = {
    */
   wishlist: ShopContextData['wishlist']
   /**
+   * The current raw wishlist
+   */
+  rawWishlist: ShopContextData['rawWishlist']
+  /**
    *
    */
   isProductInWishlist: (
@@ -16,7 +20,7 @@ export type UseShopWishlistData = {
 }
 
 export function useShopWishlist(): UseShopWishlistData {
-  const { wishlist } = useContext(ShopContext)
+  const { wishlist, rawWishlist } = useContext(ShopContext)
 
   const isProductInWishlist = useCallback(
     (id: string): MakairaResponse<boolean, undefined, Error> => {
@@ -37,5 +41,5 @@ export function useShopWishlist(): UseShopWishlistData {
     [wishlist]
   )
 
-  return { wishlist, isProductInWishlist }
+  return { wishlist, isProductInWishlist, rawWishlist }
 }

@@ -18,12 +18,21 @@ export type StorefrontReactTypes = MergeBy<
     cart: Awaited<
       ReturnType<StorefrontReactClient['client']['cart']['getCart']>
     >['data']
+    rawCart: Awaited<
+      ReturnType<StorefrontReactClient['client']['cart']['getCart']>
+    >['raw']
     user: Awaited<
       ReturnType<StorefrontReactClient['client']['user']['getUser']>
     >['data']
+    rawUser: Awaited<
+      ReturnType<StorefrontReactClient['client']['user']['getUser']>
+    >['raw']
     wishlist: Awaited<
       ReturnType<StorefrontReactClient['client']['wishlist']['getWishlist']>
     >['data']
+    rawWishlist: Awaited<
+      ReturnType<StorefrontReactClient['client']['wishlist']['getWishlist']>
+    >['raw']
   },
   StorefrontReactCustomTypes
 >
