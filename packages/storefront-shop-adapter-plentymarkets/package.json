@@ -2,19 +2,26 @@
   "name": "@makaira/storefront-shop-adapter-plentymarkets",
   "version": "1.0.0",
   "description": "Contains the makaira plentymarkets shop adapter to connect your storefront with your plentymarkets shop",
-  "main": "dist/esm/index.js",
-  "typings": "dist/types/index.d.ts",
+  "main": "./dist/esm/index.js",
+  "typings": "./dist/types/index.d.ts",
   "exports": {
-    "import": "dist/esm/index.js",
-    "require": "dist/cjs/index.js",
-    "default": "dist/esm/index.js"
+    "import": "./dist/esm/index.js",
+    "require": "./dist/cjs/index.js",
+    "default": "./dist/esm/index.js"
+  },
+  "files": [
+    "./dist"
+  ],
+  "engines": {
+    "node": ">=15.0.0"
   },
   "scripts": {
     "clean": "rimraf ./dist",
-    "lint": "eslint src --fix",
+    "lint:eslint": "eslint src --fix",
+    "lint:tsc": "tsc --project tsconfig.json --noEmit --skipLibCheck",
     "build": "tsc --project tsconfig.build.esm.json & tsc --project tsconfig.build.cjs.json",
     "release": "semantic-release",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --passWithNoTests"
   },
   "repository": {
     "type": "git",
@@ -34,7 +41,23 @@
     "url": "https://github.com/MakairaIO/storefront-shop-adapter/issues"
   },
   "homepage": "https://github.com/MakairaIO/storefront-shop-adapter#readme",
-  "devDependencies": {
-    "@makaira/storefront-types": "1.6.0"
+  "dependencies": {
+    "@makaira/storefront-types": "^1.4.0",
+    "isomorphic-unfetch": "^3.1.0"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "jest-environment-jsdom",
+    "transform": {
+      "^.+\\\\.ts?$": "ts-jest"
+    },
+    "transformIgnorePatterns": [
+      "./node_modules/(?!(storefront-.*)/)"
+    ],
+    "globals": {
+      "ts-jest": {
+        "diagnostics": false
+      }
+    }
   }
 }

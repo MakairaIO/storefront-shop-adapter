@@ -7,6 +7,7 @@ import {
   MakairaShopProviderUser,
   MakairaShopProviderWishlist,
 } from '@makaira/storefront-types'
+import fetch from 'isomorphic-unfetch'
 import { StorefrontShopAdapterPlentymarketsCart } from './cart'
 import { StorefrontShopAdapterPlentymarketsCheckout } from './checkout'
 import { StorefrontShopAdapterPlentymarketsUser } from './user'
