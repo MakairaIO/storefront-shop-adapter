@@ -7,6 +7,10 @@ export type UseShopCartData = {
    */
   cart: ShopContextData['cart']
   /**
+   * The current cart with the raw products.
+   */
+  rawCart: ShopContextData['rawCart']
+  /**
    * The current amount of products in the cart.
    * It counts the number of unique products but not
    * their quantity in the cart.
@@ -31,7 +35,7 @@ export type UseShopCartData = {
 }
 
 export function useShopCart(): UseShopCartData {
-  const { cart } = useContext(ShopContext)
+  const { cart, rawCart } = useContext(ShopContext)
 
   const productsInCart = cart?.items.length ?? 0
 
@@ -46,5 +50,5 @@ export function useShopCart(): UseShopCartData {
       0
     ) ?? 0
 
-  return { cart, productsInCart, quantityInCart, totalPriceInCart }
+  return { cart, productsInCart, quantityInCart, totalPriceInCart, rawCart }
 }

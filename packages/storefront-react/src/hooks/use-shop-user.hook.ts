@@ -7,10 +7,14 @@ export type UseShopUserData = {
    * logged in or when reloading the user fails.
    */
   user: ShopContextData['user']
+  /**
+   * The current raw user.
+   */
+  rawUser: ShopContextData['rawUser']
 }
 
 export function useShopUser(): UseShopUserData {
-  const { user } = useContext(ShopContext)
+  const { user, rawUser } = useContext(ShopContext)
 
-  return { user }
+  return { user, rawUser }
 }
