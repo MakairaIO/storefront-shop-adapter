@@ -59,7 +59,11 @@ export class StorefrontShopAdapterShopware5Review
           error: undefined,
         }
       } catch (e) {
-        return { data: undefined, error: e as Error }
+        return {
+          data: undefined,
+          raw: { getReviews: undefined },
+          error: e as Error,
+        }
       }
     }
 
@@ -113,7 +117,11 @@ export class StorefrontShopAdapterShopware5Review
 
       return { data, raw, error: undefined }
     } catch (e) {
-      return { data: undefined, error: e as Error }
+      return {
+        data: undefined,
+        raw: { createReview: undefined },
+        error: e as Error,
+      }
     }
   }
 }

@@ -30,7 +30,7 @@ export type ShopwareReview = {
 
 export type ShopwareGetCartRes = ShopwareProduct[]
 
-export type ShopwareGetCartRaw = { getCart: ShopwareGetCartRes }
+export type ShopwareGetCartRaw = { getCart?: ShopwareGetCartRes }
 
 //#endregion
 
@@ -41,7 +41,7 @@ export type ShopwareAddItemRes =
   | { ok: false; message: string }
 
 export type ShopwareAddItemRaw = {
-  addItem: ShopwareAddItemRes
+  addItem?: ShopwareAddItemRes
 }
 
 //#endregion
@@ -53,7 +53,7 @@ export type ShopwareRemoveItemRes =
   | { ok: false; message: string }
 
 export type ShopwareRemoveItemRaw = {
-  removeItem: ShopwareRemoveItemRes
+  removeItem?: ShopwareRemoveItemRes
 }
 
 //#endregion
@@ -65,7 +65,7 @@ export type ShopwareUpdateItemRes =
   | { ok: false; message: string }
 
 export type ShopwareUpdateItemRaw = {
-  updateItem: ShopwareUpdateItemRes
+  updateItem?: ShopwareUpdateItemRes
 }
 
 //#endregion
@@ -80,7 +80,7 @@ export type ShopwareGetUserRes =
   | ShopwareUser
   | { ok: false; message?: 'Forbidden' | string }
 
-export type ShopwareGetUserRaw = { getUser: ShopwareGetUserRes }
+export type ShopwareGetUserRaw = { getUser?: ShopwareGetUserRes }
 
 //#endregion
 
@@ -89,7 +89,7 @@ export type ShopwareGetUserRaw = { getUser: ShopwareGetUserRes }
 export type ShopwareLogoutRes = { ok: true }
 
 export type ShopwareLogoutRaw = {
-  logout: ShopwareLoginRes
+  logout?: ShopwareLoginRes
 }
 
 //#endregion
@@ -102,7 +102,7 @@ export type ShopwareLoginRes =
   | { ok: false; errors: any }
 
 export type ShopwareLoginRaw = {
-  login: ShopwareLoginRes
+  login?: ShopwareLoginRes
   getUser?: ShopwareGetUserRaw['getUser']
 }
 
@@ -120,7 +120,7 @@ export type ShopwareGetReviewsRes =
   | ShopwareReview[]
   | { ok: false; message: string }
 
-export type ShopwareGetReviewsRaw = { getReviews: ShopwareGetReviewsRes }
+export type ShopwareGetReviewsRaw = { getReviews?: ShopwareGetReviewsRes }
 
 //#endregion
 
@@ -137,7 +137,7 @@ export type ShopwareCreateReviewRes =
   | { ok: false; message: string }
 
 export type ShopwareCreateReviewRaw = {
-  createReview: ShopwareCreateReviewRes
+  createReview?: ShopwareCreateReviewRes
 }
 
 //#endregion

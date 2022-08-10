@@ -66,7 +66,7 @@ export class StorefrontShopAdapterShopware5Cart
 
       return { data: { items }, raw: { getCart: response }, error: undefined }
     } catch (e) {
-      return { data: undefined, error: e as Error }
+      return { data: undefined, raw: { getCart: undefined }, error: e as Error }
     }
   }
 
@@ -118,7 +118,7 @@ export class StorefrontShopAdapterShopware5Cart
 
       return { data, raw, error: undefined }
     } catch (e) {
-      return { data: undefined, error: e as Error }
+      return { data: undefined, raw: { addItem: undefined }, error: e as Error }
     }
   }
 
@@ -166,7 +166,11 @@ export class StorefrontShopAdapterShopware5Cart
 
         return { data, raw, error: undefined }
       } catch (e) {
-        return { data: undefined, error: e as Error }
+        return {
+          data: undefined,
+          raw: { removeItem: undefined },
+          error: e as Error,
+        }
       }
     }
 
@@ -217,7 +221,11 @@ export class StorefrontShopAdapterShopware5Cart
 
         return { data, raw, error: undefined }
       } catch (e) {
-        return { data: undefined, error: e as Error }
+        return {
+          data: undefined,
+          raw: { updateItem: undefined },
+          error: e as Error,
+        }
       }
     }
 }

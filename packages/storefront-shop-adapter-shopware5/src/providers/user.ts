@@ -88,7 +88,11 @@ export class StorefrontShopAdapterShopware5User
 
       return { data: undefined, raw, error: errorGetUser }
     } catch (e) {
-      return { data: undefined, error: e as Error }
+      return {
+        data: undefined,
+        raw: { getUser: undefined, login: undefined },
+        error: e as Error,
+      }
     }
   }
 
@@ -116,13 +120,14 @@ export class StorefrontShopAdapterShopware5User
     } catch (e) {
       return {
         data: undefined,
+        raw: { logout: undefined },
         error: e as Error,
       }
     }
   }
 
   signup: MakairaSignup<unknown, undefined, Error> = async () => {
-    return { error: new NotImplementedError() }
+    return { error: new NotImplementedError(), raw: undefined }
   }
 
   getUser: MakairaGetUser<unknown, ShopwareGetUserRaw, Error> = async () => {
@@ -165,12 +170,12 @@ export class StorefrontShopAdapterShopware5User
         error: undefined,
       }
     } catch (e) {
-      return { data: undefined, error: e as Error }
+      return { data: undefined, raw: { getUser: undefined }, error: e as Error }
     }
   }
 
   forgotPassword: MakairaForgotPassword<unknown, undefined, Error> =
     async () => {
-      return { error: new NotImplementedError() }
+      return { error: new NotImplementedError(), raw: undefined }
     }
 }
