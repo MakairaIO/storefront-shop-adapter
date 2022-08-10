@@ -55,7 +55,7 @@ export class StorefrontShopAdapterOxidCart implements MakairaShopProviderCart {
 
       return { data: { items }, raw: { getCart: response }, error: undefined }
     } catch (e) {
-      return { data: undefined, error: e as Error }
+      return { data: undefined, raw: {}, error: e as Error }
     }
   }
 
@@ -108,7 +108,7 @@ export class StorefrontShopAdapterOxidCart implements MakairaShopProviderCart {
 
       return { data: undefined, raw, error: errorGetCart }
     } catch (e) {
-      return { data: undefined, error: e as Error }
+      return { data: undefined, raw: {}, error: e as Error }
     }
   }
 
@@ -159,7 +159,7 @@ export class StorefrontShopAdapterOxidCart implements MakairaShopProviderCart {
 
         return { data: undefined, raw, error: errorGetCart }
       } catch (e) {
-        return { data: undefined, error: e as Error }
+        return { data: undefined, raw: {}, error: e as Error }
       }
     }
 
@@ -211,7 +211,7 @@ export class StorefrontShopAdapterOxidCart implements MakairaShopProviderCart {
 
         return { data: undefined, raw, error: errorGetCart }
       } catch (e) {
-        return { data: undefined, error: e as Error }
+        return { data: undefined, raw: {}, error: e as Error }
       }
     }
 }

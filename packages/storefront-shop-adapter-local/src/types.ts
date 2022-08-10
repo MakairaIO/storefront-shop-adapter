@@ -22,6 +22,15 @@ export type UserStoreVersioned = ShopAdapterLocalStorageVersioned<
   UserStore
 >
 
+type WishlistStore = {
+  items: Array<{ product: MakairaProduct }>
+}
+
+export type WishlistStoreVersioned = ShopAdapterLocalStorageVersioned<
+  'v1',
+  WishlistStore
+>
+
 //#region cart provider
 
 //#region getCart method
@@ -80,10 +89,36 @@ export type LocalLoginRaw = {
 
 //#endregion
 
-//#region login method
+//#region signup method
 
 export type LocalSignupRaw = {
   store: UserStoreVersioned
+}
+
+//#endregion
+
+//#endregion
+
+//#region wishlist provider
+
+//#region getUser method
+
+export type LocalGetWishlistRaw = { store: WishlistStoreVersioned }
+
+//#endregion
+
+//#region addItem method
+
+export type LocalWishlistAddItemRaw = {
+  store: WishlistStoreVersioned
+}
+
+//#endregion
+
+//#region removeItem method
+
+export type LocalWishlistRemoveItemRaw = {
+  store: WishlistStoreVersioned
 }
 
 //#endregion

@@ -1,7 +1,7 @@
 {
-  "name": "@makaira/storefront-react",
-  "version": "1.5.3",
-  "description": "Contains the makaira react layer to connect makaira shop adapters to connect your storefront with",
+  "name": "@makaira/storefront-shop-adapter-shopify",
+  "version": "0.0.0",
+  "description": "Contains the makaira shopify shop adapter to connect your storefront with your shopify shop",
   "main": "./dist/esm/index.js",
   "typings": "./dist/types/index.d.ts",
   "exports": {
@@ -12,6 +12,9 @@
   "files": [
     "./dist"
   ],
+  "engines": {
+    "node": ">=15.0.0"
+  },
   "scripts": {
     "clean": "rimraf ./dist",
     "lint:eslint": "eslint src --fix",
@@ -30,7 +33,7 @@
   "keywords": [
     "storefront",
     "makaira",
-    "react"
+    "shopify"
   ],
   "author": "Jonas Embach <je@marmalade.group>",
   "license": "ISC",
@@ -38,14 +41,26 @@
     "url": "https://github.com/MakairaIO/storefront-shop-adapter/issues"
   },
   "homepage": "https://github.com/MakairaIO/storefront-shop-adapter#readme",
-  "devDependencies": {
-    "@types/react": "18.0.17"
-  },
-  "peerDependencies": {
-    "react": ">=16.8",
-    "react-dom": ">=16.8"
-  },
   "dependencies": {
-    "@makaira/storefront-types": "1.6.0"
+    "@makaira/storefront-types": "^1.4.0",
+    "isomorphic-unfetch": "^3.1.0"
+  },
+  "devDependencies": {
+    "msw": "^0.43.0"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "jest-environment-jsdom",
+    "transform": {
+      "^.+\\\\.ts?$": "ts-jest"
+    },
+    "transformIgnorePatterns": [
+      "./node_modules/(?!(storefront-.*)/)"
+    ],
+    "globals": {
+      "ts-jest": {
+        "diagnostics": false
+      }
+    }
   }
 }
