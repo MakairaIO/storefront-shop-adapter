@@ -1,6 +1,6 @@
 {
   "name": "@makaira/storefront-react",
-  "version": "1.5.2",
+  "version": "1.5.3",
   "description": "Contains the makaira react layer to connect makaira shop adapters to connect your storefront with",
   "main": "./dist/esm/index.js",
   "typings": "./dist/types/index.d.ts",
@@ -39,7 +39,7 @@
   },
   "homepage": "https://github.com/MakairaIO/storefront-shop-adapter#readme",
   "devDependencies": {
-    "@types/react": "18.0.14"
+    "@types/react": "18.0.17"
   },
   "peerDependencies": {
     "react": ">=16.8",

@@ -64,7 +64,7 @@ export class StorefrontShopAdapterOxidReview
         error: undefined,
       }
     } catch (e) {
-      return { data: undefined, error: e as Error }
+      return { data: undefined, raw: {}, error: e as Error }
     }
   }
 
@@ -111,7 +111,7 @@ export class StorefrontShopAdapterOxidReview
 
         return { data, raw, error: undefined }
       } catch (e) {
-        return { data: undefined, error: e as Error }
+        return { data: undefined, raw: {}, error: e as Error }
       }
     }
 }

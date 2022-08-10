@@ -11,16 +11,16 @@ export class StorefrontShopAdapterOxidWishlist
 {
   constructor(private mainAdapter: StorefrontShopAdapterOxid) {}
 
-  getWishlist: MakairaGetWishlist = async () => {
-    return {}
+  getWishlist: MakairaGetWishlist<unknown, undefined, Error> = async () => {
+    return { raw: undefined, error: new Error('Not implemented') }
   }
 
-  addItem: MakairaAddItemToWishlist<unknown, unknown, Error> = async () => {
-    return { error: new Error('Not implemented') }
+  addItem: MakairaAddItemToWishlist<unknown, undefined, Error> = async () => {
+    return { raw: undefined, error: new Error('Not implemented') }
   }
 
-  removeItem: MakairaRemoveItemFromWishlist<unknown, unknown, Error> =
+  removeItem: MakairaRemoveItemFromWishlist<unknown, undefined, Error> =
     async () => {
-      return { error: new Error('Not implemented') }
+      return { raw: undefined, error: new Error('Not implemented') }
     }
 }
