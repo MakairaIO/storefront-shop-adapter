@@ -4,23 +4,23 @@ import {
   MakairaRemoveItemFromWishlist,
   MakairaShopProviderWishlist,
 } from '@makaira/storefront-types'
-import { StorefrontShopAdapterOxid } from './main'
+import { StorefrontShopAdapterShopify } from './main'
 
-export class StorefrontShopAdapterOxidWishlist
+export class StorefrontShopAdapterShopifyWishlist
   implements MakairaShopProviderWishlist
 {
-  constructor(private mainAdapter: StorefrontShopAdapterOxid) {}
+  constructor(private mainAdapter: StorefrontShopAdapterShopify) {}
 
   getWishlist: MakairaGetWishlist<unknown, undefined, Error> = async () => {
-    return { raw: undefined, error: new Error('Not implemented') }
+    return { error: new Error('Not implemented'), raw: undefined }
   }
 
   addItem: MakairaAddItemToWishlist<unknown, undefined, Error> = async () => {
-    return { raw: undefined, error: new Error('Not implemented') }
+    return { error: new Error('Not implemented'), raw: undefined }
   }
 
   removeItem: MakairaRemoveItemFromWishlist<unknown, undefined, Error> =
     async () => {
-      return { raw: undefined, error: new Error('Not implemented') }
+      return { error: new Error('Not implemented'), raw: undefined }
     }
 }

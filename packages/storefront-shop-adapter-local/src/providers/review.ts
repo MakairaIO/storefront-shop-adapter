@@ -1,5 +1,6 @@
 import { faker } from '@faker-js/faker'
 import {
+  LocalStorageSsrSafe,
   MakairaCreateReview,
   MakairaGetReviews,
   MakairaReview,
@@ -76,7 +77,7 @@ export class StorefrontShopAdapterLocalReview
     }
 
   private getStore(): ReviewStoreVersioned {
-    const rawStore = localStorage.getItem(this.LOCAL_STORAGE_STORE)
+    const rawStore = LocalStorageSsrSafe.getItem(this.LOCAL_STORAGE_STORE)
 
     if (!rawStore) {
       return { version: 'v1', items: [] }
@@ -86,6 +87,6 @@ export class StorefrontShopAdapterLocalReview
   }
 
   private async setStore(store: ReviewStoreVersioned) {
-    localStorage.setItem(this.LOCAL_STORAGE_STORE, JSON.stringify(store))
+    LocalStorageSsrSafe.setItem(this.LOCAL_STORAGE_STORE, JSON.stringify(store))
   }
 }

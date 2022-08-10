@@ -1,5 +1,5 @@
 export type MakairaResponse<ResData, ResRawData, ResError extends Error> = {
   data?: ResData
-  raw?: ResRawData
+  raw: ResRawData
   error?: ResError
 }
