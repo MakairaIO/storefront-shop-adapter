@@ -1,7 +1,7 @@
 {
-  "name": "@makaira/storefront-shop-adapter-shopify",
+  "name": "@makaira/storefront-shop-adapter-plentymarkets",
   "version": "1.0.0",
-  "description": "Contains the makaira shopify shop adapter to connect your storefront with your shopify shop",
+  "description": "Contains the makaira plentymarkets shop adapter to connect your storefront with your plentymarkets shop",
   "main": "./dist/esm/index.js",
   "typings": "./dist/types/index.d.ts",
   "exports": {
@@ -33,7 +33,7 @@
   "keywords": [
     "storefront",
     "makaira",
-    "shopify"
+    "plentymarkets"
   ],
   "author": "Jonas Embach <je@marmalade.group>",
   "license": "ISC",
@@ -44,9 +44,6 @@
   "dependencies": {
     "@makaira/storefront-types": "^1.4.0",
     "isomorphic-unfetch": "^3.1.0"
-  },
-  "devDependencies": {
-    "msw": "^0.43.0"
   },
   "jest": {
     "preset": "ts-jest",
