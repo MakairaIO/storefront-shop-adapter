@@ -9,8 +9,8 @@ import {
 import { StorefrontShopAdapterOxid } from './main'
 import { REVIEW_GET, REVIEW_CREATE } from '../paths'
 import {
-  OxidAddItemRes,
   OxidCreateReviewRaw,
+  OxidCreateReviewRes,
   OxidGetReviewsRaw,
   OxidGetReviewsRes,
 } from '../types'
@@ -72,7 +72,7 @@ export class StorefrontShopAdapterOxidReview
     async ({ input: { review } }) => {
       try {
         const { response, status } =
-          await this.mainAdapter.fetchFromShop<OxidAddItemRes>({
+          await this.mainAdapter.fetchFromShop<OxidCreateReviewRes>({
             path: REVIEW_CREATE,
             body: {
               product_id: review.product.id,
