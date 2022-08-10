@@ -56,7 +56,11 @@ export class StorefrontShopAdapterPlentymarketsWishlist
           error: undefined,
         }
       } catch (e) {
-        return { data: undefined, error: e as Error }
+        return {
+          data: undefined,
+          raw: { getWishlist: undefined },
+          error: e as Error,
+        }
       }
     }
 
@@ -111,7 +115,11 @@ export class StorefrontShopAdapterPlentymarketsWishlist
 
       return { data: undefined, raw, error: errorGetWishlist }
     } catch (e) {
-      return { data: undefined, error: e as Error }
+      return {
+        data: undefined,
+        raw: { addWishlist: undefined, getWishlist: undefined },
+        error: e as Error,
+      }
     }
   }
 
@@ -164,7 +172,11 @@ export class StorefrontShopAdapterPlentymarketsWishlist
 
       return { data: undefined, raw, error: errorGetWishlist }
     } catch (e) {
-      return { data: undefined, error: e as Error }
+      return {
+        data: undefined,
+        raw: { getWishlist: undefined, removeWishlist: undefined },
+        error: e as Error,
+      }
     }
   }
 }

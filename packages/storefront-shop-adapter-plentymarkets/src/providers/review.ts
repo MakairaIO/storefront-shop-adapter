@@ -11,11 +11,11 @@ export class StorefrontShopAdapterPlentymarketsReview
 {
   constructor(private mainAdapter: StorefrontShopAdapterPlentymarkets) {}
 
-  getReviews: MakairaGetReviews<unknown, unknown, Error> = async () => {
-    return { error: new NotImplementedError() }
+  getReviews: MakairaGetReviews<unknown, undefined, Error> = async () => {
+    return { error: new NotImplementedError(), raw: undefined }
   }
 
-  createReview: MakairaCreateReview<unknown, unknown, Error> = async () => {
-    return { error: new NotImplementedError() }
+  createReview: MakairaCreateReview<unknown, undefined, Error> = async () => {
+    return { error: new NotImplementedError(), raw: undefined }
   }
 }

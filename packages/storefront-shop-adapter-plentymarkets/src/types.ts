@@ -71,7 +71,7 @@ export type PlentymarketsGetCartRes = {
   total: number
 }
 
-export type PlentymarketsGetCartRaw = { getCart: PlentymarketsGetCartRes }
+export type PlentymarketsGetCartRaw = { getCart?: PlentymarketsGetCartRes }
 
 //#endregion
 
@@ -82,7 +82,7 @@ export type PlentymarketsAddItemRes =
   | { success: false; message: string }
 
 export type PlentymarketsAddItemRaw = {
-  addItem: PlentymarketsAddItemRes
+  addItem?: PlentymarketsAddItemRes
 }
 
 //#endregion
@@ -96,7 +96,7 @@ export type PlentymarketsRemoveItemRes = {
 }
 
 export type PlentymarketsRemoveItemRaw = {
-  removeItem: PlentymarketsRemoveItemRes
+  removeItem?: PlentymarketsRemoveItemRes
   getCart?: PlentymarketsGetCartRaw['getCart']
 }
 
@@ -109,7 +109,7 @@ export type PlentymarketsUpdateItemRes =
   | { success: false; message: string }
 
 export type PlentymarketsUpdateItemRaw = {
-  updateItem: PlentymarketsUpdateItemRes
+  updateItem?: PlentymarketsUpdateItemRes
 }
 
 //#endregion
@@ -130,7 +130,7 @@ export type PlentymarketsGetWishlistRes = {
 }
 
 export type PlentymarketsGetWishlistRaw = {
-  getWishlist: PlentymarketsGetWishlistRes
+  getWishlist?: PlentymarketsGetWishlistRes
 }
 
 //#endregion
@@ -150,7 +150,7 @@ export type PlentymarketsAddWishlistRes = {
 }
 
 export type PlentymarketsAddWishlistRaw = {
-  addWishlist: PlentymarketsAddWishlistRes
+  addWishlist?: PlentymarketsAddWishlistRes
   getWishlist?: PlentymarketsGetWishlistRaw['getWishlist']
 }
 
@@ -164,7 +164,7 @@ export type PlentymarketsRemoveWishlistRes = {
 }
 
 export type PlentymarketsRemoveWishlistRaw = {
-  removeWishlist: PlentymarketsRemoveWishlistRes
+  removeWishlist?: PlentymarketsRemoveWishlistRes
   getWishlist?: PlentymarketsGetWishlistRaw['getWishlist']
 }
 
@@ -185,7 +185,7 @@ export type PlentymarketsLoginRes = {
 }
 
 export type PlentymarketsLoginRaw = {
-  login: PlentymarketsLoginRes
+  login?: PlentymarketsLoginRes
 }
 //#endregion
 
@@ -198,7 +198,7 @@ export type PlentymarketsLogoutRes = {
 }
 
 export type PlentymarketsLogoutRaw = {
-  logout: PlentymarketsLogoutRes
+  logout?: PlentymarketsLogoutRes
 }
 //#endregion
 
@@ -209,7 +209,7 @@ export type PlentymarketsGetUserRes = {
 }
 
 export type PlentymarketsGetUserRaw = {
-  getUser: PlentymarketsGetUserRes
+  getUser?: PlentymarketsGetUserRes
 }
 
 //#endregion

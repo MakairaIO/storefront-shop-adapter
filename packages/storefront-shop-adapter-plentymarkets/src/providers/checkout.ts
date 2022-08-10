@@ -12,10 +12,10 @@ export class StorefrontShopAdapterPlentymarketsCheckout
   constructor(private mainAdapter: StorefrontShopAdapterPlentymarkets) {}
 
   getCheckout: MakairaGetCheckout<unknown, undefined, Error> = async () => {
-    return { error: new NotImplementedError() }
+    return { error: new NotImplementedError(), raw: undefined }
   }
 
   submit: MakairaSubmitCheckout<unknown, undefined, Error> = async () => {
-    return { error: new NotImplementedError() }
+    return { error: new NotImplementedError(), raw: undefined }
   }
 }

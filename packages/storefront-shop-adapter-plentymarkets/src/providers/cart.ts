@@ -57,7 +57,11 @@ export class StorefrontShopAdapterPlentymarketsCart
 
         return { data: { items }, raw: { getCart: response }, error: undefined }
       } catch (e) {
-        return { data: undefined, error: e as Error }
+        return {
+          data: undefined,
+          raw: { getCart: undefined },
+          error: e as Error,
+        }
       }
     }
 
@@ -103,7 +107,11 @@ export class StorefrontShopAdapterPlentymarketsCart
 
         return { data, raw: { addItem: response }, error: undefined }
       } catch (e) {
-        return { data: undefined, error: e as Error }
+        return {
+          data: undefined,
+          raw: { addItem: undefined },
+          error: e as Error,
+        }
       }
     }
 
@@ -154,7 +162,11 @@ export class StorefrontShopAdapterPlentymarketsCart
 
       return { data: undefined, raw, error: errorGetCart }
     } catch (e) {
-      return { data: undefined, error: e as Error }
+      return {
+        data: undefined,
+        raw: { getCart: undefined, removeItem: undefined },
+        error: e as Error,
+      }
     }
   }
 
@@ -202,7 +214,11 @@ export class StorefrontShopAdapterPlentymarketsCart
 
       return { data, raw: { updateItem: response }, error: undefined }
     } catch (e) {
-      return { data: undefined, error: e as Error }
+      return {
+        data: undefined,
+        raw: { updateItem: undefined },
+        error: e as Error,
+      }
     }
   }
 }

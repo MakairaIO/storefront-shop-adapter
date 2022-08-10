@@ -1,5 +1,6 @@
 import {
   BadHttpStatusError,
+  MakairaForgotPassword,
   MakairaGetUser,
   MakairaLogin,
   MakairaLogout,
@@ -67,7 +68,7 @@ export class StorefrontShopAdapterPlentymarketsUser
 
       return { data, raw, error: undefined }
     } catch (e) {
-      return { data: undefined, error: e as Error }
+      return { data: undefined, raw: { login: undefined }, error: e as Error }
     }
   }
 
@@ -94,13 +95,14 @@ export class StorefrontShopAdapterPlentymarketsUser
 
       return { data: undefined, raw, error: undefined }
     } catch (e) {
-      return { data: undefined, raw: undefined, error: e as Error }
+      return { data: undefined, raw: { logout: undefined }, error: e as Error }
     }
   }
 
-  signup: MakairaSignup<unknown, unknown, Error> = async () => {
+  signup: MakairaSignup<unknown, undefined, Error> = async () => {
     return {
       data: undefined,
+      raw: undefined,
       error: new NotImplementedError(),
     }
   }
@@ -142,7 +144,20 @@ export class StorefrontShopAdapterPlentymarketsUser
 
         return { data, raw, error: undefined }
       } catch (e) {
-        return { data: undefined, raw: undefined, error: e as Error }
+        return {
+          data: undefined,
+          raw: { getUser: undefined },
+          error: e as Error,
+        }
+      }
+    }
+
+  forgotPassword: MakairaForgotPassword<unknown, undefined, Error> =
+    async () => {
+      return {
+        data: undefined,
+        raw: undefined,
+        error: new NotImplementedError(),
       }
     }
 }
