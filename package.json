@@ -9,7 +9,7 @@
     "lint:tsc": "turbo run lint:tsc",
     "test": "turbo run test",
     "prepare": "husky install",
-    "lint-staged": "lint-staged --concurrent=false",
+    "lint-staged": "lint-staged",
     "commitlint": "commitlint",
     "create-new-shop-provider": "node ./cli/create-new-shop-provider/index.js"
   },

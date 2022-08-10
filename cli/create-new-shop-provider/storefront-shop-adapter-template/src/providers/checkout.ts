@@ -3,6 +3,7 @@ import {
   MakairaShopProviderCheckout,
   MakairaSubmitCheckout,
 } from '@makaira/storefront-types'
+import { StorefrontShopAdapter__SHOP_ADAPTER_NAME_UPPERCASE__ } from './main'
 
 export class StorefrontShopAdapter__SHOP_ADAPTER_NAME_UPPERCASE__Checkout
   implements MakairaShopProviderCheckout

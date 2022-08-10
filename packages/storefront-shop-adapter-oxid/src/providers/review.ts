@@ -9,8 +9,8 @@ import {
 import { StorefrontShopAdapterOxid } from './main'
 import { REVIEW_GET, REVIEW_CREATE } from '../paths'
 import {
-  OxidAddItemRes,
   OxidCreateReviewRaw,
+  OxidCreateReviewRes,
   OxidGetReviewsRaw,
   OxidGetReviewsRes,
 } from '../types'
@@ -64,7 +64,7 @@ export class StorefrontShopAdapterOxidReview
         error: undefined,
       }
     } catch (e) {
-      return { data: undefined, error: e as Error }
+      return { data: undefined, raw: {}, error: e as Error }
     }
   }
 
@@ -72,7 +72,7 @@ export class StorefrontShopAdapterOxidReview
     async ({ input: { review } }) => {
       try {
         const { response, status } =
-          await this.mainAdapter.fetchFromShop<OxidAddItemRes>({
+          await this.mainAdapter.fetchFromShop<OxidCreateReviewRes>({
             path: REVIEW_CREATE,
             body: {
               product_id: review.product.id,
@@ -111,7 +111,7 @@ export class StorefrontShopAdapterOxidReview
 
         return { data, raw, error: undefined }
       } catch (e) {
-        return { data: undefined, error: e as Error }
+        return { data: undefined, raw: {}, error: e as Error }
       }
     }
 }

@@ -12,10 +12,10 @@ export class StorefrontShopAdapterOxidCheckout
   constructor(private mainAdapter: StorefrontShopAdapterOxid) {}
 
   getCheckout: MakairaGetCheckout<unknown, undefined, Error> = async () => {
-    return { error: new NotImplementedError() }
+    return { error: new NotImplementedError(), raw: undefined }
   }
 
   submit: MakairaSubmitCheckout<unknown, undefined, Error> = async () => {
-    return { error: new NotImplementedError() }
+    return { error: new NotImplementedError(), raw: undefined }
   }
 }
