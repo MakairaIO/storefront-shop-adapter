@@ -229,19 +229,25 @@ const ShopProvider: React.FC<ShopProviderProps> = ({
 
     // load cart if not already loaded by the default cart get method
     if (cart === undefined && bootstrap.cart === true) {
-      const res = await client.cart
-        .getCart({ input: {} })
-        .catch(() => ({ data: undefined, error: new Error('unknown error') }))
+      const res = await client.cart.getCart({ input: {} }).catch(() => ({
+        data: undefined,
+        raw: undefined,
+        error: new Error('unknown error'),
+      }))
 
       setCart(res.data ?? null)
+      setRawCart(res.raw ?? null)
     }
     // load cart if not already loaded by the custom cart loader
     else if (cart === undefined && typeof bootstrap.cart === 'function') {
-      const res = await bootstrap
-        .cart()
-        .catch(() => ({ data: undefined, error: new Error('unknown error') }))
+      const res = await bootstrap.cart().catch(() => ({
+        data: undefined,
+        raw: undefined,
+        error: new Error('unknown error'),
+      }))
 
       setCart(res.data ?? null)
+      setRawCart(res.raw ?? null)
     }
 
     // mark bootstrapping as completed
@@ -262,19 +268,25 @@ const ShopProvider: React.FC<ShopProviderProps> = ({
 
     // load user if not already loaded by the default user get method
     if (user === undefined && bootstrap.user === true) {
-      const res = await client.user
-        .getUser({ input: {} })
-        .catch(() => ({ data: undefined, error: new Error('unknown error') }))
+      const res = await client.user.getUser({ input: {} }).catch(() => ({
+        data: undefined,
+        raw: undefined,
+        error: new Error('unknown error'),
+      }))
 
       setUser(res.data ?? null)
+      setRawUser(res.raw ?? null)
     }
     // load user if not already loaded by the custom user loader
     else if (user === undefined && typeof bootstrap.user === 'function') {
-      const res = await bootstrap
-        .user()
-        .catch(() => ({ data: undefined, error: new Error('unknown error') }))
+      const res = await bootstrap.user().catch(() => ({
+        data: undefined,
+        raw: undefined,
+        error: new Error('unknown error'),
+      }))
 
       setUser(res.data ?? null)
+      setRawUser(res.raw ?? null)
     }
 
     // mark bootstrapping as completed
@@ -297,20 +309,28 @@ const ShopProvider: React.FC<ShopProviderProps> = ({
     if (wishlist === undefined && bootstrap.wishlist === true) {
       const res = await client.wishlist
         .getWishlist({ input: {} })
-        .catch(() => ({ data: undefined, error: new Error('unknown error') }))
+        .catch(() => ({
+          data: undefined,
+          raw: undefined,
+          error: new Error('unknown error'),
+        }))
 
       setWishlist(res.data ?? null)
+      setRawWishlist(res.raw ?? null)
     }
     // load wishlist if not already loaded by the custom wishlist loader
     else if (
       wishlist === undefined &&
       typeof bootstrap.wishlist === 'function'
     ) {
-      const res = await bootstrap
-        .wishlist()
-        .catch(() => ({ data: undefined, error: new Error('unknown error') }))
+      const res = await bootstrap.wishlist().catch(() => ({
+        data: undefined,
+        raw: undefined,
+        error: new Error('unknown error'),
+      }))
 
       setWishlist(res.data ?? null)
+      setRawWishlist(res.raw ?? null)
     }
 
     // mark bootstrapping as completed
