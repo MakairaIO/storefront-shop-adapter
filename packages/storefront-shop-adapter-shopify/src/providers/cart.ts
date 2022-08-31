@@ -229,7 +229,10 @@ export class StorefrontShopAdapterShopifyCart
   }
 
   removeItem: MakairaRemoveItemFromCart<
-    { product: never; lineItemIds: string[] },
+    {
+      product?: never
+      lineItemIds: string[]
+    },
     ShopifyRemoveItemRaw,
     Error
   > = async ({ input: { lineItemIds } }) => {

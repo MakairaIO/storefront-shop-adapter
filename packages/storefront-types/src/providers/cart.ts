@@ -1,6 +1,8 @@
 import { MakairaShopProviderInteractor } from '../general/shop-provider-interactor'
 import { MakairaProduct } from '../product'
 
+type MergeBy<T, K> = Omit<T, keyof K> & K
+
 //#region type definition: add-to-cart
 export type MakairaAddItemToCartInput<AdditionalInput = unknown> = {
   product: { id: string; attributes?: { key: string; value: string }[] }
@@ -43,9 +45,12 @@ export type MakairaGetCart<
 //#endregion
 
 //#region type definition: remove-item-from-cart
-export type MakairaRemoveItemFromCartInput<AdditionalInput = unknown> = {
-  product: { id: string; attributes?: { key: string; value: string }[] }
-} & AdditionalInput
+export type MakairaRemoveItemFromCartInput<AdditionalInput = unknown> = MergeBy<
+  {
+    product: { id: string; attributes?: { key: string; value: string }[] }
+  },
+  AdditionalInput
+>
 
 export type MakairaRemoveItemFromCartResData = {
   items: { product: MakairaProduct; quantity: number }[]
