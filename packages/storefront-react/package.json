@@ -46,6 +46,6 @@
     "react-dom": ">=16.8"
   },
   "dependencies": {
-    "@makaira/storefront-types": "1.7.0"
+    "@makaira/storefront-types": "1.7.1"
   }
 }
