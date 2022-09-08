@@ -162,6 +162,12 @@ export type AdditionalShopifyOptions = {
     userErrorFragment?: string
     customerUserErrorFragment?: string
   }
+  /**
+   * If set will change the `presentmentCurrencyCode` during the creation of a checkout.
+   * Sets the default value for client.getCurrency(string)
+   * Can be changed later on with client.setCurrency(string).
+   */
+  currency?: string | null
 }
 
 export type FetchParameters<GraphqlInputVariables = any> = {

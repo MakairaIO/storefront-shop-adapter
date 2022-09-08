@@ -108,7 +108,10 @@ export const CheckoutCreateMutation = ({
 `
 
 export type CheckoutCreateMutationVariables = {
-  input: { lineItems?: LineItemInput[] }
+  input: {
+    lineItems?: LineItemInput[]
+    presentmentCurrencyCode?: string | null
+  }
 }
 
 export type CheckoutCreateMutationData = {
