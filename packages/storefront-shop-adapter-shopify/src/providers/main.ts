@@ -58,6 +58,8 @@ export class StorefrontShopAdapterShopify<
     fragments: Required<AdditionalShopifyOptions['fragments']>
   }
 
+  STORAGE_KEY_CHECKOUT_CURRENCY_ID = 'makaira-shop-shopify-checkout-currency-id'
+
   constructor(
     options: MakairaShopProviderOptions<
       CartProviderType,
@@ -96,6 +98,7 @@ export class StorefrontShopAdapterShopify<
         userErrorFragment:
           options.fragments?.userErrorFragment ?? UserErrorFragment,
       },
+      currency: options.currency ?? null,
     }
 
     // @ts-expect-error https://stackoverflow.com/questions/56505560/how-to-fix-ts2322-could-be-instantiated-with-a-different-subtype-of-constraint
@@ -133,5 +136,30 @@ export class StorefrontShopAdapterShopify<
     })
 
     return response.json()
+  }
+
+  public setCurrency(currency: string | null): void {
+    this.additionalOptions.currency = currency
+
+    if (currency === null) {
+      this.additionalOptions.storage.removeItem(
+        this.STORAGE_KEY_CHECKOUT_CURRENCY_ID
+      )
+    } else {
+      this.additionalOptions.storage.setItem(
+        this.STORAGE_KEY_CHECKOUT_CURRENCY_ID,
+        currency
+      )
+    }
+  }
+
+  public getCurrency(): string | null {
+    const storageCurrency = this.additionalOptions.storage.getItem(
+      this.STORAGE_KEY_CHECKOUT_CURRENCY_ID
+    )
+
+    if (storageCurrency) return storageCurrency
+
+    return this.additionalOptions.currency
   }
 }

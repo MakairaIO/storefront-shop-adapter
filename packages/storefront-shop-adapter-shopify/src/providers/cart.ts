@@ -453,6 +453,12 @@ export class StorefrontShopAdapterShopifyCart
     { createCheckout: GraphqlResWithError<CheckoutCreateMutationData> },
     Error
   > = async ({ input }) => {
+    const variables = { input }
+
+    if (this.mainAdapter.getCurrency() !== null) {
+      variables.input.presentmentCurrencyCode = this.mainAdapter.getCurrency()
+    }
+
     const responseCreateCheckout = await this.mainAdapter.fetchFromShop<
       CheckoutCreateMutationData,
       CheckoutCreateMutationVariables
@@ -464,7 +470,7 @@ export class StorefrontShopAdapterShopifyCart
           this.mainAdapter.additionalOptions.fragments
             .checkoutUserErrorFragment,
       }),
-      variables: { input },
+      variables,
     })
 
     if (responseCreateCheckout.errors?.length) {
