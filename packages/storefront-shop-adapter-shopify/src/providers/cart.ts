@@ -447,17 +447,13 @@ export class StorefrontShopAdapterShopifyCart
       }
     }
 
-  private createCheckoutAndStoreId: MakairaShopProviderInteractor<
+  public createCheckoutAndStoreId: MakairaShopProviderInteractor<
     CheckoutCreateMutationVariables['input'],
     CheckoutCreateMutationData['checkoutCreate'],
     { createCheckout: GraphqlResWithError<CheckoutCreateMutationData> },
     Error
   > = async ({ input }) => {
     const variables = { input }
-
-    if (this.mainAdapter.getCurrency() !== null) {
-      variables.input.presentmentCurrencyCode = this.mainAdapter.getCurrency()
-    }
 
     const responseCreateCheckout = await this.mainAdapter.fetchFromShop<
       CheckoutCreateMutationData,
@@ -469,6 +465,7 @@ export class StorefrontShopAdapterShopifyCart
         checkoutUserErrorFragment:
           this.mainAdapter.additionalOptions.fragments
             .checkoutUserErrorFragment,
+        contextOptions: this.mainAdapter.getContextOptions(),
       }),
       variables,
     })

@@ -16,6 +16,7 @@ import { StorefrontShopAdapterShopifyWishlist } from './wishlist'
 import fetch from 'isomorphic-unfetch'
 import {
   AdditionalShopifyOptions,
+  ContextOptions,
   FetchParameters,
   GraphqlResWithError,
 } from '../types'
@@ -58,7 +59,7 @@ export class StorefrontShopAdapterShopify<
     fragments: Required<AdditionalShopifyOptions['fragments']>
   }
 
-  STORAGE_KEY_CHECKOUT_CURRENCY_ID = 'makaira-shop-shopify-checkout-currency-id'
+  private STORAGE_KEY_CHECKOUT_OPTIONS = 'makaira-shop-shopify-checkout-options'
 
   constructor(
     options: MakairaShopProviderOptions<
@@ -99,6 +100,7 @@ export class StorefrontShopAdapterShopify<
           options.fragments?.userErrorFragment ?? UserErrorFragment,
       },
       currency: options.currency ?? null,
+      contextOptions: options.contextOptions ?? null,
     }
 
     // @ts-expect-error https://stackoverflow.com/questions/56505560/how-to-fix-ts2322-could-be-instantiated-with-a-different-subtype-of-constraint
@@ -138,28 +140,55 @@ export class StorefrontShopAdapterShopify<
     return response.json()
   }
 
-  public setCurrency(currency: string | null): void {
-    this.additionalOptions.currency = currency
+  // public setCurrency(currency: string | null): void {
+  //   this.additionalOptions.currency = currency
 
-    if (currency === null) {
+  //   if (currency === null) {
+  //     this.additionalOptions.storage.removeItem(
+  //       this.STORAGE_KEY_CHECKOUT_CURRENCY_ID
+  //     )
+  //   } else {
+  //     this.additionalOptions.storage.setItem(
+  //       this.STORAGE_KEY_CHECKOUT_CURRENCY_ID,
+  //       currency
+  //     )
+  //   }
+  // }
+
+  // public getCurrency(): string | null {
+  //   const storageCurrency = this.additionalOptions.storage.getItem(
+  //     this.STORAGE_KEY_CHECKOUT_CURRENCY_ID
+  //   )
+
+  //   if (storageCurrency) return storageCurrency
+
+  //   return this.additionalOptions.currency
+  // }
+
+  public setContextOptions(options: ContextOptions) {
+    this.additionalOptions.contextOptions = options
+
+    if (options === null) {
       this.additionalOptions.storage.removeItem(
-        this.STORAGE_KEY_CHECKOUT_CURRENCY_ID
+        this.STORAGE_KEY_CHECKOUT_OPTIONS
       )
     } else {
       this.additionalOptions.storage.setItem(
-        this.STORAGE_KEY_CHECKOUT_CURRENCY_ID,
-        currency
+        this.STORAGE_KEY_CHECKOUT_OPTIONS,
+        JSON.stringify(options)
       )
     }
+
+    // this.cart.createCheckoutAndStoreId()
   }
 
-  public getCurrency(): string | null {
-    const storageCurrency = this.additionalOptions.storage.getItem(
-      this.STORAGE_KEY_CHECKOUT_CURRENCY_ID
+  public getContextOptions(): ContextOptions {
+    const storageContextOptions = this.additionalOptions.storage.getItem(
+      this.STORAGE_KEY_CHECKOUT_OPTIONS
     )
 
-    if (storageCurrency) return storageCurrency
+    if (!storageContextOptions) return this.additionalOptions.contextOptions
 
-    return this.additionalOptions.currency
+    return JSON.parse(storageContextOptions) as ContextOptions
   }
 }

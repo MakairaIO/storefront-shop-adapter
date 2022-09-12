@@ -168,9 +168,12 @@ export type AdditionalShopifyOptions = {
    * Can be changed later on with client.setCurrency(string).
    */
   currency?: string | null
+  contextOptions: ContextOptions
 }
 
 export type FetchParameters<GraphqlInputVariables = any> = {
   query: string
   variables?: GraphqlInputVariables
 }
+
+export type ContextOptions = Record<'language' | 'country', string | null>

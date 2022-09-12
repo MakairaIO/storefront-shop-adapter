@@ -1,4 +1,4 @@
-import { StorefrontShopifyFragments } from '../types'
+import { ContextOptions, StorefrontShopifyFragments } from '../types'
 
 export type LineItemInput = {
   quantity: number
@@ -89,23 +89,39 @@ export type CheckoutUserErrorFragmentData = {
 export const CheckoutCreateMutation = ({
   checkoutUserErrorFragment,
   checkoutFragment,
+  contextOptions,
 }: {
   checkoutUserErrorFragment: string
   checkoutFragment: string
-}) => `
-    mutation checkoutCreate($input: CheckoutCreateInput!) {
-        checkoutCreate(input: $input) {
-            checkoutUserErrors {
-                ...CheckoutUserErrorFragment
-            }
-            checkout {
-                ...CheckoutFragment
-            }
-        }
-    }
-    ${checkoutUserErrorFragment}
-    ${checkoutFragment}
+  contextOptions: ContextOptions
+}) => {
+  const contextParams = []
+  for (const key of Object.keys(contextOptions)) {
+    contextParams.push(
+      `${key}: ${contextOptions[key as keyof typeof contextOptions]}`
+    )
+  }
+
+  let inContext = ''
+  if (contextParams.length > 0) {
+    inContext = `@inContext(${contextParams.join()})`
+  }
+
+  return `
+  mutation checkoutCreate($input: CheckoutCreateInput!) ${inContext} {
+      checkoutCreate(input: $input) {
+          checkoutUserErrors {
+              ...CheckoutUserErrorFragment
+          }
+          checkout {
+              ...CheckoutFragment
+          }
+      }
+  }
+  ${checkoutUserErrorFragment}
+  ${checkoutFragment}
 `
+}
 
 export type CheckoutCreateMutationVariables = {
   input: {
