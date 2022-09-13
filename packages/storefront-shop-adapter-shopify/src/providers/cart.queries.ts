@@ -18,6 +18,7 @@ export const CheckoutFragment = `
                     title
                     quantity
                     variant {
+                        id
                         priceV2 {
                             amount
                             currencyCode
@@ -49,6 +50,7 @@ export type CheckoutFragmentData = {
         title: string
         quantity: number
         variant?: {
+          id: string
           priceV2: {
             amount: number
             currencyCode: number
@@ -89,22 +91,24 @@ export type CheckoutUserErrorFragmentData = {
 export const CheckoutCreateMutation = ({
   checkoutUserErrorFragment,
   checkoutFragment,
-  contextOptions,
+  contextOptions = {},
 }: {
   checkoutUserErrorFragment: string
   checkoutFragment: string
-  contextOptions: ContextOptions
+  contextOptions?: ContextOptions | null
 }) => {
-  const contextParams = []
-  for (const key of Object.keys(contextOptions)) {
-    contextParams.push(
-      `${key}: ${contextOptions[key as keyof typeof contextOptions]}`
-    )
-  }
-
   let inContext = ''
-  if (contextParams.length > 0) {
-    inContext = `@inContext(${contextParams.join()})`
+  if (contextOptions !== null) {
+    const contextParams = []
+    for (const key of Object.keys(contextOptions)) {
+      contextParams.push(
+        `${key}: ${contextOptions[key as keyof typeof contextOptions]}`
+      )
+    }
+
+    if (contextParams.length > 0) {
+      inContext = `@inContext(${contextParams.join()})`
+    }
   }
 
   return `

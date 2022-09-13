@@ -1,12 +1,14 @@
 import {
+  CartUpdateItemEvent,
   LocalStorageSsrSafe,
+  MakairaShopifyShopProviderCart,
   MakairaShopProvider,
-  MakairaShopProviderCart,
   MakairaShopProviderCheckout,
   MakairaShopProviderOptions,
   MakairaShopProviderReview,
   MakairaShopProviderUser,
   MakairaShopProviderWishlist,
+  MakairaUpdateItemFromCartResData,
 } from '@makaira/storefront-types'
 import { StorefrontShopAdapterShopifyCart } from './cart'
 import { StorefrontShopAdapterShopifyCheckout } from './checkout'
@@ -19,6 +21,8 @@ import {
   ContextOptions,
   FetchParameters,
   GraphqlResWithError,
+  MakairaUpdateContextOptionsInput,
+  ShopifyUpdateItemRaw,
 } from '../types'
 import { StorefrontShopAdapterShopifyReview } from './review'
 import { CheckoutFragment, CheckoutUserErrorFragment } from './cart.queries'
@@ -27,9 +31,10 @@ import {
   CustomerUserErrorFragment,
   UserErrorFragment,
 } from './user.queries'
+import { lineItemsToMakairaCartItems } from '../utils/lineItemsToMakairaCartItems'
 
 export class StorefrontShopAdapterShopify<
-    CartProviderType extends MakairaShopProviderCart = StorefrontShopAdapterShopifyCart,
+    CartProviderType extends MakairaShopifyShopProviderCart = StorefrontShopAdapterShopifyCart,
     CheckoutProviderType extends MakairaShopProviderCheckout = StorefrontShopAdapterShopifyCheckout,
     UserProviderType extends MakairaShopProviderUser = StorefrontShopAdapterShopifyUser,
     WishlistProviderType extends MakairaShopProviderWishlist = StorefrontShopAdapterShopifyWishlist,
@@ -99,7 +104,6 @@ export class StorefrontShopAdapterShopify<
         userErrorFragment:
           options.fragments?.userErrorFragment ?? UserErrorFragment,
       },
-      currency: options.currency ?? null,
       contextOptions: options.contextOptions ?? null,
     }
 
@@ -140,32 +144,10 @@ export class StorefrontShopAdapterShopify<
     return response.json()
   }
 
-  // public setCurrency(currency: string | null): void {
-  //   this.additionalOptions.currency = currency
-
-  //   if (currency === null) {
-  //     this.additionalOptions.storage.removeItem(
-  //       this.STORAGE_KEY_CHECKOUT_CURRENCY_ID
-  //     )
-  //   } else {
-  //     this.additionalOptions.storage.setItem(
-  //       this.STORAGE_KEY_CHECKOUT_CURRENCY_ID,
-  //       currency
-  //     )
-  //   }
-  // }
-
-  // public getCurrency(): string | null {
-  //   const storageCurrency = this.additionalOptions.storage.getItem(
-  //     this.STORAGE_KEY_CHECKOUT_CURRENCY_ID
-  //   )
-
-  //   if (storageCurrency) return storageCurrency
-
-  //   return this.additionalOptions.currency
-  // }
-
-  public setContextOptions(options: ContextOptions) {
+  public async setContextOptions(
+    options: ContextOptions,
+    lineItems: MakairaUpdateContextOptionsInput[] = []
+  ) {
     this.additionalOptions.contextOptions = options
 
     if (options === null) {
@@ -179,10 +161,41 @@ export class StorefrontShopAdapterShopify<
       )
     }
 
-    // this.cart.createCheckoutAndStoreId()
+    const responseCheckoutCreate = await this.cart.createCheckoutAndStoreId({
+      input: {
+        lineItems: lineItems.map((lineItem) => ({
+          quantity: lineItem.quantity,
+          variantId: lineItem.product.id,
+          customAttributes: lineItem.product.attributes,
+        })),
+      },
+    })
+
+    if (responseCheckoutCreate.error || !responseCheckoutCreate.data) {
+      return {
+        error: responseCheckoutCreate.error,
+        raw: {
+          checkoutCreate: responseCheckoutCreate.raw.createCheckout,
+        },
+      }
+    }
+
+    const data: MakairaUpdateItemFromCartResData = {
+      items: lineItemsToMakairaCartItems(
+        responseCheckoutCreate.data.checkout.lineItems
+      ),
+    }
+
+    const raw: ShopifyUpdateItemRaw = {
+      checkoutCreate: responseCheckoutCreate.raw.createCheckout,
+    }
+
+    this.dispatchEvent(new CartUpdateItemEvent<ShopifyUpdateItemRaw>(data, raw))
+
+    return { data, raw }
   }
 
-  public getContextOptions(): ContextOptions {
+  public getContextOptions(): ContextOptions | null | undefined {
     const storageContextOptions = this.additionalOptions.storage.getItem(
       this.STORAGE_KEY_CHECKOUT_OPTIONS
     )

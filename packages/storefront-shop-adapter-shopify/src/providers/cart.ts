@@ -5,10 +5,9 @@ import {
   MakairaAddItemToCart,
   MakairaAddItemToCartResData,
   MakairaGetCart,
-  MakairaGetCartResData,
   MakairaRemoveItemFromCart,
   MakairaRemoveItemFromCartResData,
-  MakairaShopProviderCart,
+  MakairaShopifyShopProviderCart,
   MakairaShopProviderInteractor,
   MakairaUpdateItemFromCart,
   MakairaUpdateItemFromCartResData,
@@ -25,7 +24,6 @@ import {
   CheckoutCreateMutation,
   CheckoutCreateMutationData,
   CheckoutCreateMutationVariables,
-  CheckoutFragmentData,
   CheckoutGetQuery,
   CheckoutGetQueryData,
   CheckoutGetQueryVariables,
@@ -40,9 +38,10 @@ import {
   CheckoutLineItemsUpdateMutationVariables,
   LineItemInput,
 } from './cart.queries'
+import { lineItemsToMakairaCartItems } from '../utils/lineItemsToMakairaCartItems'
 
 export class StorefrontShopAdapterShopifyCart
-  implements MakairaShopProviderCart
+  implements MakairaShopifyShopProviderCart
 {
   STORAGE_KEY_CHECKOUT_ID = 'makaira-shop-shopify-checkout-id'
 
@@ -68,7 +67,7 @@ export class StorefrontShopAdapterShopifyCart
 
         return {
           data: {
-            items: this.lineItemsToMakairaCartItems(
+            items: lineItemsToMakairaCartItems(
               createCheckoutResponse.data.checkout.lineItems
             ),
           },
@@ -113,7 +112,7 @@ export class StorefrontShopAdapterShopifyCart
 
       return {
         data: {
-          items: this.lineItemsToMakairaCartItems(
+          items: lineItemsToMakairaCartItems(
             responseGetCheckout.data.node.lineItems
           ),
         },
@@ -151,7 +150,7 @@ export class StorefrontShopAdapterShopifyCart
         }
 
         const data: MakairaAddItemToCartResData = {
-          items: this.lineItemsToMakairaCartItems(
+          items: lineItemsToMakairaCartItems(
             responseCheckoutCreate.data.checkout.lineItems
           ),
         }
@@ -208,7 +207,7 @@ export class StorefrontShopAdapterShopifyCart
       }
 
       const data: MakairaAddItemToCartResData = {
-        items: this.lineItemsToMakairaCartItems(
+        items: lineItemsToMakairaCartItems(
           responseCheckoutLineItemsAdd.data.checkoutLineItemsAdd.checkout
             .lineItems
         ),
@@ -254,7 +253,7 @@ export class StorefrontShopAdapterShopifyCart
         }
 
         const data: MakairaRemoveItemFromCartResData = {
-          items: this.lineItemsToMakairaCartItems(
+          items: lineItemsToMakairaCartItems(
             responseCheckoutCreate.data.checkout.lineItems
           ),
         }
@@ -312,7 +311,7 @@ export class StorefrontShopAdapterShopifyCart
       }
 
       const data: MakairaRemoveItemFromCartResData = {
-        items: this.lineItemsToMakairaCartItems(
+        items: lineItemsToMakairaCartItems(
           responseCheckoutLineItemsRemove.data.checkoutLineItemsRemove.checkout
             .lineItems
         ),
@@ -360,7 +359,7 @@ export class StorefrontShopAdapterShopifyCart
           }
 
           const data: MakairaUpdateItemFromCartResData = {
-            items: this.lineItemsToMakairaCartItems(
+            items: lineItemsToMakairaCartItems(
               responseCheckoutCreate.data.checkout.lineItems
             ),
           }
@@ -427,7 +426,7 @@ export class StorefrontShopAdapterShopifyCart
         }
 
         const data: MakairaUpdateItemFromCartResData = {
-          items: this.lineItemsToMakairaCartItems(
+          items: lineItemsToMakairaCartItems(
             responseCheckoutLineItemsUpdate.data.checkoutLineItemsUpdate
               .checkout.lineItems
           ),
@@ -452,9 +451,7 @@ export class StorefrontShopAdapterShopifyCart
     CheckoutCreateMutationData['checkoutCreate'],
     { createCheckout: GraphqlResWithError<CheckoutCreateMutationData> },
     Error
-  > = async ({ input }) => {
-    const variables = { input }
-
+  > = async (variables) => {
     const responseCreateCheckout = await this.mainAdapter.fetchFromShop<
       CheckoutCreateMutationData,
       CheckoutCreateMutationVariables
@@ -501,24 +498,6 @@ export class StorefrontShopAdapterShopifyCart
       data: responseCreateCheckout.data.checkoutCreate,
       raw: { createCheckout: responseCreateCheckout },
     }
-  }
-
-  private lineItemsToMakairaCartItems(
-    lineItems: CheckoutFragmentData['lineItems']
-  ): MakairaGetCartResData['items'] {
-    return lineItems.edges.map(({ node }) => ({
-      product: {
-        id: node.id,
-        images: node.variant?.product.featuredImage.url
-          ? [node.variant?.product.featuredImage.url]
-          : [],
-        price: node.variant?.priceV2.amount ?? 0,
-        title: node.title,
-        url: '', // TODO
-        attributes: node.customAttributes,
-      },
-      quantity: node.quantity,
-    }))
   }
 
   private transformToShopifyVariantId(productId: string) {
