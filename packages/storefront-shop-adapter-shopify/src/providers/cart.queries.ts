@@ -1,4 +1,4 @@
-import { StorefrontShopifyFragments } from '../types'
+import { ContextOptions, StorefrontShopifyFragments } from '../types'
 
 export type LineItemInput = {
   quantity: number
@@ -18,6 +18,7 @@ export const CheckoutFragment = `
                     title
                     quantity
                     variant {
+                        id
                         priceV2 {
                             amount
                             currencyCode
@@ -49,6 +50,7 @@ export type CheckoutFragmentData = {
         title: string
         quantity: number
         variant?: {
+          id: string
           priceV2: {
             amount: number
             currencyCode: number
@@ -89,23 +91,41 @@ export type CheckoutUserErrorFragmentData = {
 export const CheckoutCreateMutation = ({
   checkoutUserErrorFragment,
   checkoutFragment,
+  contextOptions = {},
 }: {
   checkoutUserErrorFragment: string
   checkoutFragment: string
-}) => `
-    mutation checkoutCreate($input: CheckoutCreateInput!) {
-        checkoutCreate(input: $input) {
-            checkoutUserErrors {
-                ...CheckoutUserErrorFragment
-            }
-            checkout {
-                ...CheckoutFragment
-            }
-        }
+  contextOptions?: ContextOptions | null
+}) => {
+  let inContext = ''
+  if (contextOptions !== null) {
+    const contextParams = []
+    for (const key of Object.keys(contextOptions)) {
+      contextParams.push(
+        `${key}: ${contextOptions[key as keyof typeof contextOptions]}`
+      )
     }
-    ${checkoutUserErrorFragment}
-    ${checkoutFragment}
+
+    if (contextParams.length > 0) {
+      inContext = `@inContext(${contextParams.join()})`
+    }
+  }
+
+  return `
+  mutation checkoutCreate($input: CheckoutCreateInput!) ${inContext} {
+      checkoutCreate(input: $input) {
+          checkoutUserErrors {
+              ...CheckoutUserErrorFragment
+          }
+          checkout {
+              ...CheckoutFragment
+          }
+      }
+  }
+  ${checkoutUserErrorFragment}
+  ${checkoutFragment}
 `
+}
 
 export type CheckoutCreateMutationVariables = {
   input: {

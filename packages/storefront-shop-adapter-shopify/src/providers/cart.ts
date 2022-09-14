@@ -5,10 +5,9 @@ import {
   MakairaAddItemToCart,
   MakairaAddItemToCartResData,
   MakairaGetCart,
-  MakairaGetCartResData,
   MakairaRemoveItemFromCart,
   MakairaRemoveItemFromCartResData,
-  MakairaShopProviderCart,
+  MakairaShopifyShopProviderCart,
   MakairaShopProviderInteractor,
   MakairaUpdateItemFromCart,
   MakairaUpdateItemFromCartResData,
@@ -25,7 +24,6 @@ import {
   CheckoutCreateMutation,
   CheckoutCreateMutationData,
   CheckoutCreateMutationVariables,
-  CheckoutFragmentData,
   CheckoutGetQuery,
   CheckoutGetQueryData,
   CheckoutGetQueryVariables,
@@ -40,9 +38,11 @@ import {
   CheckoutLineItemsUpdateMutationVariables,
   LineItemInput,
 } from './cart.queries'
+import { lineItemsToMakairaCartItems } from '../utils/lineItemsToMakairaCartItems'
+import { digest } from '../utils/digest'
 
 export class StorefrontShopAdapterShopifyCart
-  implements MakairaShopProviderCart
+  implements MakairaShopifyShopProviderCart
 {
   STORAGE_KEY_CHECKOUT_ID = 'makaira-shop-shopify-checkout-id'
 
@@ -68,7 +68,7 @@ export class StorefrontShopAdapterShopifyCart
 
         return {
           data: {
-            items: this.lineItemsToMakairaCartItems(
+            items: lineItemsToMakairaCartItems(
               createCheckoutResponse.data.checkout.lineItems
             ),
           },
@@ -76,7 +76,10 @@ export class StorefrontShopAdapterShopifyCart
         }
       }
 
-      const storedCheckoutId = this.getCheckoutId()
+      const shopInstanceIdentifier = await digest(
+        this.mainAdapter.additionalOptions.url
+      )
+      const storedCheckoutId = this.getCheckoutId(shopInstanceIdentifier)
 
       if (!storedCheckoutId) {
         return createCheckout({ input: {} })
@@ -113,7 +116,7 @@ export class StorefrontShopAdapterShopifyCart
 
       return {
         data: {
-          items: this.lineItemsToMakairaCartItems(
+          items: lineItemsToMakairaCartItems(
             responseGetCheckout.data.node.lineItems
           ),
         },
@@ -136,7 +139,10 @@ export class StorefrontShopAdapterShopifyCart
         },
       ]
 
-      const checkoutId = this.getCheckoutId()
+      const shopInstanceIdentifier = await digest(
+        this.mainAdapter.additionalOptions.url
+      )
+      const checkoutId = this.getCheckoutId(shopInstanceIdentifier)
 
       if (!checkoutId) {
         const responseCheckoutCreate = await this.createCheckoutAndStoreId({
@@ -151,7 +157,7 @@ export class StorefrontShopAdapterShopifyCart
         }
 
         const data: MakairaAddItemToCartResData = {
-          items: this.lineItemsToMakairaCartItems(
+          items: lineItemsToMakairaCartItems(
             responseCheckoutCreate.data.checkout.lineItems
           ),
         }
@@ -208,7 +214,7 @@ export class StorefrontShopAdapterShopifyCart
       }
 
       const data: MakairaAddItemToCartResData = {
-        items: this.lineItemsToMakairaCartItems(
+        items: lineItemsToMakairaCartItems(
           responseCheckoutLineItemsAdd.data.checkoutLineItemsAdd.checkout
             .lineItems
         ),
@@ -237,7 +243,10 @@ export class StorefrontShopAdapterShopifyCart
     Error
   > = async ({ input: { lineItemIds } }) => {
     try {
-      const checkoutId = this.getCheckoutId()
+      const shopInstanceIdentifier = await digest(
+        this.mainAdapter.additionalOptions.url
+      )
+      const checkoutId = this.getCheckoutId(shopInstanceIdentifier)
 
       if (!checkoutId) {
         const responseCheckoutCreate = await this.createCheckoutAndStoreId({
@@ -254,7 +263,7 @@ export class StorefrontShopAdapterShopifyCart
         }
 
         const data: MakairaRemoveItemFromCartResData = {
-          items: this.lineItemsToMakairaCartItems(
+          items: lineItemsToMakairaCartItems(
             responseCheckoutCreate.data.checkout.lineItems
           ),
         }
@@ -312,7 +321,7 @@ export class StorefrontShopAdapterShopifyCart
       }
 
       const data: MakairaRemoveItemFromCartResData = {
-        items: this.lineItemsToMakairaCartItems(
+        items: lineItemsToMakairaCartItems(
           responseCheckoutLineItemsRemove.data.checkoutLineItemsRemove.checkout
             .lineItems
         ),
@@ -335,7 +344,10 @@ export class StorefrontShopAdapterShopifyCart
   updateItem: MakairaUpdateItemFromCart<unknown, ShopifyUpdateItemRaw, Error> =
     async ({ input: { product, quantity } }) => {
       try {
-        const checkoutId = this.getCheckoutId()
+        const shopInstanceIdentifier = await digest(
+          this.mainAdapter.additionalOptions.url
+        )
+        const checkoutId = this.getCheckoutId(shopInstanceIdentifier)
 
         if (!checkoutId) {
           const responseCheckoutCreate = await this.createCheckoutAndStoreId({
@@ -360,7 +372,7 @@ export class StorefrontShopAdapterShopifyCart
           }
 
           const data: MakairaUpdateItemFromCartResData = {
-            items: this.lineItemsToMakairaCartItems(
+            items: lineItemsToMakairaCartItems(
               responseCheckoutCreate.data.checkout.lineItems
             ),
           }
@@ -427,7 +439,7 @@ export class StorefrontShopAdapterShopifyCart
         }
 
         const data: MakairaUpdateItemFromCartResData = {
-          items: this.lineItemsToMakairaCartItems(
+          items: lineItemsToMakairaCartItems(
             responseCheckoutLineItemsUpdate.data.checkoutLineItemsUpdate
               .checkout.lineItems
           ),
@@ -447,18 +459,12 @@ export class StorefrontShopAdapterShopifyCart
       }
     }
 
-  private createCheckoutAndStoreId: MakairaShopProviderInteractor<
+  public createCheckoutAndStoreId: MakairaShopProviderInteractor<
     CheckoutCreateMutationVariables['input'],
     CheckoutCreateMutationData['checkoutCreate'],
     { createCheckout: GraphqlResWithError<CheckoutCreateMutationData> },
     Error
-  > = async ({ input }) => {
-    const variables = { input }
-
-    if (this.mainAdapter.getCurrency() !== null) {
-      variables.input.presentmentCurrencyCode = this.mainAdapter.getCurrency()
-    }
-
+  > = async (variables) => {
     const responseCreateCheckout = await this.mainAdapter.fetchFromShop<
       CheckoutCreateMutationData,
       CheckoutCreateMutationVariables
@@ -469,6 +475,7 @@ export class StorefrontShopAdapterShopifyCart
         checkoutUserErrorFragment:
           this.mainAdapter.additionalOptions.fragments
             .checkoutUserErrorFragment,
+        contextOptions: this.mainAdapter.getContextOptions(),
       }),
       variables,
     })
@@ -498,30 +505,18 @@ export class StorefrontShopAdapterShopifyCart
       }
     }
 
-    this.setCheckoutId(responseCreateCheckout.data.checkoutCreate.checkout.id)
+    const shopInstanceIdentifier = await digest(
+      this.mainAdapter.additionalOptions.url
+    )
+    this.setCheckoutId(
+      responseCreateCheckout.data.checkoutCreate.checkout.id,
+      shopInstanceIdentifier
+    )
 
     return {
       data: responseCreateCheckout.data.checkoutCreate,
       raw: { createCheckout: responseCreateCheckout },
     }
-  }
-
-  private lineItemsToMakairaCartItems(
-    lineItems: CheckoutFragmentData['lineItems']
-  ): MakairaGetCartResData['items'] {
-    return lineItems.edges.map(({ node }) => ({
-      product: {
-        id: node.id,
-        images: node.variant?.product.featuredImage.url
-          ? [node.variant?.product.featuredImage.url]
-          : [],
-        price: node.variant?.priceV2.amount ?? 0,
-        title: node.title,
-        url: '', // TODO
-        attributes: node.customAttributes,
-      },
-      quantity: node.quantity,
-    }))
   }
 
   private transformToShopifyVariantId(productId: string) {
@@ -532,15 +527,15 @@ export class StorefrontShopAdapterShopifyCart
     return btoa(`gid://shopify/ProductVariant/${productId}`)
   }
 
-  private getCheckoutId() {
+  private getCheckoutId(instanceIdentifier: string) {
     return this.mainAdapter.additionalOptions.storage.getItem(
-      this.STORAGE_KEY_CHECKOUT_ID
+      `${this.STORAGE_KEY_CHECKOUT_ID}-${instanceIdentifier}`
     )
   }
 
-  private setCheckoutId(id: string) {
+  private setCheckoutId(id: string, instanceIdentifier: string) {
     return this.mainAdapter.additionalOptions.storage.setItem(
-      this.STORAGE_KEY_CHECKOUT_ID,
+      `${this.STORAGE_KEY_CHECKOUT_ID}-${instanceIdentifier}`,
       id
     )
   }

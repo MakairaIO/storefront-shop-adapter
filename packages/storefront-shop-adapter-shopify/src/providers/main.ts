@@ -1,12 +1,15 @@
 import {
+  CartUpdateItemEvent,
   LocalStorageSsrSafe,
+  MakairaShopifyShopProviderCart,
   MakairaShopProvider,
-  MakairaShopProviderCart,
   MakairaShopProviderCheckout,
+  MakairaShopProviderInteractor,
   MakairaShopProviderOptions,
   MakairaShopProviderReview,
   MakairaShopProviderUser,
   MakairaShopProviderWishlist,
+  MakairaUpdateItemFromCartResData,
 } from '@makaira/storefront-types'
 import { StorefrontShopAdapterShopifyCart } from './cart'
 import { StorefrontShopAdapterShopifyCheckout } from './checkout'
@@ -16,8 +19,11 @@ import { StorefrontShopAdapterShopifyWishlist } from './wishlist'
 import fetch from 'isomorphic-unfetch'
 import {
   AdditionalShopifyOptions,
+  ContextOptions,
   FetchParameters,
   GraphqlResWithError,
+  MakairaUpdateContextOptionsInput,
+  ShopifyUpdateItemRaw,
 } from '../types'
 import { StorefrontShopAdapterShopifyReview } from './review'
 import { CheckoutFragment, CheckoutUserErrorFragment } from './cart.queries'
@@ -26,9 +32,10 @@ import {
   CustomerUserErrorFragment,
   UserErrorFragment,
 } from './user.queries'
+import { lineItemsToMakairaCartItems } from '../utils/lineItemsToMakairaCartItems'
 
 export class StorefrontShopAdapterShopify<
-    CartProviderType extends MakairaShopProviderCart = StorefrontShopAdapterShopifyCart,
+    CartProviderType extends MakairaShopifyShopProviderCart = StorefrontShopAdapterShopifyCart,
     CheckoutProviderType extends MakairaShopProviderCheckout = StorefrontShopAdapterShopifyCheckout,
     UserProviderType extends MakairaShopProviderUser = StorefrontShopAdapterShopifyUser,
     WishlistProviderType extends MakairaShopProviderWishlist = StorefrontShopAdapterShopifyWishlist,
@@ -58,7 +65,7 @@ export class StorefrontShopAdapterShopify<
     fragments: Required<AdditionalShopifyOptions['fragments']>
   }
 
-  STORAGE_KEY_CHECKOUT_CURRENCY_ID = 'makaira-shop-shopify-checkout-currency-id'
+  private STORAGE_KEY_CHECKOUT_OPTIONS = 'makaira-shop-shopify-checkout-options'
 
   constructor(
     options: MakairaShopProviderOptions<
@@ -98,7 +105,7 @@ export class StorefrontShopAdapterShopify<
         userErrorFragment:
           options.fragments?.userErrorFragment ?? UserErrorFragment,
       },
-      currency: options.currency ?? null,
+      contextOptions: options.contextOptions ?? null,
     }
 
     // @ts-expect-error https://stackoverflow.com/questions/56505560/how-to-fix-ts2322-could-be-instantiated-with-a-different-subtype-of-constraint
@@ -138,28 +145,65 @@ export class StorefrontShopAdapterShopify<
     return response.json()
   }
 
-  public setCurrency(currency: string | null): void {
-    this.additionalOptions.currency = currency
+  public setContextOptions: MakairaShopProviderInteractor<
+    MakairaUpdateContextOptionsInput,
+    MakairaUpdateItemFromCartResData,
+    ShopifyUpdateItemRaw
+  > = async ({ input: { options, lineItems = [] } }) => {
+    this.additionalOptions.contextOptions = options
 
-    if (currency === null) {
+    if (options === null) {
       this.additionalOptions.storage.removeItem(
-        this.STORAGE_KEY_CHECKOUT_CURRENCY_ID
+        this.STORAGE_KEY_CHECKOUT_OPTIONS
       )
     } else {
       this.additionalOptions.storage.setItem(
-        this.STORAGE_KEY_CHECKOUT_CURRENCY_ID,
-        currency
+        this.STORAGE_KEY_CHECKOUT_OPTIONS,
+        JSON.stringify(options)
       )
     }
+
+    const responseCheckoutCreate = await this.cart.createCheckoutAndStoreId({
+      input: {
+        lineItems: lineItems.map((lineItem) => ({
+          quantity: lineItem.quantity,
+          variantId: lineItem.product.id,
+          customAttributes: lineItem.product.attributes,
+        })),
+      },
+    })
+
+    if (responseCheckoutCreate.error || !responseCheckoutCreate.data) {
+      return {
+        error: responseCheckoutCreate.error,
+        raw: {
+          checkoutCreate: responseCheckoutCreate.raw.createCheckout,
+        },
+      }
+    }
+
+    const data: MakairaUpdateItemFromCartResData = {
+      items: lineItemsToMakairaCartItems(
+        responseCheckoutCreate.data.checkout.lineItems
+      ),
+    }
+
+    const raw: ShopifyUpdateItemRaw = {
+      checkoutCreate: responseCheckoutCreate.raw.createCheckout,
+    }
+
+    this.dispatchEvent(new CartUpdateItemEvent<ShopifyUpdateItemRaw>(data, raw))
+
+    return { data, raw }
   }
 
-  public getCurrency(): string | null {
-    const storageCurrency = this.additionalOptions.storage.getItem(
-      this.STORAGE_KEY_CHECKOUT_CURRENCY_ID
+  public getContextOptions(): ContextOptions | null | undefined {
+    const storageContextOptions = this.additionalOptions.storage.getItem(
+      this.STORAGE_KEY_CHECKOUT_OPTIONS
     )
 
-    if (storageCurrency) return storageCurrency
+    if (!storageContextOptions) return this.additionalOptions.contextOptions
 
-    return this.additionalOptions.currency
+    return JSON.parse(storageContextOptions) as ContextOptions
   }
 }

@@ -90,10 +90,32 @@ export type MakairaUpdateItemFromCart<
 >
 //#endregion
 
+//#region type definition: create-checkout-and-store-id
+export type MakairaCreateCheckoutAndStoreId<
+  AdditionalInput = any,
+  ResData = any,
+  ResRawData = any,
+  ResError extends Error = Error
+> = MakairaShopProviderInteractor<
+  AdditionalInput,
+  ResData,
+  ResRawData,
+  ResError
+>
+//#endregion
+
 //#region type definition: provider cart
 export type MakairaShopProviderCart = {
   addItem: MakairaAddItemToCart
   getCart: MakairaGetCart
   removeItem: MakairaRemoveItemFromCart
   updateItem: MakairaUpdateItemFromCart
+}
+
+export type MakairaShopifyShopProviderCart = {
+  addItem: MakairaAddItemToCart
+  getCart: MakairaGetCart
+  removeItem: MakairaRemoveItemFromCart
+  updateItem: MakairaUpdateItemFromCart
+  createCheckoutAndStoreId: MakairaCreateCheckoutAndStoreId
 }
