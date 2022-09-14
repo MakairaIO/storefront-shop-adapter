@@ -90,7 +90,7 @@ export type MakairaUpdateItemFromCart<
 >
 //#endregion
 
-//#region type definition: provider cart
+//#region type definition: create-checkout-and-store-id
 export type MakairaCreateCheckoutAndStoreId<
   AdditionalInput = any,
   ResData = any,
@@ -102,7 +102,9 @@ export type MakairaCreateCheckoutAndStoreId<
   ResRawData,
   ResError
 >
+//#endregion
 
+//#region type definition: provider cart
 export type MakairaShopProviderCart = {
   addItem: MakairaAddItemToCart
   getCart: MakairaGetCart

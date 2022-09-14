@@ -529,13 +529,13 @@ export class StorefrontShopAdapterShopifyCart
 
   private getCheckoutId(instanceIdentifier: string) {
     return this.mainAdapter.additionalOptions.storage.getItem(
-      this.STORAGE_KEY_CHECKOUT_ID + instanceIdentifier
+      `${this.STORAGE_KEY_CHECKOUT_ID}-${instanceIdentifier}`
     )
   }
 
   private setCheckoutId(id: string, instanceIdentifier: string) {
     return this.mainAdapter.additionalOptions.storage.setItem(
-      this.STORAGE_KEY_CHECKOUT_ID + instanceIdentifier,
+      `${this.STORAGE_KEY_CHECKOUT_ID}-${instanceIdentifier}`,
       id
     )
   }

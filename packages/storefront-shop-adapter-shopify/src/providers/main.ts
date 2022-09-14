@@ -4,6 +4,7 @@ import {
   MakairaShopifyShopProviderCart,
   MakairaShopProvider,
   MakairaShopProviderCheckout,
+  MakairaShopProviderInteractor,
   MakairaShopProviderOptions,
   MakairaShopProviderReview,
   MakairaShopProviderUser,
@@ -144,10 +145,11 @@ export class StorefrontShopAdapterShopify<
     return response.json()
   }
 
-  public async setContextOptions(
-    options: ContextOptions,
-    lineItems: MakairaUpdateContextOptionsInput[] = []
-  ) {
+  public setContextOptions: MakairaShopProviderInteractor<
+    MakairaUpdateContextOptionsInput,
+    MakairaUpdateItemFromCartResData,
+    ShopifyUpdateItemRaw
+  > = async ({ input: { options, lineItems = [] } }) => {
     this.additionalOptions.contextOptions = options
 
     if (options === null) {

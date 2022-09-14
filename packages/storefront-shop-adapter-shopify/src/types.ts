@@ -163,9 +163,18 @@ export type AdditionalShopifyOptions = {
     customerUserErrorFragment?: string
   }
   /**
-   * If set will change the `presentmentCurrencyCode` during the creation of a checkout.
-   * Sets the default value for client.getCurrency(string)
-   * Can be changed later on with client.setCurrency(string).
+   * <p>
+   * If set will change the `@inContext` graphql directive during the creation of a checkout.
+   * Can be used if you want to change the language or country of a checkout.
+   * The currency of the checkout will be determined by shopify from the country.
+   * <p/>
+   * <p>
+   * More information about the @inContext GraphQL directive at <a href="https://shopify.dev/changelog/storefront-api-incontext-directive-supports-languages">Shopify Docs</a>
+   * <p/>
+   * <p>
+   * Sets the default value for client.getContextOptions() <br />
+   * Can be changed later on with client.setContextOptions({ input: MakairaUpdateContextOptionsInput }).
+   * <p/>
    */
   contextOptions?: ContextOptions | null
 }
@@ -180,6 +189,9 @@ export type ContextOptions = Partial<
 >
 
 export type MakairaUpdateContextOptionsInput = {
-  product: { id: string; attributes?: { key: string; value?: string }[] }
-  quantity: number
+  lineItems?: {
+    product: { id: string; attributes?: { key: string; value?: string }[] }
+    quantity: number
+  }[]
+  options: ContextOptions
 }
