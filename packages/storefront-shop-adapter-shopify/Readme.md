@@ -61,17 +61,20 @@ declare module '@makaira/storefront-react' {
 | Argument | Required/Optional | Description | Type |
 | -------- | ----------------- | ----------- | ---- |
 
-| Argument                    | Required/Optional | Description                                                                                                                                                                                                                                                    | Type             |
-| --------------------------- | ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------- |
-| url                         | required          | The graphql storefront api url to made requests again.                                                                                                                                                                                                         | `string`         |
-| accessToken                 | required          | The graphql storefront api access token. This must have the following scopes: `unauthenticated_write_checkouts`, `unauthenticated_read_checkouts`,`unauthenticated_read_product_listings`, `unauthenticated_read_customers`, `unauthenticated_write_customers` | `string`         |
-| storage                     | optional          | A storage engine for persisting data. This is by default the `LocalStorage` that is working in SSR. On Server Side every read and write will not be performed but not creates an error.                                                                        | `MakairaStorage` |
-| fragments                   | optional          | An object to overwrite the used fragments to customize the the responsed raw data. See for more details [here](#customize-used-fragments).                                                                                                                     | `object`         |
-| - checkoutFragment          | optional          | Fragment for the shopify `Checkout` object                                                                                                                                                                                                                     | `string`         |
-| - checkoutUserErrorFragment | optional          | Fragment for the shopify `CheckoutUserError` object                                                                                                                                                                                                            | `string`         |
-| - customerFragment          | optional          | Fragment for the shopify `Customer` object                                                                                                                                                                                                                     | `string`         |
-| - userErrorFragment         | optional          | Fragment for the shopify `UserError` object                                                                                                                                                                                                                    | `string`         |
-| - customerUserErrorFragment | optional          | Fragment for the shopify `CustomerUserError` object                                                                                                                                                                                                            | `string`         |
+| Argument                    | Required/Optional | Description                                                                                                                                                                                                                                                    | Type                                                                                       |
+| --------------------------- | ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| url                         | required          | The graphql storefront api url to made requests again.                                                                                                                                                                                                         | `string`                                                                                   |
+| accessToken                 | required          | The graphql storefront api access token. This must have the following scopes: `unauthenticated_write_checkouts`, `unauthenticated_read_checkouts`,`unauthenticated_read_product_listings`, `unauthenticated_read_customers`, `unauthenticated_write_customers` | `string`                                                                                   |
+| storage                     | optional          | A storage engine for persisting data. This is by default the `LocalStorage` that is working in SSR. On Server Side every read and write will not be performed but not creates an error.                                                                        | `MakairaStorage`                                                                           |
+| fragments                   | optional          | An object to overwrite the used fragments to customize the the responsed raw data. See for more details [here](#customize-used-fragments).                                                                                                                     | `object`                                                                                   |
+| - checkoutFragment          | optional          | Fragment for the shopify `Checkout` object                                                                                                                                                                                                                     | `string`                                                                                   |
+| - checkoutUserErrorFragment | optional          | Fragment for the shopify `CheckoutUserError` object                                                                                                                                                                                                            | `string`                                                                                   |
+| - customerFragment          | optional          | Fragment for the shopify `Customer` object                                                                                                                                                                                                                     | `string`                                                                                   |
+| - userErrorFragment         | optional          | Fragment for the shopify `UserError` object                                                                                                                                                                                                                    | `string`                                                                                   |
+| - customerUserErrorFragment | optional          | Fragment for the shopify `CustomerUserError` object                                                                                                                                                                                                            | `string`                                                                                   |
+| contextOptions              | optional          | An objective to override the context in which the checkout will be created.                                                                                                                                                                                    | `object`                                                                                   |
+| - country                   | optional          | The country of the customer in which the checkout will be created.                                                                                                                                                                                             | `CountryCode` [Shopify-Docs](https://shopify.dev/api/storefront/2022-07/enums/CountryCode) |
+| - language                  | optional          | The language in which the checkout will be created.                                                                                                                                                                                                            | `string`                                                                                   |
 
 ## Feature map
 
@@ -400,3 +403,43 @@ declare module '@makaira/storefront-shop-adapter-shopify' {
   }
 }
 ```
+
+## Update language and country of checkout
+
+The `StorefrontShopAdapterShopify` exposes for changing the country and language of a checkout this method
+
+```typescript
+setContextOptions({
+  input: {
+    options: { country: '', language: '' },
+    lineItems: [],
+  },
+})
+```
+
+When this method is called a new checkout will the provided options will be created.
+Additionally, the options are stored in the localStorage so that after a reload of the page the options are still available.
+
+You can also provide the lineItems to be added to the new checkout so that they won't get lost.
+
+Example: Updating the checkout to use english as language and Great Britain as country whilst the checkout items survive.
+
+```typescript
+const { client } = useShopClient()
+const { cart } = useShopCart()
+
+function updateContext() {
+  client.setContextOptions({
+    input: {
+      options: {
+        country: 'GB',
+        language: 'EN',
+      },
+      lineItems: cart.items,
+    },
+  })
+}
+```
+
+The correct country codes can be found at the [Shopify Documentation](https://shopify.dev/api/storefront/2022-07/enums/CountryCode)
+The same applies to the [language codes](https://shopify.dev/api/storefront/2022-07/enums/LanguageCode)
