@@ -1,6 +1,6 @@
 {
   "name": "@makaira/storefront-shop-adapter-plentymarkets",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Contains the makaira plentymarkets shop adapter to connect your storefront with your plentymarkets shop",
   "main": "./dist/esm/index.js",
   "typings": "./dist/types/index.d.ts",
