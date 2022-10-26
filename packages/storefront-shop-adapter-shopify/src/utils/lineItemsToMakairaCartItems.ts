@@ -7,8 +7,8 @@ export function lineItemsToMakairaCartItems(
   return lineItems.edges.map(({ node }) => ({
     product: {
       id: node.variant?.id ?? '',
-      images: node.variant?.product.featuredImage.url
-        ? [node.variant?.product.featuredImage.url]
+      images: node.variant?.product.featuredImage?.url
+        ? [node.variant?.product.featuredImage?.url]
         : [],
       price: node.variant?.priceV2.amount ?? 0,
       title: node.title,
