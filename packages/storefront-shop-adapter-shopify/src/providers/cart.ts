@@ -110,7 +110,10 @@ export class StorefrontShopAdapterShopifyCart
         }
       }
 
-      if (responseGetCheckout.data.node.completedAt) {
+      if (
+        responseGetCheckout.data.node == null ||
+        responseGetCheckout.data.node.completedAt
+      ) {
         return createCheckout({ input: {} })
       }
 
