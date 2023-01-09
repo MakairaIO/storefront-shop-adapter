@@ -92,6 +92,7 @@ export class StorefrontShopAdapterShopifyCart
         query: CheckoutGetQuery({
           checkoutFragment:
             this.mainAdapter.additionalOptions.fragments.checkoutFragment,
+          contextOptions: this.mainAdapter.getContextOptions(),
         }),
         variables: { id: storedCheckoutId },
       })
@@ -186,6 +187,7 @@ export class StorefrontShopAdapterShopifyCart
           checkoutUserErrorFragment:
             this.mainAdapter.additionalOptions.fragments
               .checkoutUserErrorFragment,
+          contextOptions: this.mainAdapter.getContextOptions(),
         }),
         variables: { checkoutId, lineItems },
       })
@@ -293,6 +295,7 @@ export class StorefrontShopAdapterShopifyCart
             checkoutUserErrorFragment:
               this.mainAdapter.additionalOptions.fragments
                 .checkoutUserErrorFragment,
+            contextOptions: this.mainAdapter.getContextOptions(),
           }),
           variables: { checkoutId, lineItemIds },
         })
@@ -402,6 +405,7 @@ export class StorefrontShopAdapterShopifyCart
               checkoutUserErrorFragment:
                 this.mainAdapter.additionalOptions.fragments
                   .checkoutUserErrorFragment,
+              contextOptions: this.mainAdapter.getContextOptions(),
             }),
             variables: {
               checkoutId,
