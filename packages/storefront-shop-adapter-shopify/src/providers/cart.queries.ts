@@ -1,3 +1,4 @@
+import { getInContextAnnotation } from '../utils/getInContextAnnotation'
 import { ContextOptions, StorefrontShopifyFragments } from '../types'
 
 export type LineItemInput = {
@@ -97,22 +98,10 @@ export const CheckoutCreateMutation = ({
   checkoutFragment: string
   contextOptions?: ContextOptions | null
 }) => {
-  let inContext = ''
-  if (contextOptions !== null) {
-    const contextParams = []
-    for (const key of Object.keys(contextOptions)) {
-      contextParams.push(
-        `${key}: ${contextOptions[key as keyof typeof contextOptions]}`
-      )
-    }
-
-    if (contextParams.length > 0) {
-      inContext = `@inContext(${contextParams.join()})`
-    }
-  }
+  const inContextAnnotation = getInContextAnnotation(contextOptions)
 
   return `
-  mutation checkoutCreate($input: CheckoutCreateInput!) ${inContext} {
+  mutation checkoutCreate($input: CheckoutCreateInput!) ${inContextAnnotation} {
       checkoutCreate(input: $input) {
           checkoutUserErrors {
               ...CheckoutUserErrorFragment
@@ -147,10 +136,12 @@ export type CheckoutCreateMutationData = {
 
 export const CheckoutGetQuery = ({
   checkoutFragment,
+  contextOptions = {},
 }: {
   checkoutFragment: string
+  contextOptions?: ContextOptions | null
 }) => `
-    query node($id: ID!) {
+    query node($id: ID!) ${getInContextAnnotation(contextOptions)} {
         node(id: $id) {
             ...CheckoutFragment
         }
@@ -173,11 +164,15 @@ export type CheckoutGetQueryData = {
 export const CheckoutLineItemsAddMutation = ({
   checkoutUserErrorFragment,
   checkoutFragment,
+  contextOptions = {},
 }: {
   checkoutUserErrorFragment: string
   checkoutFragment: string
+  contextOptions?: ContextOptions | null
 }) => `
-    mutation ($checkoutId: ID!, $lineItems: [CheckoutLineItemInput!]!) {
+    mutation ($checkoutId: ID!, $lineItems: [CheckoutLineItemInput!]!) ${getInContextAnnotation(
+      contextOptions
+    )} {
       checkoutLineItemsAdd(checkoutId: $checkoutId, lineItems: $lineItems) {
           checkoutUserErrors {
               ...CheckoutUserErrorFragment
@@ -210,11 +205,15 @@ export type CheckoutLineItemsAddMutationData = {
 export const CheckoutLineItemsRemoveMutation = ({
   checkoutUserErrorFragment,
   checkoutFragment,
+  contextOptions = {},
 }: {
   checkoutUserErrorFragment: string
   checkoutFragment: string
+  contextOptions?: ContextOptions | null
 }) => `
-mutation ($checkoutId: ID!, $lineItemIds: [ID!]!) {
+mutation ($checkoutId: ID!, $lineItemIds: [ID!]!) ${getInContextAnnotation(
+  contextOptions
+)} {
   checkoutLineItemsRemove(checkoutId: $checkoutId, lineItemIds: $lineItemIds) {
       checkoutUserErrors {
           ...CheckoutUserErrorFragment
@@ -247,11 +246,15 @@ export type CheckoutLineItemsRemoveMutationData = {
 export const CheckoutLineItemsUpdateMutation = ({
   checkoutUserErrorFragment,
   checkoutFragment,
+  contextOptions = {},
 }: {
   checkoutUserErrorFragment: string
   checkoutFragment: string
+  contextOptions?: ContextOptions | null
 }) => `
-mutation ($checkoutId: ID!, $lineItems: [CheckoutLineItemUpdateInput!]!) {
+mutation ($checkoutId: ID!, $lineItems: [CheckoutLineItemUpdateInput!]!) ${getInContextAnnotation(
+  contextOptions
+)} {
   checkoutLineItemsUpdate(checkoutId: $checkoutId, lineItems: $lineItems) {
       checkoutUserErrors {
           ...CheckoutUserErrorFragment
