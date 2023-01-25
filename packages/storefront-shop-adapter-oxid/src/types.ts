@@ -144,6 +144,7 @@ export type AdditionalInputLoginOxid = {
 
 export type AdditionalOxidOptions = {
   url: string
+  customPaths?: Partial<OxidPaths>
 }
 
 export type FetchParameters = {
@@ -154,4 +155,16 @@ export type FetchParameters = {
 export type FetchResponse<Response = any> = {
   response: Response
   status: number
+}
+
+export type OxidPaths = {
+  USER_LOGIN: string
+  USER_GET_CURRENT: string
+  USER_LOGOUT: string
+  CART_GET: string
+  CART_ADD: string
+  CART_REMOVE: string
+  CART_UPDATE: string
+  REVIEW_GET: string
+  REVIEW_CREATE: string
 }

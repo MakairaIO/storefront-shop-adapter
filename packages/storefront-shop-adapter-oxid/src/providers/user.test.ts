@@ -1,12 +1,12 @@
 import { rest } from 'msw'
 import { setupServer } from 'msw/node'
 import { StorefrontShopAdapterOxid } from './'
-import { USER_GET_CURRENT, USER_LOGIN, USER_LOGOUT } from '../paths'
 import {
   BadHttpStatusError,
   MakairaResponse,
   NotImplementedError,
 } from '@makaira/storefront-types'
+import { PATHS } from '../paths'
 
 const TARGET_HOST = 'https://example.com'
 // Will answer all requests with an error and correct error message
@@ -24,11 +24,11 @@ const userSuccessServer = setupServer(
     const pathWithSearch = req.url.pathname + '?' + req.url.searchParams
 
     switch (pathWithSearch) {
-      case USER_GET_CURRENT:
+      case PATHS.USER_GET_CURRENT:
         return res(
           context.json({ ...USER_OBJECT, additionalParameter: 'test123' })
         )
-      case USER_LOGIN: {
+      case PATHS.USER_LOGIN: {
         const successful =
           typeof req.body === 'string' &&
           JSON.parse(req.body).password === 'password123'
@@ -39,7 +39,7 @@ const userSuccessServer = setupServer(
 
         return res(context.json(responseData))
       }
-      case USER_LOGOUT:
+      case PATHS.USER_LOGOUT:
         return res(context.json({ success: true }))
       default:
         return res(context.status(500), context.json({}))
@@ -49,11 +49,11 @@ const userSuccessServer = setupServer(
     const pathWithSearch = req.url.pathname + '?' + req.url.searchParams
 
     switch (pathWithSearch) {
-      case USER_LOGIN:
+      case PATHS.USER_LOGIN:
         return res(context.json({ success: true }))
-      case USER_GET_CURRENT:
+      case PATHS.USER_GET_CURRENT:
         return res(context.status(403), context.json({ message: 'Forbidden' }))
-      case USER_LOGOUT:
+      case PATHS.USER_LOGOUT:
         return res(context.status(400), context.json({}))
       default:
         return res(context.status(500), context.json({}))
