@@ -103,9 +103,13 @@ export class StorefrontShopAdapterOxid<
     path,
     body = {},
   }: FetchParameters): Promise<FetchResponse<Response>> {
-    let requestUrl = this.additionalOptions.url
+    let requestUrl = this.additionalOptions.url ?? ''
 
-    if (!requestUrl?.endsWith('/') && !path.startsWith('/')) {
+    if (
+      !requestUrl?.endsWith('/') &&
+      !path.startsWith('/') &&
+      !this.additionalOptions.url
+    ) {
       requestUrl += '/'
     }
 

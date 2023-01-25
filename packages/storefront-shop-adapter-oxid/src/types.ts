@@ -143,7 +143,7 @@ export type AdditionalInputLoginOxid = {
 }
 
 export type AdditionalOxidOptions = {
-  url: string
+  url?: string
   customPaths?: Partial<OxidPaths>
 }
 
