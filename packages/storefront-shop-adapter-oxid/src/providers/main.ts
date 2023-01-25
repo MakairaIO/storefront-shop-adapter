@@ -13,8 +13,14 @@ import { StorefrontShopAdapterOxidUser } from './user'
 import { StorefrontShopAdapterOxidWishlist } from './wishlist'
 
 import fetch from 'isomorphic-unfetch'
-import { AdditionalOxidOptions, FetchParameters, FetchResponse } from '../types'
+import {
+  AdditionalOxidOptions,
+  FetchParameters,
+  FetchResponse,
+  OxidPaths,
+} from '../types'
 import { StorefrontShopAdapterOxidReview } from './review'
+import { PATHS } from '../paths'
 
 export class StorefrontShopAdapterOxid<
     CartProviderType extends MakairaShopProviderCart = StorefrontShopAdapterOxidCart,
@@ -45,6 +51,8 @@ export class StorefrontShopAdapterOxid<
 
   additionalOptions: AdditionalOxidOptions
 
+  paths: OxidPaths
+
   constructor(
     options: MakairaShopProviderOptions<
       CartProviderType,
@@ -67,6 +75,12 @@ export class StorefrontShopAdapterOxid<
 
     this.additionalOptions = {
       url: options.url,
+      customPaths: options.customPaths,
+    }
+
+    this.paths = {
+      ...PATHS,
+      ...this.additionalOptions.customPaths,
     }
 
     // @ts-expect-error https://stackoverflow.com/questions/56505560/how-to-fix-ts2322-could-be-instantiated-with-a-different-subtype-of-constraint
@@ -89,9 +103,13 @@ export class StorefrontShopAdapterOxid<
     path,
     body = {},
   }: FetchParameters): Promise<FetchResponse<Response>> {
-    let requestUrl = this.additionalOptions.url
+    let requestUrl = this.additionalOptions.url ?? ''
 
-    if (!requestUrl?.endsWith('/') && !path.startsWith('/')) {
+    if (
+      !requestUrl?.endsWith('/') &&
+      !path.startsWith('/') &&
+      !this.additionalOptions.url
+    ) {
       requestUrl += '/'
     }
 

@@ -10,7 +10,6 @@ import {
   MakairaUpdateItemFromCart,
 } from '@makaira/storefront-types'
 import { StorefrontShopAdapterOxid } from './main'
-import { CART_ADD, CART_GET, CART_REMOVE, CART_UPDATE } from '../paths'
 import {
   OxidAddItemRaw,
   OxidAddItemRes,
@@ -29,7 +28,7 @@ export class StorefrontShopAdapterOxidCart implements MakairaShopProviderCart {
     try {
       const { response, status } =
         await this.mainAdapter.fetchFromShop<OxidGetCartRes>({
-          path: CART_GET,
+          path: this.mainAdapter.paths.CART_GET,
         })
 
       if (status !== 200 || !Array.isArray(response)) {
@@ -65,7 +64,7 @@ export class StorefrontShopAdapterOxidCart implements MakairaShopProviderCart {
     try {
       const { response, status } =
         await this.mainAdapter.fetchFromShop<OxidAddItemRes>({
-          path: CART_ADD,
+          path: this.mainAdapter.paths.CART_ADD,
           body: {
             product_id: product.id,
             amount: quantity,
@@ -117,7 +116,7 @@ export class StorefrontShopAdapterOxidCart implements MakairaShopProviderCart {
       try {
         const { response, status } =
           await this.mainAdapter.fetchFromShop<OxidRemoveItemRes>({
-            path: CART_REMOVE,
+            path: this.mainAdapter.paths.CART_REMOVE,
             body: {
               cart_item_id: product.id,
             },
@@ -168,7 +167,7 @@ export class StorefrontShopAdapterOxidCart implements MakairaShopProviderCart {
       try {
         const { response, status } =
           await this.mainAdapter.fetchFromShop<OxidUpdateItemRes>({
-            path: CART_UPDATE,
+            path: this.mainAdapter.paths.CART_UPDATE,
             body: {
               cart_item_id: product.id,
               amount: quantity,

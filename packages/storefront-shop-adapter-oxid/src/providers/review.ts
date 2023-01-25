@@ -7,7 +7,6 @@ import {
   ReviewCreateEvent,
 } from '@makaira/storefront-types'
 import { StorefrontShopAdapterOxid } from './main'
-import { REVIEW_GET, REVIEW_CREATE } from '../paths'
 import {
   OxidCreateReviewRaw,
   OxidCreateReviewRes,
@@ -31,7 +30,7 @@ export class StorefrontShopAdapterOxidReview
     try {
       const { response, status } =
         await this.mainAdapter.fetchFromShop<OxidGetReviewsRes>({
-          path: REVIEW_GET,
+          path: this.mainAdapter.paths.REVIEW_GET,
           body: {
             id: product.id,
             limit: paginationWithDefaults.limit,
@@ -73,7 +72,7 @@ export class StorefrontShopAdapterOxidReview
       try {
         const { response, status } =
           await this.mainAdapter.fetchFromShop<OxidCreateReviewRes>({
-            path: REVIEW_CREATE,
+            path: this.mainAdapter.paths.REVIEW_CREATE,
             body: {
               product_id: review.product.id,
               rating: review.rating,

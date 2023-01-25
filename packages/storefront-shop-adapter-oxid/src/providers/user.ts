@@ -11,7 +11,6 @@ import {
   UserLogoutEvent,
 } from '@makaira/storefront-types'
 import { StorefrontShopAdapterOxid } from './main'
-import { USER_GET_CURRENT, USER_LOGIN, USER_LOGOUT } from '../paths'
 import {
   AdditionalInputLoginOxid,
   OxidGetUserRaw,
@@ -27,12 +26,20 @@ export class StorefrontShopAdapterOxidUser implements MakairaShopProviderUser {
   constructor(private mainAdapter: StorefrontShopAdapterOxid) {}
 
   login: MakairaLogin<AdditionalInputLoginOxid, OxidLoginRaw, Error> = async ({
-    input: { password, username, rememberLogin },
+    input: { password, username, rememberLogin = false },
   }) => {
     try {
+      console.log({
+        body: {
+          password,
+          username,
+          rememberLogin,
+        },
+      })
+
       const { response, status } =
         await this.mainAdapter.fetchFromShop<OxidLoginRes>({
-          path: USER_LOGIN,
+          path: this.mainAdapter.paths.USER_LOGIN,
           body: {
             password,
             username,
@@ -88,7 +95,7 @@ export class StorefrontShopAdapterOxidUser implements MakairaShopProviderUser {
     try {
       const { response, status } =
         await this.mainAdapter.fetchFromShop<OxidLogoutRes>({
-          path: USER_LOGOUT,
+          path: this.mainAdapter.paths.USER_LOGOUT,
         })
 
       if (status !== 200) {
@@ -120,7 +127,7 @@ export class StorefrontShopAdapterOxidUser implements MakairaShopProviderUser {
     try {
       const { response, status } =
         await this.mainAdapter.fetchFromShop<OxidGetUserRes>({
-          path: USER_GET_CURRENT,
+          path: this.mainAdapter.paths.USER_GET_CURRENT,
         })
 
       // oxid returns an 403 if no user is logged in. Therefore
