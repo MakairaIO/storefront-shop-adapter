@@ -119,7 +119,9 @@ _No additional properties_
 
 #### updateItem
 
-_No additional properties_
+| Property   | Required/Optional | Description                                                                                                                                                                                            | Type     |
+| ---------- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------- |
+| lineItemId | required          | In Shopify it is not possible to update a product in the shopping cart only by its variantId. Instead both IDs are required. The `lineItemId` can be accessed through the `raw` property on `getCart`. | `string` |
 
 ### Review
 
