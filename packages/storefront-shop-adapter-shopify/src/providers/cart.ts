@@ -347,124 +347,128 @@ export class StorefrontShopAdapterShopifyCart
     }
   }
 
-  updateItem: MakairaUpdateItemFromCart<unknown, ShopifyUpdateItemRaw, Error> =
-    async ({ input: { product, quantity } }) => {
-      try {
-        const shopInstanceIdentifier = await digest(
-          this.mainAdapter.additionalOptions.url
-        )
-        const checkoutId = this.getCheckoutId(shopInstanceIdentifier)
+  updateItem: MakairaUpdateItemFromCart<
+    { lineItemId: string },
+    ShopifyUpdateItemRaw,
+    Error
+  > = async ({ input: { product, quantity, lineItemId } }) => {
+    try {
+      const shopInstanceIdentifier = await digest(
+        this.mainAdapter.additionalOptions.url
+      )
+      const checkoutId = this.getCheckoutId(shopInstanceIdentifier)
 
-        if (!checkoutId) {
-          const responseCheckoutCreate = await this.createCheckoutAndStoreId({
-            input: {
-              lineItems: [
-                {
-                  quantity,
-                  variantId: this.transformToShopifyVariantId(product.id),
-                  customAttributes: product.attributes,
-                },
-              ],
-            },
-          })
-
-          if (responseCheckoutCreate.error || !responseCheckoutCreate.data) {
-            return {
-              error: responseCheckoutCreate.error,
-              raw: {
-                checkoutCreate: responseCheckoutCreate.raw.createCheckout,
+      if (!checkoutId) {
+        const responseCheckoutCreate = await this.createCheckoutAndStoreId({
+          input: {
+            lineItems: [
+              {
+                quantity,
+                variantId: this.transformToShopifyVariantId(product.id),
+                customAttributes: product.attributes,
               },
-            }
-          }
+            ],
+          },
+        })
 
-          const data: MakairaUpdateItemFromCartResData = {
-            items: lineItemsToMakairaCartItems(
-              responseCheckoutCreate.data.checkout.lineItems
-            ),
-          }
-
-          const raw: ShopifyUpdateItemRaw = {
-            checkoutCreate: responseCheckoutCreate.raw.createCheckout,
-          }
-
-          this.mainAdapter.dispatchEvent(
-            new CartUpdateItemEvent<ShopifyUpdateItemRaw>(data, raw)
-          )
-
-          return { data, raw }
-        }
-
-        const responseCheckoutLineItemsUpdate =
-          await this.mainAdapter.fetchFromShop<
-            CheckoutLineItemsUpdateMutationData,
-            CheckoutLineItemsUpdateMutationVariables
-          >({
-            query: CheckoutLineItemsUpdateMutation({
-              checkoutFragment:
-                this.mainAdapter.additionalOptions.fragments.checkoutFragment,
-              checkoutUserErrorFragment:
-                this.mainAdapter.additionalOptions.fragments
-                  .checkoutUserErrorFragment,
-              contextOptions: this.mainAdapter.getContextOptions(),
-            }),
-            variables: {
-              checkoutId,
-              lineItems: [
-                {
-                  variantId: this.transformToShopifyVariantId(product.id),
-                  customAttributes: product.attributes,
-                  quantity,
-                },
-              ],
+        if (responseCheckoutCreate.error || !responseCheckoutCreate.data) {
+          return {
+            error: responseCheckoutCreate.error,
+            raw: {
+              checkoutCreate: responseCheckoutCreate.raw.createCheckout,
             },
-          })
-
-        if (responseCheckoutLineItemsUpdate.errors?.length) {
-          return {
-            raw: { checkoutLineItemsUpdate: responseCheckoutLineItemsUpdate },
-            error: new Error(responseCheckoutLineItemsUpdate.errors[0].message),
-          }
-        }
-
-        if (!responseCheckoutLineItemsUpdate.data) {
-          return {
-            raw: { checkoutLineItemsUpdate: responseCheckoutLineItemsUpdate },
-            error: new Error('checkoutLineItemsUpdate is not defined'),
-          }
-        }
-
-        if (
-          responseCheckoutLineItemsUpdate.data.checkoutLineItemsUpdate
-            .checkoutUserErrors.length > 0
-        ) {
-          return {
-            raw: { checkoutLineItemsUpdate: responseCheckoutLineItemsUpdate },
-            error: new Error(
-              responseCheckoutLineItemsUpdate.data.checkoutLineItemsUpdate.checkoutUserErrors[0].message
-            ),
           }
         }
 
         const data: MakairaUpdateItemFromCartResData = {
           items: lineItemsToMakairaCartItems(
-            responseCheckoutLineItemsUpdate.data.checkoutLineItemsUpdate
-              .checkout.lineItems
+            responseCheckoutCreate.data.checkout.lineItems
           ),
         }
 
         const raw: ShopifyUpdateItemRaw = {
-          checkoutLineItemsUpdate: responseCheckoutLineItemsUpdate,
+          checkoutCreate: responseCheckoutCreate.raw.createCheckout,
         }
 
         this.mainAdapter.dispatchEvent(
           new CartUpdateItemEvent<ShopifyUpdateItemRaw>(data, raw)
         )
 
-        return { data, raw, error: undefined }
-      } catch (e) {
-        return { data: undefined, raw: {}, error: e as Error }
+        return { data, raw }
       }
+
+      const responseCheckoutLineItemsUpdate =
+        await this.mainAdapter.fetchFromShop<
+          CheckoutLineItemsUpdateMutationData,
+          CheckoutLineItemsUpdateMutationVariables
+        >({
+          query: CheckoutLineItemsUpdateMutation({
+            checkoutFragment:
+              this.mainAdapter.additionalOptions.fragments.checkoutFragment,
+            checkoutUserErrorFragment:
+              this.mainAdapter.additionalOptions.fragments
+                .checkoutUserErrorFragment,
+            contextOptions: this.mainAdapter.getContextOptions(),
+          }),
+          variables: {
+            checkoutId,
+            lineItems: [
+              {
+                id: lineItemId,
+                variantId: this.transformToShopifyVariantId(product.id),
+                customAttributes: product.attributes,
+                quantity,
+              },
+            ],
+          },
+        })
+
+      if (responseCheckoutLineItemsUpdate.errors?.length) {
+        return {
+          raw: { checkoutLineItemsUpdate: responseCheckoutLineItemsUpdate },
+          error: new Error(responseCheckoutLineItemsUpdate.errors[0].message),
+        }
+      }
+
+      if (!responseCheckoutLineItemsUpdate.data) {
+        return {
+          raw: { checkoutLineItemsUpdate: responseCheckoutLineItemsUpdate },
+          error: new Error('checkoutLineItemsUpdate is not defined'),
+        }
+      }
+
+      if (
+        responseCheckoutLineItemsUpdate.data.checkoutLineItemsUpdate
+          .checkoutUserErrors.length > 0
+      ) {
+        return {
+          raw: { checkoutLineItemsUpdate: responseCheckoutLineItemsUpdate },
+          error: new Error(
+            responseCheckoutLineItemsUpdate.data.checkoutLineItemsUpdate.checkoutUserErrors[0].message
+          ),
+        }
+      }
+
+      const data: MakairaUpdateItemFromCartResData = {
+        items: lineItemsToMakairaCartItems(
+          responseCheckoutLineItemsUpdate.data.checkoutLineItemsUpdate.checkout
+            .lineItems
+        ),
+      }
+
+      const raw: ShopifyUpdateItemRaw = {
+        checkoutLineItemsUpdate: responseCheckoutLineItemsUpdate,
+      }
+
+      this.mainAdapter.dispatchEvent(
+        new CartUpdateItemEvent<ShopifyUpdateItemRaw>(data, raw)
+      )
+
+      return { data, raw, error: undefined }
+    } catch (e) {
+      return { data: undefined, raw: {}, error: e as Error }
     }
+  }
 
   public createCheckoutAndStoreId: MakairaShopProviderInteractor<
     CheckoutCreateMutationVariables['input'],
