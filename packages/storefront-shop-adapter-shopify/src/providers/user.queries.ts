@@ -8,6 +8,7 @@ export const CustomerFragment = `
         firstName
         lastName
         email
+        phone
     }
 `
 
@@ -16,6 +17,7 @@ export type CustomerFragmentData = {
   firstName?: string
   lastName?: string
   email?: string
+  phone?: string
 }
 
 //#endregion
@@ -168,6 +170,80 @@ export const CustomerQuery = ({
     query customer($customerAccessToken: String!){
         customer(customerAccessToken: $customerAccessToken) {
             ...CustomerFragment
+            orders(first: 50, sortKey: PROCESSED_AT, reverse: true) {
+              edges {
+                node {
+                  id
+                  name
+                  processedAt
+                  orderNumber
+                  cancelReason
+                  fulfillmentStatus
+                  totalShippingPriceV2{
+                    amount
+                    currencyCode
+                  }
+                  successfulFulfillments{
+                    trackingCompany
+                    trackingInfo{
+                      number
+                      url
+                    }
+                  }
+                  shippingAddress{
+                    city
+                    name
+                    zip
+                    address1
+                    
+                  }
+                  totalPriceV2 {
+                    amount
+                    currencyCode
+                  }
+                  financialStatus
+                  lineItems(first: 50) {
+                    edges {
+                      node {
+                        title
+                        quantity
+                        originalTotalPrice{
+                          amount
+                          currencyCode
+                        }
+                        variant {
+                          title
+                          id
+                          priceV2 {
+                            amount
+                            currencyCode
+                          }
+                          sku
+                          compareAtPriceV2 {
+                            amount
+                            currencyCode
+                          }
+                          product {
+                            id
+                            images(first: 1) {
+                              edges {
+                                node {
+                                  url
+                                }
+                              }
+                            }
+                          }
+                        }
+                        customAttributes {
+                          key
+                          value
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
         }
     }
     ${customerFragment}
@@ -210,4 +286,38 @@ export type CustomerRecoverMutationData = {
   }
 }
 
+//#endregion
+//#region update
+export const CustomerUpdateMutation = ({
+  customerFragment,
+  customerUserErrorFragment,
+}: {
+  customerFragment: string
+  customerUserErrorFragment: string
+}) => `
+    mutation customerUpdate($input: CustomerUpdateInput!,$customerAccessToken: String!){
+      customerUpdate(customer: $input,customerAccessToken: $customerAccessToken) {
+        customer {
+          ...CustomerFragment
+        }
+        customerUserErrors {
+            ...CustomerUserErrorFragment
+        }
+      }
+    }
+    ${customerUserErrorFragment}
+    ${customerFragment}
+`
+
+export type CustomerUpdateMutationVariables = {
+  input: { firstName: string; lastName: string; phone: string; email: string }
+  customerAccessToken: string
+}
+
+export type CustomerUpdateMutationData = {
+  customerUpdate: {
+    customer: StorefrontShopifyFragments['customerFragment']
+    customerUserErrors: StorefrontShopifyFragments['customerUserErrorFragment'][]
+  }
+}
 //#endregion

@@ -100,6 +100,30 @@ export type MakairaForgotPassword<
 >
 //#endregion
 
+//#region type definition: updateUser
+export type MakairaUpdateUserInput<AdditionalInput = unknown> = {
+  firstName: string
+  lastName: string
+  phone: string
+  email: string
+} & AdditionalInput
+
+export type MakairaUpdateUserResData = {
+  user: MakairaUser
+}
+
+export type MakairaUpdateUser<
+  AdditionalInput = any,
+  ResRawData = any,
+  ResError extends Error = Error
+> = MakairaShopProviderInteractor<
+  MakairaUpdateUserInput<AdditionalInput>,
+  MakairaUpdateUserResData,
+  ResRawData,
+  ResError
+>
+//#endregion
+
 //#region type definition: provider user
 export type MakairaShopProviderUser = {
   login: MakairaLogin
@@ -107,4 +131,5 @@ export type MakairaShopProviderUser = {
   signup: MakairaSignup
   getUser: MakairaGetUser
   forgotPassword: MakairaForgotPassword
+  update?: MakairaUpdateUser
 }

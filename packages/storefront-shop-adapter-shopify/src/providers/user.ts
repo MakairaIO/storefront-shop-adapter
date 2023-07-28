@@ -7,6 +7,7 @@ import {
   MakairaShopProviderUser,
   MakairaSignup,
   MakairaSignupResData,
+  MakairaUpdateUser,
   UserLoginEvent,
   UserLogoutEvent,
 } from '@makaira/storefront-types'
@@ -18,6 +19,7 @@ import {
   ShopifyLoginRaw,
   ShopifyLogoutRaw,
   ShopifySignupRaw,
+  ShopifyUpdateUserRaw,
 } from '../types'
 import {
   CustomerAccessTokenCreateMutation,
@@ -35,6 +37,9 @@ import {
   CustomerRecoverMutation,
   CustomerRecoverMutationData,
   CustomerRecoverMutationVariables,
+  CustomerUpdateMutation,
+  CustomerUpdateMutationData,
+  CustomerUpdateMutationVariables,
 } from './user.queries'
 
 export class StorefrontShopAdapterShopifyUser
@@ -300,6 +305,72 @@ export class StorefrontShopAdapterShopifyUser
           },
         },
         raw: { getUser: responseGetUser },
+        error: undefined,
+      }
+    } catch (e) {
+      return { data: undefined, raw: {}, error: e as Error }
+    }
+  }
+
+  update: MakairaUpdateUser<unknown, ShopifyUpdateUserRaw, Error> = async ({
+    input: { firstName, lastName, phone, email },
+  }) => {
+    try {
+      const { customerAccessToken } = this.getCustomerAccessToken()
+
+      if (!customerAccessToken) {
+        return { raw: {} }
+      }
+      const responseCustomerUpdate = await this.mainAdapter.fetchFromShop<
+        CustomerUpdateMutationData,
+        CustomerUpdateMutationVariables
+      >({
+        query: CustomerUpdateMutation({
+          customerFragment:
+            this.mainAdapter.additionalOptions.fragments.customerFragment,
+          customerUserErrorFragment:
+            this.mainAdapter.additionalOptions.fragments
+              .customerUserErrorFragment,
+        }),
+        variables: {
+          input: {
+            firstName: firstName,
+            lastName: lastName,
+            phone: phone,
+            email: email,
+          },
+          customerAccessToken: customerAccessToken,
+        },
+      })
+
+      if (responseCustomerUpdate.errors?.length) {
+        return {
+          raw: { update: responseCustomerUpdate },
+          error: new Error(responseCustomerUpdate.errors[0].message),
+        }
+      }
+
+      if (!responseCustomerUpdate.data) {
+        return {
+          raw: { update: responseCustomerUpdate },
+          error: new Error('customerUpdate is not defined'),
+        }
+      }
+
+      if (
+        responseCustomerUpdate.data.customerUpdate.customerUserErrors.length > 0
+      ) {
+        return {
+          raw: { updateUser: responseCustomerUpdate },
+          error: new Error(
+            responseCustomerUpdate.data.customerUpdate.customerUserErrors[0].message
+          ),
+        }
+      }
+
+      return {
+        raw: { updateUser: responseCustomerUpdate },
+        data: undefined,
         error: undefined,
       }
     } catch (e) {
