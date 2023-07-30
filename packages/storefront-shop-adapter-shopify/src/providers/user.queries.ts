@@ -339,13 +339,10 @@ export const CustomerActivateMutation = ({
       mutation customerActivate($activationUrl: URL!, $password:String!){
         customerActivateByUrl(activationUrl: $activationUrl, password:$password){
           customer {
-            id
-            email
+            ...CustomerFragment
           }
           customerUserErrors{
-            code
-            field
-            message
+            ...CustomerUserErrorFragment
           }
         }
       }
@@ -359,6 +356,43 @@ export type CustomerActivateMutationVariables = {
 
 export type CustomerActivateMutationData = {
   customerActivate: {
+    customer: StorefrontShopifyFragments['customerFragment']
+    customerUserErrors: StorefrontShopifyFragments['customerUserErrorFragment'][]
+  }
+}
+
+//#endregion
+
+//#region updatePassword
+
+export const PasswordUpdateMutation = ({
+  customerFragment,
+  customerUserErrorFragment,
+}: {
+  customerFragment: string
+  customerUserErrorFragment: string
+}) => `
+    mutation customerUpdate($input: CustomerUpdateInput!,$customerAccessToken: String!){
+      customerUpdate(customer: $input,customerAccessToken: $customerAccessToken) {
+        customer {
+          ...CustomerFragment
+        }
+        customerUserErrors {
+            ...CustomerUserErrorFragment
+        }
+      }
+    }
+    ${customerUserErrorFragment}
+    ${customerFragment}
+`
+
+export type PasswordUpdateMutationVariables = {
+  input: { password: string }
+  customerAccessToken: string
+}
+
+export type PasswordUpdateMutationData = {
+  passwordUpdate: {
     customer: StorefrontShopifyFragments['customerFragment']
     customerUserErrors: StorefrontShopifyFragments['customerUserErrorFragment'][]
   }

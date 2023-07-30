@@ -8,6 +8,7 @@ import {
   MakairaShopProviderUser,
   MakairaSignup,
   MakairaSignupResData,
+  MakairaUpdatePassword,
   MakairaUpdateUser,
   UserLoginEvent,
   UserLogoutEvent,
@@ -21,6 +22,7 @@ import {
   ShopifyLoginRaw,
   ShopifyLogoutRaw,
   ShopifySignupRaw,
+  ShopifyUpdatePasswordRaw,
   ShopifyUpdateUserRaw,
 } from '../types'
 import {
@@ -45,6 +47,9 @@ import {
   CustomerUpdateMutation,
   CustomerUpdateMutationData,
   CustomerUpdateMutationVariables,
+  PasswordUpdateMutation,
+  PasswordUpdateMutationData,
+  PasswordUpdateMutationVariables,
 } from './user.queries'
 
 export class StorefrontShopAdapterShopifyUser
@@ -442,6 +447,51 @@ export class StorefrontShopAdapterShopifyUser
 
       return {
         raw: { updateUser: responseCustomerUpdate },
+        data: undefined,
+        error: undefined,
+      }
+    } catch (e) {
+      return { data: undefined, raw: {}, error: e as Error }
+    }
+  }
+
+  updatePassword: MakairaUpdatePassword<
+    unknown,
+    ShopifyUpdatePasswordRaw,
+    Error
+  > = async ({ input: { password } }) => {
+    try {
+      const { customerAccessToken } = this.getCustomerAccessToken()
+
+      if (!customerAccessToken) {
+        return { raw: {} }
+      }
+      const responsePasswordUpdate = await this.mainAdapter.fetchFromShop<
+        PasswordUpdateMutationData,
+        PasswordUpdateMutationVariables
+      >({
+        query: PasswordUpdateMutation({
+          customerFragment:
+            this.mainAdapter.additionalOptions.fragments.customerFragment,
+          customerUserErrorFragment:
+            this.mainAdapter.additionalOptions.fragments
+              .customerUserErrorFragment,
+        }),
+        variables: {
+          input: { password: password },
+          customerAccessToken: customerAccessToken,
+        },
+      })
+
+      if (responsePasswordUpdate.errors?.length) {
+        return {
+          raw: { update: responsePasswordUpdate },
+          error: new Error(responsePasswordUpdate.errors[0].message),
+        }
+      }
+
+      return {
+        raw: { updatePassword: responsePasswordUpdate },
         data: undefined,
         error: undefined,
       }

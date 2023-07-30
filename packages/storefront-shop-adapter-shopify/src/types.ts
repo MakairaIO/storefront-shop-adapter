@@ -18,6 +18,7 @@ import {
   CustomerRecoverMutationData,
   CustomerUpdateMutationData,
   CustomerUserErrorFragmentData,
+  PasswordUpdateMutationData,
   UserErrorFragmentData,
 } from './providers/user.queries'
 
@@ -139,6 +140,12 @@ export type ShopifyForgotPasswordRaw = {
 //#region update method
 export type ShopifyUpdateUserRaw = {
   update?: GraphqlResWithError<CustomerUpdateMutationData>
+}
+//endregion
+
+//#region updatePassword method
+export type ShopifyUpdatePasswordRaw = {
+  update?: GraphqlResWithError<PasswordUpdateMutationData>
 }
 //endregion
 
