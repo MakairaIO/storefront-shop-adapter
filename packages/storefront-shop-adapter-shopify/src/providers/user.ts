@@ -1,4 +1,5 @@
 import {
+  MakairaActivateUser,
   MakairaForgotPassword,
   MakairaGetUser,
   MakairaLogin,
@@ -14,6 +15,7 @@ import {
 import { StorefrontShopAdapterShopify } from './main'
 import {
   GraphqlResWithError,
+  ShopifyActivateUserRaw,
   ShopifyForgotPasswordRaw,
   ShopifyGetUserRaw,
   ShopifyLoginRaw,
@@ -28,6 +30,9 @@ import {
   CustomerAccessTokenDeleteMutation,
   CustomerAccessTokenDeleteMutationData,
   CustomerAccessTokenDeleteMutationVariables,
+  CustomerActivateMutation,
+  CustomerActivateMutationData,
+  CustomerActivateMutationVariables,
   CustomerCreateMutation,
   CustomerCreateMutationData,
   CustomerCreateMutationVariables,
@@ -273,6 +278,66 @@ export class StorefrontShopAdapterShopifyUser
       return { raw: {}, error: e as Error }
     }
   }
+  activate: MakairaActivateUser<unknown, ShopifyActivateUserRaw, Error> =
+    async ({ input: { activationUrl, password } }) => {
+      try {
+        const { customerAccessToken } = this.getCustomerAccessToken()
+
+        if (!customerAccessToken) {
+          return { raw: {} }
+        }
+        const responseCustomerActivate = await this.mainAdapter.fetchFromShop<
+          CustomerActivateMutationData,
+          CustomerActivateMutationVariables
+        >({
+          query: CustomerActivateMutation({
+            customerFragment:
+              this.mainAdapter.additionalOptions.fragments.customerFragment,
+            customerUserErrorFragment:
+              this.mainAdapter.additionalOptions.fragments
+                .customerUserErrorFragment,
+          }),
+          variables: {
+            activationUrl: activationUrl,
+            password: password,
+          },
+        })
+
+        if (responseCustomerActivate.errors?.length) {
+          return {
+            raw: { update: responseCustomerActivate },
+            error: new Error(responseCustomerActivate.errors[0].message),
+          }
+        }
+
+        if (!responseCustomerActivate.data) {
+          return {
+            raw: { activate: responseCustomerActivate },
+            error: new Error('customerUpdate is not defined'),
+          }
+        }
+
+        if (
+          responseCustomerActivate.data.customerActivate.customerUserErrors
+            .length > 0
+        ) {
+          return {
+            raw: { activateUser: responseCustomerActivate },
+            error: new Error(
+              responseCustomerActivate.data.customerActivate.customerUserErrors[0].message
+            ),
+          }
+        }
+
+        return {
+          raw: { activateUser: responseCustomerActivate },
+          data: undefined,
+          error: undefined,
+        }
+      } catch (e) {
+        return { data: undefined, raw: {}, error: e as Error }
+      }
+    }
 
   getUser: MakairaGetUser<unknown, ShopifyGetUserRaw, Error> = async () => {
     try {

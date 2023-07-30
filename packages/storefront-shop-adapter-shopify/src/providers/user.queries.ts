@@ -326,3 +326,42 @@ export type CustomerUpdateMutationData = {
   }
 }
 //#endregion
+
+//#region activateCustomer
+
+export const CustomerActivateMutation = ({
+  customerFragment,
+  customerUserErrorFragment,
+}: {
+  customerFragment: string
+  customerUserErrorFragment: string
+}) => `
+      mutation customerActivate($activationUrl: URL!, $password:String!){
+        customerActivateByUrl(activationUrl: $activationUrl, password:$password){
+          customer {
+            id
+            email
+          }
+          customerUserErrors{
+            code
+            field
+            message
+          }
+        }
+      }
+    ${customerUserErrorFragment}
+    ${customerFragment}
+    `
+export type CustomerActivateMutationVariables = {
+  activationUrl: string
+  password: string
+}
+
+export type CustomerActivateMutationData = {
+  customerActivate: {
+    customer: StorefrontShopifyFragments['customerFragment']
+    customerUserErrors: StorefrontShopifyFragments['customerUserErrorFragment'][]
+  }
+}
+
+//#endregion

@@ -11,6 +11,7 @@ import {
 import {
   CustomerAccessTokenCreateMutationData,
   CustomerAccessTokenDeleteMutationData,
+  CustomerActivateMutationData,
   CustomerCreateMutationData,
   CustomerFragmentData,
   CustomerQueryData,
@@ -138,6 +139,12 @@ export type ShopifyForgotPasswordRaw = {
 //#region update method
 export type ShopifyUpdateUserRaw = {
   update?: GraphqlResWithError<CustomerUpdateMutationData>
+}
+//endregion
+
+//#region activate method
+export type ShopifyActivateUserRaw = {
+  activate?: GraphqlResWithError<CustomerActivateMutationData>
 }
 //endregion
 

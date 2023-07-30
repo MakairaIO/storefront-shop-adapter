@@ -126,6 +126,28 @@ export type MakairaUpdateUser<
 >
 //#endregion
 
+//region type definition: activateUser
+export type MakairaActivateUserInput<AdditionalInput = unknown> = {
+  activationUrl: string
+  password: string
+} & AdditionalInput
+
+export type MakairaActivateUserResData = {
+  user: MakairaUser
+}
+
+export type MakairaActivateUser<
+  AdditionalInput = any,
+  ResRawData = any,
+  ResError extends Error = Error
+> = MakairaShopProviderInteractor<
+  MakairaActivateUserInput<AdditionalInput>,
+  MakairaActivateUserResData,
+  ResRawData,
+  ResError
+>
+//endregion
+
 //#region type definition: provider user
 export type MakairaShopProviderUser = {
   login: MakairaLogin
@@ -134,4 +156,5 @@ export type MakairaShopProviderUser = {
   getUser: MakairaGetUser
   forgotPassword: MakairaForgotPassword
   update?: MakairaUpdateUser
+  activate?: MakairaActivateUser
 }
