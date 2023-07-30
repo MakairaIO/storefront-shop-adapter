@@ -171,7 +171,7 @@ export class StorefrontShopAdapterShopifyUser
   }
 
   signup: MakairaSignup<unknown, ShopifySignupRaw, Error> = async ({
-    input: { password, username },
+    input: { password, username, firstName, lastName },
   }) => {
     try {
       const responseSignup = await this.mainAdapter.fetchFromShop<
@@ -185,7 +185,14 @@ export class StorefrontShopAdapterShopifyUser
             this.mainAdapter.additionalOptions.fragments
               .customerUserErrorFragment,
         }),
-        variables: { input: { email: username, password } },
+        variables: {
+          input: {
+            email: username,
+            password,
+            firstName: firstName as string,
+            lastName: lastName as string,
+          },
+        },
       })
 
       if (responseSignup.errors?.length) {

@@ -44,6 +44,8 @@ export type MakairaLogout<
 export type MakairaSignupInput<AdditionalInput = unknown> = {
   username: string
   password: string
+  firstName?: string
+  lastName?: string
 } & AdditionalInput
 
 export type MakairaSignupResData = {
