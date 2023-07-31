@@ -147,6 +147,32 @@ export type MakairaUpdatePassword<
 >
 //#endregion
 
+//#region type definition: updateUser
+export type MakairaAddressUpdateInput<AdditionalInput = unknown> = {
+  firstName: string
+  lastName: string
+  company: string
+  address1: string
+  address2: string
+  city: string
+  zip: string
+  id: string
+} & AdditionalInput
+
+export type MakairaAddressUpdateResData = undefined
+
+export type MakairaAddressUpdate<
+  AdditionalInput = any,
+  ResRawData = any,
+  ResError extends Error = Error
+> = MakairaShopProviderInteractor<
+  MakairaAddressUpdateInput<AdditionalInput>,
+  MakairaAddressUpdateResData,
+  ResRawData,
+  ResError
+>
+//#endregion
+
 //region type definition: activateUser
 export type MakairaActivateUserInput<AdditionalInput = unknown> = {
   activationUrl: string
@@ -179,4 +205,5 @@ export type MakairaShopProviderUser = {
   update?: MakairaUpdateUser
   activate?: MakairaActivateUser
   updatePassword?: MakairaUpdatePassword
+  addressUpdate?: MakairaAddressUpdate
 }

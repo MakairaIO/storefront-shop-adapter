@@ -9,6 +9,7 @@ import {
   CheckoutUserErrorFragmentData,
 } from './providers/cart.queries'
 import {
+  AddressUpdateMutationData,
   CustomerAccessTokenCreateMutationData,
   CustomerAccessTokenDeleteMutationData,
   CustomerActivateMutationData,
@@ -140,6 +141,12 @@ export type ShopifyForgotPasswordRaw = {
 //#region update method
 export type ShopifyUpdateUserRaw = {
   update?: GraphqlResWithError<CustomerUpdateMutationData>
+}
+//endregion
+
+//#region create address method
+export type ShopifyAddressUpdateRaw = {
+  update?: GraphqlResWithError<AddressUpdateMutationData>
 }
 //endregion
 

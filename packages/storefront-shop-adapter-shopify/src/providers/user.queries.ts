@@ -9,6 +9,9 @@ export const CustomerFragment = `
         lastName
         email
         phone
+        defaultAddress {
+            id
+         }
     }
 `
 
@@ -18,6 +21,9 @@ export type CustomerFragmentData = {
   lastName?: string
   email?: string
   phone?: string
+  defaultAddress?: {
+    id: string
+  }
 }
 
 //#endregion
@@ -175,6 +181,20 @@ export const CustomerQuery = ({
     query customer($customerAccessToken: String!){
         customer(customerAccessToken: $customerAccessToken) {
             ...CustomerFragment
+            addresses(first:5){
+              edges{
+                node{
+                  id
+                  firstName
+                  lastName
+                  company
+                  address1
+                  address2
+                  city
+                  zip
+                }
+              }
+            }
             orders(first: 50, sortKey: PROCESSED_AT, reverse: true) {
               edges {
                 node {
@@ -394,6 +414,63 @@ export type PasswordUpdateMutationVariables = {
 export type PasswordUpdateMutationData = {
   passwordUpdate: {
     customer: StorefrontShopifyFragments['customerFragment']
+    customerUserErrors: StorefrontShopifyFragments['customerUserErrorFragment'][]
+  }
+}
+
+//#endregion
+
+//#region updatePassword
+
+export const AddressUpdateMutation = ({
+  customerUserErrorFragment,
+}: {
+  customerUserErrorFragment: string
+}) => `
+      mutation customerAddressUpdate(
+        $address: MailingAddressInput!
+        $customerAccessToken: String!
+        $id: ID!
+      ) {
+        customerAddressUpdate(
+          address: $address
+          customerAccessToken: $customerAccessToken
+          id: $id
+        ) {
+          customerAddress {
+            id
+            firstName
+            lastName
+            company
+            address1
+            address2
+            city
+            zip
+          }
+          customerUserErrors {
+            ...CustomerUserErrorFragment
+          }
+        }
+      }
+    ${customerUserErrorFragment}
+`
+
+export type AddressUpdateMutationVariables = {
+  address: {
+    firstName: string
+    lastName: string
+    company: string
+    address1: string
+    address2: string
+    city: string
+    zip: string
+  }
+  customerAccessToken: string
+  id: string
+}
+
+export type AddressUpdateMutationData = {
+  addressUpdate: {
     customerUserErrors: StorefrontShopifyFragments['customerUserErrorFragment'][]
   }
 }

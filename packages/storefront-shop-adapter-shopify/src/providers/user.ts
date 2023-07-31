@@ -1,5 +1,6 @@
 import {
   MakairaActivateUser,
+  MakairaAddressUpdate,
   MakairaForgotPassword,
   MakairaGetUser,
   MakairaLogin,
@@ -17,6 +18,7 @@ import { StorefrontShopAdapterShopify } from './main'
 import {
   GraphqlResWithError,
   ShopifyActivateUserRaw,
+  ShopifyAddressUpdateRaw,
   ShopifyForgotPasswordRaw,
   ShopifyGetUserRaw,
   ShopifyLoginRaw,
@@ -26,6 +28,9 @@ import {
   ShopifyUpdateUserRaw,
 } from '../types'
 import {
+  AddressUpdateMutation,
+  AddressUpdateMutationData,
+  AddressUpdateMutationVariables,
   CustomerAccessTokenCreateMutation,
   CustomerAccessTokenCreateMutationData,
   CustomerAccessTokenCreateMutationVariables,
@@ -454,6 +459,66 @@ export class StorefrontShopAdapterShopifyUser
       return { data: undefined, raw: {}, error: e as Error }
     }
   }
+
+  addressUpdate: MakairaAddressUpdate<unknown, ShopifyAddressUpdateRaw, Error> =
+    async ({
+      input: {
+        firstName,
+        lastName,
+        company,
+        address1,
+        address2,
+        city,
+        zip,
+        id,
+      },
+    }) => {
+      try {
+        const { customerAccessToken } = this.getCustomerAccessToken()
+
+        if (!customerAccessToken) {
+          return { raw: {} }
+        }
+        const responseAddressUpdate = await this.mainAdapter.fetchFromShop<
+          AddressUpdateMutationData,
+          AddressUpdateMutationVariables
+        >({
+          query: AddressUpdateMutation({
+            customerUserErrorFragment:
+              this.mainAdapter.additionalOptions.fragments
+                .customerUserErrorFragment,
+          }),
+          variables: {
+            address: {
+              firstName: firstName,
+              lastName: lastName,
+              company: company,
+              address1: address1,
+              address2: address2,
+              city: city,
+              zip: zip,
+            },
+            customerAccessToken: customerAccessToken,
+            id: id,
+          },
+        })
+
+        if (responseAddressUpdate.errors?.length) {
+          return {
+            raw: { update: responseAddressUpdate },
+            error: new Error(responseAddressUpdate.errors[0].message),
+          }
+        }
+
+        return {
+          raw: { createAddress: responseAddressUpdate },
+          data: undefined,
+          error: undefined,
+        }
+      } catch (e) {
+        return { data: undefined, raw: {}, error: e as Error }
+      }
+    }
 
   updatePassword: MakairaUpdatePassword<
     unknown,
