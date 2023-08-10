@@ -1,4 +1,6 @@
 import {
+  MakairaActivateUser,
+  MakairaAddressUpdate,
   MakairaForgotPassword,
   MakairaGetUser,
   MakairaLogin,
@@ -7,25 +9,37 @@ import {
   MakairaShopProviderUser,
   MakairaSignup,
   MakairaSignupResData,
+  MakairaUpdatePassword,
+  MakairaUpdateUser,
   UserLoginEvent,
   UserLogoutEvent,
 } from '@makaira/storefront-types'
 import { StorefrontShopAdapterShopify } from './main'
 import {
   GraphqlResWithError,
+  ShopifyActivateUserRaw,
+  ShopifyAddressUpdateRaw,
   ShopifyForgotPasswordRaw,
   ShopifyGetUserRaw,
   ShopifyLoginRaw,
   ShopifyLogoutRaw,
   ShopifySignupRaw,
+  ShopifyUpdatePasswordRaw,
+  ShopifyUpdateUserRaw,
 } from '../types'
 import {
+  AddressUpdateMutation,
+  AddressUpdateMutationData,
+  AddressUpdateMutationVariables,
   CustomerAccessTokenCreateMutation,
   CustomerAccessTokenCreateMutationData,
   CustomerAccessTokenCreateMutationVariables,
   CustomerAccessTokenDeleteMutation,
   CustomerAccessTokenDeleteMutationData,
   CustomerAccessTokenDeleteMutationVariables,
+  CustomerActivateMutation,
+  CustomerActivateMutationData,
+  CustomerActivateMutationVariables,
   CustomerCreateMutation,
   CustomerCreateMutationData,
   CustomerCreateMutationVariables,
@@ -35,6 +49,12 @@ import {
   CustomerRecoverMutation,
   CustomerRecoverMutationData,
   CustomerRecoverMutationVariables,
+  CustomerUpdateMutation,
+  CustomerUpdateMutationData,
+  CustomerUpdateMutationVariables,
+  PasswordUpdateMutation,
+  PasswordUpdateMutationData,
+  PasswordUpdateMutationVariables,
 } from './user.queries'
 
 export class StorefrontShopAdapterShopifyUser
@@ -166,7 +186,7 @@ export class StorefrontShopAdapterShopifyUser
   }
 
   signup: MakairaSignup<unknown, ShopifySignupRaw, Error> = async ({
-    input: { password, username },
+    input: { password, username, firstName, lastName },
   }) => {
     try {
       const responseSignup = await this.mainAdapter.fetchFromShop<
@@ -180,7 +200,14 @@ export class StorefrontShopAdapterShopifyUser
             this.mainAdapter.additionalOptions.fragments
               .customerUserErrorFragment,
         }),
-        variables: { input: { email: username, password } },
+        variables: {
+          input: {
+            email: username,
+            password,
+            firstName: firstName as string,
+            lastName: lastName as string,
+          },
+        },
       })
 
       if (responseSignup.errors?.length) {
@@ -261,6 +288,66 @@ export class StorefrontShopAdapterShopifyUser
       return { raw: {}, error: e as Error }
     }
   }
+  activate: MakairaActivateUser<unknown, ShopifyActivateUserRaw, Error> =
+    async ({ input: { activationUrl, password } }) => {
+      try {
+        const { customerAccessToken } = this.getCustomerAccessToken()
+
+        if (!customerAccessToken) {
+          return { raw: {} }
+        }
+        const responseCustomerActivate = await this.mainAdapter.fetchFromShop<
+          CustomerActivateMutationData,
+          CustomerActivateMutationVariables
+        >({
+          query: CustomerActivateMutation({
+            customerFragment:
+              this.mainAdapter.additionalOptions.fragments.customerFragment,
+            customerUserErrorFragment:
+              this.mainAdapter.additionalOptions.fragments
+                .customerUserErrorFragment,
+          }),
+          variables: {
+            activationUrl: activationUrl,
+            password: password,
+          },
+        })
+
+        if (responseCustomerActivate.errors?.length) {
+          return {
+            raw: { update: responseCustomerActivate },
+            error: new Error(responseCustomerActivate.errors[0].message),
+          }
+        }
+
+        if (!responseCustomerActivate.data) {
+          return {
+            raw: { activate: responseCustomerActivate },
+            error: new Error('customerUpdate is not defined'),
+          }
+        }
+
+        if (
+          responseCustomerActivate.data.customerActivate.customerUserErrors
+            .length > 0
+        ) {
+          return {
+            raw: { activateUser: responseCustomerActivate },
+            error: new Error(
+              responseCustomerActivate.data.customerActivate.customerUserErrors[0].message
+            ),
+          }
+        }
+
+        return {
+          raw: { activateUser: responseCustomerActivate },
+          data: undefined,
+          error: undefined,
+        }
+      } catch (e) {
+        return { data: undefined, raw: {}, error: e as Error }
+      }
+    }
 
   getUser: MakairaGetUser<unknown, ShopifyGetUserRaw, Error> = async () => {
     try {
@@ -300,6 +387,177 @@ export class StorefrontShopAdapterShopifyUser
           },
         },
         raw: { getUser: responseGetUser },
+        error: undefined,
+      }
+    } catch (e) {
+      return { data: undefined, raw: {}, error: e as Error }
+    }
+  }
+
+  update: MakairaUpdateUser<unknown, ShopifyUpdateUserRaw, Error> = async ({
+    input: { firstName, lastName, phone, email },
+  }) => {
+    try {
+      const { customerAccessToken } = this.getCustomerAccessToken()
+
+      if (!customerAccessToken) {
+        return { raw: {} }
+      }
+      const responseCustomerUpdate = await this.mainAdapter.fetchFromShop<
+        CustomerUpdateMutationData,
+        CustomerUpdateMutationVariables
+      >({
+        query: CustomerUpdateMutation({
+          customerFragment:
+            this.mainAdapter.additionalOptions.fragments.customerFragment,
+          customerUserErrorFragment:
+            this.mainAdapter.additionalOptions.fragments
+              .customerUserErrorFragment,
+        }),
+        variables: {
+          input: {
+            firstName: firstName,
+            lastName: lastName,
+            phone: phone,
+            email: email,
+          },
+          customerAccessToken: customerAccessToken,
+        },
+      })
+
+      if (responseCustomerUpdate.errors?.length) {
+        return {
+          raw: { update: responseCustomerUpdate },
+          error: new Error(responseCustomerUpdate.errors[0].message),
+        }
+      }
+
+      if (!responseCustomerUpdate.data) {
+        return {
+          raw: { update: responseCustomerUpdate },
+          error: new Error('customerUpdate is not defined'),
+        }
+      }
+
+      if (
+        responseCustomerUpdate.data.customerUpdate.customerUserErrors.length > 0
+      ) {
+        return {
+          raw: { updateUser: responseCustomerUpdate },
+          error: new Error(
+            responseCustomerUpdate.data.customerUpdate.customerUserErrors[0].message
+          ),
+        }
+      }
+
+      return {
+        raw: { updateUser: responseCustomerUpdate },
+        data: undefined,
+        error: undefined,
+      }
+    } catch (e) {
+      return { data: undefined, raw: {}, error: e as Error }
+    }
+  }
+
+  addressUpdate: MakairaAddressUpdate<unknown, ShopifyAddressUpdateRaw, Error> =
+    async ({
+      input: {
+        firstName,
+        lastName,
+        company,
+        address1,
+        address2,
+        city,
+        zip,
+        id,
+      },
+    }) => {
+      try {
+        const { customerAccessToken } = this.getCustomerAccessToken()
+
+        if (!customerAccessToken) {
+          return { raw: {} }
+        }
+        const responseAddressUpdate = await this.mainAdapter.fetchFromShop<
+          AddressUpdateMutationData,
+          AddressUpdateMutationVariables
+        >({
+          query: AddressUpdateMutation({
+            customerUserErrorFragment:
+              this.mainAdapter.additionalOptions.fragments
+                .customerUserErrorFragment,
+          }),
+          variables: {
+            address: {
+              firstName: firstName,
+              lastName: lastName,
+              company: company,
+              address1: address1,
+              address2: address2,
+              city: city,
+              zip: zip,
+            },
+            customerAccessToken: customerAccessToken,
+            id: id,
+          },
+        })
+
+        if (responseAddressUpdate.errors?.length) {
+          return {
+            raw: { update: responseAddressUpdate },
+            error: new Error(responseAddressUpdate.errors[0].message),
+          }
+        }
+
+        return {
+          raw: { createAddress: responseAddressUpdate },
+          data: undefined,
+          error: undefined,
+        }
+      } catch (e) {
+        return { data: undefined, raw: {}, error: e as Error }
+      }
+    }
+
+  updatePassword: MakairaUpdatePassword<
+    unknown,
+    ShopifyUpdatePasswordRaw,
+    Error
+  > = async ({ input: { password } }) => {
+    try {
+      const { customerAccessToken } = this.getCustomerAccessToken()
+
+      if (!customerAccessToken) {
+        return { raw: {} }
+      }
+      const responsePasswordUpdate = await this.mainAdapter.fetchFromShop<
+        PasswordUpdateMutationData,
+        PasswordUpdateMutationVariables
+      >({
+        query: PasswordUpdateMutation({
+          customerFragment:
+            this.mainAdapter.additionalOptions.fragments.customerFragment,
+          customerUserErrorFragment:
+            this.mainAdapter.additionalOptions.fragments
+              .customerUserErrorFragment,
+        }),
+        variables: {
+          input: { password: password },
+          customerAccessToken: customerAccessToken,
+        },
+      })
+
+      if (responsePasswordUpdate.errors?.length) {
+        return {
+          raw: { update: responsePasswordUpdate },
+          error: new Error(responsePasswordUpdate.errors[0].message),
+        }
+      }
+
+      return {
+        raw: { updatePassword: responsePasswordUpdate },
+        data: undefined,
         error: undefined,
       }
     } catch (e) {

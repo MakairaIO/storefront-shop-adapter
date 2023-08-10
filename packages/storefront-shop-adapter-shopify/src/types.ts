@@ -9,13 +9,17 @@ import {
   CheckoutUserErrorFragmentData,
 } from './providers/cart.queries'
 import {
+  AddressUpdateMutationData,
   CustomerAccessTokenCreateMutationData,
   CustomerAccessTokenDeleteMutationData,
+  CustomerActivateMutationData,
   CustomerCreateMutationData,
   CustomerFragmentData,
   CustomerQueryData,
   CustomerRecoverMutationData,
+  CustomerUpdateMutationData,
   CustomerUserErrorFragmentData,
+  PasswordUpdateMutationData,
   UserErrorFragmentData,
 } from './providers/user.queries'
 
@@ -133,6 +137,30 @@ export type ShopifyForgotPasswordRaw = {
 }
 
 //#endregion
+
+//#region update method
+export type ShopifyUpdateUserRaw = {
+  update?: GraphqlResWithError<CustomerUpdateMutationData>
+}
+//endregion
+
+//#region create address method
+export type ShopifyAddressUpdateRaw = {
+  update?: GraphqlResWithError<AddressUpdateMutationData>
+}
+//endregion
+
+//#region updatePassword method
+export type ShopifyUpdatePasswordRaw = {
+  update?: GraphqlResWithError<PasswordUpdateMutationData>
+}
+//endregion
+
+//#region activate method
+export type ShopifyActivateUserRaw = {
+  activate?: GraphqlResWithError<CustomerActivateMutationData>
+}
+//endregion
 
 //#endregion
 
