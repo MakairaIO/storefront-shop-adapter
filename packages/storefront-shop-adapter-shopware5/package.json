@@ -1,6 +1,6 @@
 {
   "name": "@makaira/storefront-shop-adapter-shopware5",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Contains the makaira shopware5 shop adapter to connect your storefront",
   "main": "./dist/esm/index.js",
   "typings": "./dist/types/index.d.ts",
