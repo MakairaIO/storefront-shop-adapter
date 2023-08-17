@@ -10,6 +10,7 @@ import {
 } from './providers/cart.queries'
 import {
   AddressUpdateMutationData,
+  AddressCreateMutationData,
   CustomerAccessTokenCreateMutationData,
   CustomerAccessTokenDeleteMutationData,
   CustomerActivateMutationData,
@@ -144,9 +145,15 @@ export type ShopifyUpdateUserRaw = {
 }
 //endregion
 
-//#region create address method
+//#region update address method
 export type ShopifyAddressUpdateRaw = {
   update?: GraphqlResWithError<AddressUpdateMutationData>
+}
+//endregion
+
+//#region create address method
+export type ShopifyAddressCreateRaw = {
+  update?: GraphqlResWithError<AddressCreateMutationData>
 }
 //endregion
 

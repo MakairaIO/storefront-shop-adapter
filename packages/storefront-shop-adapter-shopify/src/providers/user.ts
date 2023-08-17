@@ -1,5 +1,6 @@
 import {
   MakairaActivateUser,
+  MakairaAddressCreate,
   MakairaAddressUpdate,
   MakairaForgotPassword,
   MakairaGetUser,
@@ -18,6 +19,7 @@ import { StorefrontShopAdapterShopify } from './main'
 import {
   GraphqlResWithError,
   ShopifyActivateUserRaw,
+  ShopifyAddressCreateRaw,
   ShopifyAddressUpdateRaw,
   ShopifyForgotPasswordRaw,
   ShopifyGetUserRaw,
@@ -28,6 +30,9 @@ import {
   ShopifyUpdateUserRaw,
 } from '../types'
 import {
+  AddressCreateMutation,
+  AddressCreateMutationData,
+  AddressCreateMutationVariables,
   AddressUpdateMutation,
   AddressUpdateMutationData,
   AddressUpdateMutationVariables,
@@ -512,6 +517,56 @@ export class StorefrontShopAdapterShopifyUser
 
         return {
           raw: { createAddress: responseAddressUpdate },
+          data: undefined,
+          error: undefined,
+        }
+      } catch (e) {
+        return { data: undefined, raw: {}, error: e as Error }
+      }
+    }
+
+  addressCreate: MakairaAddressCreate<unknown, ShopifyAddressCreateRaw, Error> =
+    async ({
+      input: { firstName, lastName, company, address1, address2, city, zip },
+    }) => {
+      try {
+        const { customerAccessToken } = this.getCustomerAccessToken()
+
+        if (!customerAccessToken) {
+          return { raw: {} }
+        }
+        const responseAddressCreate = await this.mainAdapter.fetchFromShop<
+          AddressCreateMutationData,
+          AddressCreateMutationVariables
+        >({
+          query: AddressCreateMutation({
+            customerUserErrorFragment:
+              this.mainAdapter.additionalOptions.fragments
+                .customerUserErrorFragment,
+          }),
+          variables: {
+            address: {
+              firstName: firstName,
+              lastName: lastName,
+              company: company,
+              address1: address1,
+              address2: address2,
+              city: city,
+              zip: zip,
+            },
+            customerAccessToken: customerAccessToken,
+          },
+        })
+
+        if (responseAddressCreate.errors?.length) {
+          return {
+            raw: { update: responseAddressCreate },
+            error: new Error(responseAddressCreate.errors[0].message),
+          }
+        }
+
+        return {
+          raw: { createAddress: responseAddressCreate },
           data: undefined,
           error: undefined,
         }
