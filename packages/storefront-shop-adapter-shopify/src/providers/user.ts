@@ -6,6 +6,7 @@ import {
   MakairaGetUser,
   MakairaLogin,
   MakairaLogout,
+  MakairaResetPassword,
   MakairaShopProviderInteractor,
   MakairaShopProviderUser,
   MakairaSignup,
@@ -25,6 +26,7 @@ import {
   ShopifyGetUserRaw,
   ShopifyLoginRaw,
   ShopifyLogoutRaw,
+  ShopifyResetPasswordRaw,
   ShopifySignupRaw,
   ShopifyUpdatePasswordRaw,
   ShopifyUpdateUserRaw,
@@ -57,6 +59,9 @@ import {
   CustomerUpdateMutation,
   CustomerUpdateMutationData,
   CustomerUpdateMutationVariables,
+  PasswordResetMutation,
+  PasswordResetMutationData,
+  PasswordResetMutationVariables,
   PasswordUpdateMutation,
   PasswordUpdateMutationData,
   PasswordUpdateMutationVariables,
@@ -673,6 +678,40 @@ export class StorefrontShopAdapterShopifyUser
       return { data: undefined, raw: {}, error: e as Error }
     }
   }
+  resetPassword: MakairaResetPassword<unknown, ShopifyResetPasswordRaw, Error> =
+    async ({ input: { password, resetToken, id } }) => {
+      try {
+        const responsePasswordReset = await this.mainAdapter.fetchFromShop<
+          PasswordResetMutationData,
+          PasswordResetMutationVariables
+        >({
+          query: PasswordResetMutation({
+            customerUserErrorFragment:
+              this.mainAdapter.additionalOptions.fragments
+                .customerUserErrorFragment,
+          }),
+          variables: {
+            input: { password: password, resetToken: resetToken },
+            id: id,
+          },
+        })
+
+        if (responsePasswordReset.errors?.length) {
+          return {
+            raw: { update: responsePasswordReset },
+            error: new Error(responsePasswordReset.errors[0].message),
+          }
+        }
+
+        return {
+          raw: { updatePassword: responsePasswordReset },
+          data: undefined,
+          error: undefined,
+        }
+      } catch (e) {
+        return { data: undefined, raw: {}, error: e as Error }
+      }
+    }
 
   private getCustomerAccessToken(): {
     customerAccessToken?: string

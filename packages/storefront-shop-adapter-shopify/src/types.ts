@@ -22,6 +22,7 @@ import {
   CustomerUserErrorFragmentData,
   PasswordUpdateMutationData,
   UserErrorFragmentData,
+  PasswordResetMutationData,
 } from './providers/user.queries'
 
 type MergeBy<T, K> = Omit<T, keyof K> & K
@@ -160,6 +161,12 @@ export type ShopifyAddressCreateRaw = {
 //#region updatePassword method
 export type ShopifyUpdatePasswordRaw = {
   update?: GraphqlResWithError<PasswordUpdateMutationData>
+}
+//endregion
+
+//#region resetPassword method
+export type ShopifyResetPasswordRaw = {
+  update?: GraphqlResWithError<PasswordResetMutationData>
 }
 //endregion
 

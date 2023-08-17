@@ -312,6 +312,39 @@ export type CustomerRecoverMutationData = {
 }
 
 //#endregion
+//#region reset
+
+export const PasswordResetMutation = ({
+  customerUserErrorFragment,
+}: {
+  customerUserErrorFragment: string
+}) => `
+     mutation customerReset($id: ID!, $input: CustomerResetInput!) {
+        customerReset(id: $id, input: $input) {
+          customerAccessToken {
+            accessToken
+            expiresAt
+          }
+          customerUserErrors {
+              ...CustomerUserErrorFragment
+          }
+        }
+    }
+    ${customerUserErrorFragment}
+`
+
+export type PasswordResetMutationVariables = {
+  id: string
+  input: { password: string; resetToken: string }
+}
+
+export type PasswordResetMutationData = {
+  passwordReset: {
+    customerUserErrors: StorefrontShopifyFragments['customerUserErrorFragment'][]
+  }
+}
+
+//#endregion
 //#region update
 export const CustomerUpdateMutation = ({
   customerFragment,
