@@ -678,40 +678,43 @@ export class StorefrontShopAdapterShopifyUser
       return { data: undefined, raw: {}, error: e as Error }
     }
   }
-  resetPassword: MakairaResetPassword<unknown, ShopifyResetPasswordRaw, Error> =
-    async ({ input: { password, resetToken, id } }) => {
-      try {
-        const responsePasswordReset = await this.mainAdapter.fetchFromShop<
-          PasswordResetMutationData,
-          PasswordResetMutationVariables
-        >({
-          query: PasswordResetMutation({
-            customerUserErrorFragment:
-              this.mainAdapter.additionalOptions.fragments
-                .customerUserErrorFragment,
-          }),
-          variables: {
-            input: { password: password, resetToken: resetToken },
-            id: id,
-          },
-        })
+  resetPassword: MakairaResetPassword<
+    { resetToken: string },
+    ShopifyResetPasswordRaw,
+    Error
+  > = async ({ input: { password, resetToken, id } }) => {
+    try {
+      const responsePasswordReset = await this.mainAdapter.fetchFromShop<
+        PasswordResetMutationData,
+        PasswordResetMutationVariables
+      >({
+        query: PasswordResetMutation({
+          customerUserErrorFragment:
+            this.mainAdapter.additionalOptions.fragments
+              .customerUserErrorFragment,
+        }),
+        variables: {
+          input: { password: password, resetToken: resetToken },
+          id: id,
+        },
+      })
 
-        if (responsePasswordReset.errors?.length) {
-          return {
-            raw: { update: responsePasswordReset },
-            error: new Error(responsePasswordReset.errors[0].message),
-          }
-        }
-
+      if (responsePasswordReset.errors?.length) {
         return {
-          raw: { updatePassword: responsePasswordReset },
-          data: undefined,
-          error: undefined,
+          raw: { update: responsePasswordReset },
+          error: new Error(responsePasswordReset.errors[0].message),
         }
-      } catch (e) {
-        return { data: undefined, raw: {}, error: e as Error }
       }
+
+      return {
+        raw: { updatePassword: responsePasswordReset },
+        data: undefined,
+        error: undefined,
+      }
+    } catch (e) {
+      return { data: undefined, raw: {}, error: e as Error }
     }
+  }
 
   private getCustomerAccessToken(): {
     customerAccessToken?: string

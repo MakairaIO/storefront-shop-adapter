@@ -105,7 +105,6 @@ export type MakairaForgotPassword<
 //#region type definition: resetPassword
 export type MakairaResetPasswordInput<AdditionalInput = unknown> = {
   password: string
-  resetToken: string
   id: string
 } & AdditionalInput
 
