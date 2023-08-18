@@ -312,6 +312,39 @@ export type CustomerRecoverMutationData = {
 }
 
 //#endregion
+//#region reset
+
+export const PasswordResetMutation = ({
+  customerUserErrorFragment,
+}: {
+  customerUserErrorFragment: string
+}) => `
+     mutation customerReset($id: ID!, $input: CustomerResetInput!) {
+        customerReset(id: $id, input: $input) {
+          customerAccessToken {
+            accessToken
+            expiresAt
+          }
+          customerUserErrors {
+              ...CustomerUserErrorFragment
+          }
+        }
+    }
+    ${customerUserErrorFragment}
+`
+
+export type PasswordResetMutationVariables = {
+  id: string
+  input: { password: string; resetToken: string }
+}
+
+export type PasswordResetMutationData = {
+  passwordReset: {
+    customerUserErrors: StorefrontShopifyFragments['customerUserErrorFragment'][]
+  }
+}
+
+//#endregion
 //#region update
 export const CustomerUpdateMutation = ({
   customerFragment,
@@ -420,7 +453,7 @@ export type PasswordUpdateMutationData = {
 
 //#endregion
 
-//#region updatePassword
+//#region updateAddress
 
 export const AddressUpdateMutation = ({
   customerUserErrorFragment,
@@ -471,6 +504,54 @@ export type AddressUpdateMutationVariables = {
 
 export type AddressUpdateMutationData = {
   addressUpdate: {
+    customerUserErrors: StorefrontShopifyFragments['customerUserErrorFragment'][]
+  }
+}
+
+//#endregion
+
+//#region createAddress
+
+export const AddressCreateMutation = ({
+  customerUserErrorFragment,
+}: {
+  customerUserErrorFragment: string
+}) => `
+      mutation customerAddressCreate($address: MailingAddressInput!, $customerAccessToken: String!) {
+        customerAddressCreate(address: $address, customerAccessToken: $customerAccessToken) {
+          customerAddress {
+            id
+            firstName
+            lastName
+            company
+            address1
+            address2
+            city
+            zip
+          }
+          customerUserErrors {
+            ...CustomerUserErrorFragment
+          }
+        }
+      }
+    ${customerUserErrorFragment}
+`
+
+export type AddressCreateMutationVariables = {
+  address: {
+    firstName: string
+    lastName: string
+    company: string
+    address1: string
+    address2: string
+    city: string
+    zip: string
+  }
+  customerAccessToken: string
+}
+
+export type AddressCreateMutationData = {
+  addressCreate: {
     customerUserErrors: StorefrontShopifyFragments['customerUserErrorFragment'][]
   }
 }

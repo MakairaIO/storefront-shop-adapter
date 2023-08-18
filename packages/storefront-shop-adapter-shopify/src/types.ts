@@ -10,6 +10,7 @@ import {
 } from './providers/cart.queries'
 import {
   AddressUpdateMutationData,
+  AddressCreateMutationData,
   CustomerAccessTokenCreateMutationData,
   CustomerAccessTokenDeleteMutationData,
   CustomerActivateMutationData,
@@ -21,6 +22,7 @@ import {
   CustomerUserErrorFragmentData,
   PasswordUpdateMutationData,
   UserErrorFragmentData,
+  PasswordResetMutationData,
 } from './providers/user.queries'
 
 type MergeBy<T, K> = Omit<T, keyof K> & K
@@ -144,15 +146,27 @@ export type ShopifyUpdateUserRaw = {
 }
 //endregion
 
-//#region create address method
+//#region update address method
 export type ShopifyAddressUpdateRaw = {
   update?: GraphqlResWithError<AddressUpdateMutationData>
+}
+//endregion
+
+//#region create address method
+export type ShopifyAddressCreateRaw = {
+  update?: GraphqlResWithError<AddressCreateMutationData>
 }
 //endregion
 
 //#region updatePassword method
 export type ShopifyUpdatePasswordRaw = {
   update?: GraphqlResWithError<PasswordUpdateMutationData>
+}
+//endregion
+
+//#region resetPassword method
+export type ShopifyResetPasswordRaw = {
+  update?: GraphqlResWithError<PasswordResetMutationData>
 }
 //endregion
 

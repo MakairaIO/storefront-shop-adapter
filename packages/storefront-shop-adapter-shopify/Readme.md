@@ -94,6 +94,10 @@ declare module '@makaira/storefront-react' {
 | - signup         | ✅        |
 | - getUser        | ✅        |
 | - forgotPassword | ✅        |
+| - update         | ✅        |
+| - activate       | ✅        |
+| - updatePassword | ✅        |
+| - addressUpdate  | ✅        |
 | wishlist         |           |
 | - getWishlist    | ❌        |
 | - addItem        | ❌        |

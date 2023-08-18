@@ -1,10 +1,12 @@
 import {
   MakairaActivateUser,
+  MakairaAddressCreate,
   MakairaAddressUpdate,
   MakairaForgotPassword,
   MakairaGetUser,
   MakairaLogin,
   MakairaLogout,
+  MakairaResetPassword,
   MakairaShopProviderInteractor,
   MakairaShopProviderUser,
   MakairaSignup,
@@ -18,16 +20,21 @@ import { StorefrontShopAdapterShopify } from './main'
 import {
   GraphqlResWithError,
   ShopifyActivateUserRaw,
+  ShopifyAddressCreateRaw,
   ShopifyAddressUpdateRaw,
   ShopifyForgotPasswordRaw,
   ShopifyGetUserRaw,
   ShopifyLoginRaw,
   ShopifyLogoutRaw,
+  ShopifyResetPasswordRaw,
   ShopifySignupRaw,
   ShopifyUpdatePasswordRaw,
   ShopifyUpdateUserRaw,
 } from '../types'
 import {
+  AddressCreateMutation,
+  AddressCreateMutationData,
+  AddressCreateMutationVariables,
   AddressUpdateMutation,
   AddressUpdateMutationData,
   AddressUpdateMutationVariables,
@@ -52,6 +59,9 @@ import {
   CustomerUpdateMutation,
   CustomerUpdateMutationData,
   CustomerUpdateMutationVariables,
+  PasswordResetMutation,
+  PasswordResetMutationData,
+  PasswordResetMutationVariables,
   PasswordUpdateMutation,
   PasswordUpdateMutationData,
   PasswordUpdateMutationVariables,
@@ -520,6 +530,56 @@ export class StorefrontShopAdapterShopifyUser
       }
     }
 
+  addressCreate: MakairaAddressCreate<unknown, ShopifyAddressCreateRaw, Error> =
+    async ({
+      input: { firstName, lastName, company, address1, address2, city, zip },
+    }) => {
+      try {
+        const { customerAccessToken } = this.getCustomerAccessToken()
+
+        if (!customerAccessToken) {
+          return { raw: {} }
+        }
+        const responseAddressCreate = await this.mainAdapter.fetchFromShop<
+          AddressCreateMutationData,
+          AddressCreateMutationVariables
+        >({
+          query: AddressCreateMutation({
+            customerUserErrorFragment:
+              this.mainAdapter.additionalOptions.fragments
+                .customerUserErrorFragment,
+          }),
+          variables: {
+            address: {
+              firstName: firstName,
+              lastName: lastName,
+              company: company,
+              address1: address1,
+              address2: address2,
+              city: city,
+              zip: zip,
+            },
+            customerAccessToken: customerAccessToken,
+          },
+        })
+
+        if (responseAddressCreate.errors?.length) {
+          return {
+            raw: { update: responseAddressCreate },
+            error: new Error(responseAddressCreate.errors[0].message),
+          }
+        }
+
+        return {
+          raw: { createAddress: responseAddressCreate },
+          data: undefined,
+          error: undefined,
+        }
+      } catch (e) {
+        return { data: undefined, raw: {}, error: e as Error }
+      }
+    }
+
   updatePassword: MakairaUpdatePassword<
     unknown,
     ShopifyUpdatePasswordRaw,
@@ -611,6 +671,43 @@ export class StorefrontShopAdapterShopifyUser
 
       return {
         raw: { forgotPassword: responseCustomerRecover },
+        data: undefined,
+        error: undefined,
+      }
+    } catch (e) {
+      return { data: undefined, raw: {}, error: e as Error }
+    }
+  }
+  resetPassword: MakairaResetPassword<
+    { resetToken: string },
+    ShopifyResetPasswordRaw,
+    Error
+  > = async ({ input: { password, resetToken, id } }) => {
+    try {
+      const responsePasswordReset = await this.mainAdapter.fetchFromShop<
+        PasswordResetMutationData,
+        PasswordResetMutationVariables
+      >({
+        query: PasswordResetMutation({
+          customerUserErrorFragment:
+            this.mainAdapter.additionalOptions.fragments
+              .customerUserErrorFragment,
+        }),
+        variables: {
+          input: { password: password, resetToken: resetToken },
+          id: id,
+        },
+      })
+
+      if (responsePasswordReset.errors?.length) {
+        return {
+          raw: { update: responsePasswordReset },
+          error: new Error(responsePasswordReset.errors[0].message),
+        }
+      }
+
+      return {
+        raw: { updatePassword: responsePasswordReset },
         data: undefined,
         error: undefined,
       }
