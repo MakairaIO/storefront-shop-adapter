@@ -97,7 +97,6 @@ export class StorefrontShopAdapterShopware6<
   public async fetchFromShop<Response = any>({
     method = 'GET',
     path,
-    action,
     body = {},
   }: FetchParameters): Promise<FetchResponse<Response>> {
     let requestUrl = this.additionalOptions.url
@@ -125,7 +124,7 @@ export class StorefrontShopAdapterShopware6<
     }
 
     if (method !== 'GET') {
-      options.body = JSON.stringify({ action, ...body })
+      options.body = JSON.stringify(body)
     }
 
     const response = await fetch(requestUrl, options)

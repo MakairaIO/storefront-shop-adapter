@@ -39,7 +39,6 @@ export class StorefrontShopAdapterShopware6User
       const { response, status } =
         await this.mainAdapter.fetchFromShop<ShopwareLoginRes>({
           path: USER_PATH,
-          action: USER_ACTION_LOGIN,
           body: {
             password,
             email: username,
@@ -101,7 +100,6 @@ export class StorefrontShopAdapterShopware6User
       const { response, status } =
         await this.mainAdapter.fetchFromShop<ShopwareLogoutRes>({
           path: USER_PATH,
-          action: USER_ACTION_LOGOUT,
         })
 
       if (status !== 200) {
@@ -135,7 +133,6 @@ export class StorefrontShopAdapterShopware6User
       const { response, status } =
         await this.mainAdapter.fetchFromShop<ShopwareGetUserRes>({
           path: USER_PATH,
-          action: USER_ACTION_GET_CURRENT,
         })
 
       // shopware6 returns an 403 if no user is logged in.

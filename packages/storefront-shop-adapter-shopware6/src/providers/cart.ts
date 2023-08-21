@@ -42,7 +42,6 @@ export class StorefrontShopAdapterShopware6Cart
       const { response, status } =
         await this.mainAdapter.fetchFromShop<ShopwareGetCartRes>({
           path: CART_PATH,
-          action: CART_ACTION_GET,
         })
 
       if (status !== 200) {
@@ -78,7 +77,6 @@ export class StorefrontShopAdapterShopware6Cart
       const { response, status } =
         await this.mainAdapter.fetchFromShop<ShopwareAddItemRes>({
           path: CART_PATH,
-          action: CART_ACTION_ADD,
           body: {
             article_id: product.id,
             quantity,
@@ -129,7 +127,6 @@ export class StorefrontShopAdapterShopware6Cart
         const { response, status } =
           await this.mainAdapter.fetchFromShop<ShopwareRemoveItemRes>({
             path: CART_PATH,
-            action: CART_ACTION_REMOVE,
             body: {
               cart_item_id: product.id,
             },
@@ -181,7 +178,6 @@ export class StorefrontShopAdapterShopware6Cart
         const { response, status } =
           await this.mainAdapter.fetchFromShop<ShopwareUpdateItemRes>({
             path: CART_PATH,
-            action: CART_ACTION_UPDATE,
             body: {
               cart_item_id: product.id,
               quantity,

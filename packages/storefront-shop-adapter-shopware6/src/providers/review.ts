@@ -27,7 +27,6 @@ export class StorefrontShopAdapterShopware6Review
         const { response, status } =
           await this.mainAdapter.fetchFromShop<ShopwareGetReviewsRes>({
             path: REVIEW_PATH,
-            action: REVIEW_ACTION_GET,
             body: {
               article_id: product.id,
             },
@@ -76,7 +75,6 @@ export class StorefrontShopAdapterShopware6Review
       const { response, status } =
         await this.mainAdapter.fetchFromShop<ShopwareCreateReviewRes>({
           path: REVIEW_PATH,
-          action: REVIEW_ACTION_CREATE,
           body: {
             article_id: review.product.id,
             comment: review.text,

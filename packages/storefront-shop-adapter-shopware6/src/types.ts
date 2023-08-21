@@ -167,7 +167,6 @@ export type AdditionalShopware6Options = {
 export type FetchParameters = {
   method?: 'GET' | 'POST' | 'DELETE' | 'PUT' | 'PATCH'
   path: string
-  action: string
   body?: object
 }
 
