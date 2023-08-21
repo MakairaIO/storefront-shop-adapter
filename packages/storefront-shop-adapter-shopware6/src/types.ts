@@ -1,4 +1,4 @@
-//#region general shopware5 types
+//#region general shopware6 types
 export type ShopwareProduct = {
   id: string
   name: string
@@ -144,7 +144,7 @@ export type ShopwareCreateReviewRaw = {
 
 //#endregion
 
-export type AdditionalShopware5Options = {
+export type AdditionalShopware6Options = {
   url: string
 }
 

@@ -6,12 +6,12 @@ import {
   NotImplementedError,
 } from '@makaira/storefront-types'
 
-import { StorefrontShopAdapterShopware5 } from './main'
+import { StorefrontShopAdapterShopware6 } from './main'
 
-export class StorefrontShopAdapterShopware5Wishlist
+export class StorefrontShopAdapterShopware6Wishlist
   implements MakairaShopProviderWishlist
 {
-  constructor(private mainAdapter: StorefrontShopAdapterShopware5) {}
+  constructor(private mainAdapter: StorefrontShopAdapterShopware6) {}
 
   getWishlist: MakairaGetWishlist<unknown, undefined, Error> = async () => {
     return { error: new NotImplementedError(), raw: undefined }

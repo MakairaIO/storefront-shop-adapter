@@ -4,12 +4,12 @@ import {
   MakairaSubmitCheckout,
   NotImplementedError,
 } from '@makaira/storefront-types'
-import { StorefrontShopAdapterShopware5 } from './main'
+import { StorefrontShopAdapterShopware6 } from './main'
 
-export class StorefrontShopAdapterShopware5Checkout
+export class StorefrontShopAdapterShopware6Checkout
   implements MakairaShopProviderCheckout
 {
-  constructor(private mainAdapter: StorefrontShopAdapterShopware5) {}
+  constructor(private mainAdapter: StorefrontShopAdapterShopware6) {}
 
   getCheckout: MakairaGetCheckout<unknown, undefined, Error> = async () => {
     return { error: new NotImplementedError(), raw: undefined }

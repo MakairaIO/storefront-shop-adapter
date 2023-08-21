@@ -30,12 +30,12 @@ import {
   ShopwareUpdateItemRes,
 } from '../types'
 
-import { StorefrontShopAdapterShopware5 } from './main'
+import { StorefrontShopAdapterShopware6 } from './main'
 
-export class StorefrontShopAdapterShopware5Cart
+export class StorefrontShopAdapterShopware6Cart
   implements MakairaShopProviderCart
 {
-  constructor(private mainAdapter: StorefrontShopAdapterShopware5) {}
+  constructor(private mainAdapter: StorefrontShopAdapterShopware6) {}
 
   getCart: MakairaGetCart<unknown, ShopwareGetCartRaw, Error> = async () => {
     try {

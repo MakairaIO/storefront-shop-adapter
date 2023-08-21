@@ -9,22 +9,22 @@ import {
 } from '@makaira/storefront-types'
 import fetch from 'isomorphic-unfetch'
 import {
-  AdditionalShopware5Options,
+  AdditionalShopware6Options,
   FetchParameters,
   FetchResponse,
 } from '../types'
-import { StorefrontShopAdapterShopware5Cart } from './cart'
-import { StorefrontShopAdapterShopware5Checkout } from './checkout'
-import { StorefrontShopAdapterShopware5Review } from './review'
-import { StorefrontShopAdapterShopware5User } from './user'
-import { StorefrontShopAdapterShopware5Wishlist } from './wishlist'
+import { StorefrontShopAdapterShopware6Cart } from './cart'
+import { StorefrontShopAdapterShopware6Checkout } from './checkout'
+import { StorefrontShopAdapterShopware6Review } from './review'
+import { StorefrontShopAdapterShopware6User } from './user'
+import { StorefrontShopAdapterShopware6Wishlist } from './wishlist'
 
-export class StorefrontShopAdapterShopware5<
-    CartProviderType extends MakairaShopProviderCart = StorefrontShopAdapterShopware5Cart,
-    CheckoutProviderType extends MakairaShopProviderCheckout = StorefrontShopAdapterShopware5Checkout,
-    UserProviderType extends MakairaShopProviderUser = StorefrontShopAdapterShopware5User,
-    WishlistProviderType extends MakairaShopProviderWishlist = StorefrontShopAdapterShopware5Wishlist,
-    ReviewProviderType extends MakairaShopProviderReview = StorefrontShopAdapterShopware5Review
+export class StorefrontShopAdapterShopware6<
+    CartProviderType extends MakairaShopProviderCart = StorefrontShopAdapterShopware6Cart,
+    CheckoutProviderType extends MakairaShopProviderCheckout = StorefrontShopAdapterShopware6Checkout,
+    UserProviderType extends MakairaShopProviderUser = StorefrontShopAdapterShopware6User,
+    WishlistProviderType extends MakairaShopProviderWishlist = StorefrontShopAdapterShopware6Wishlist,
+    ReviewProviderType extends MakairaShopProviderReview = StorefrontShopAdapterShopware6Review
   >
   extends EventTarget
   implements
@@ -46,7 +46,7 @@ export class StorefrontShopAdapterShopware5<
 
   review: ReviewProviderType
 
-  additionalOptions: AdditionalShopware5Options
+  additionalOptions: AdditionalShopware6Options
 
   constructor(
     options: MakairaShopProviderOptions<
@@ -55,17 +55,17 @@ export class StorefrontShopAdapterShopware5<
       UserProviderType,
       WishlistProviderType,
       ReviewProviderType,
-      AdditionalShopware5Options
+      AdditionalShopware6Options
     >
   ) {
     super()
 
     const {
-      cart: CartProvider = StorefrontShopAdapterShopware5Cart,
-      checkout: CheckoutProvider = StorefrontShopAdapterShopware5Checkout,
-      user: UserProvider = StorefrontShopAdapterShopware5User,
-      wishlist: WishlistProvider = StorefrontShopAdapterShopware5Wishlist,
-      review: ReviewProvider = StorefrontShopAdapterShopware5Review,
+      cart: CartProvider = StorefrontShopAdapterShopware6Cart,
+      checkout: CheckoutProvider = StorefrontShopAdapterShopware6Checkout,
+      user: UserProvider = StorefrontShopAdapterShopware6User,
+      wishlist: WishlistProvider = StorefrontShopAdapterShopware6Wishlist,
+      review: ReviewProvider = StorefrontShopAdapterShopware6Review,
     } = options.providers ?? {}
 
     this.additionalOptions = {

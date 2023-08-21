@@ -14,12 +14,12 @@ import {
   ShopwareGetReviewsRaw,
   ShopwareGetReviewsRes,
 } from '../types'
-import { StorefrontShopAdapterShopware5 } from './main'
+import { StorefrontShopAdapterShopware6 } from './main'
 
-export class StorefrontShopAdapterShopware5Review
+export class StorefrontShopAdapterShopware6Review
   implements MakairaShopProviderReview
 {
-  constructor(private mainAdapter: StorefrontShopAdapterShopware5) {}
+  constructor(private mainAdapter: StorefrontShopAdapterShopware6) {}
 
   getReviews: MakairaGetReviews<unknown, ShopwareGetReviewsRaw, Error> =
     async ({ input: { product } }) => {

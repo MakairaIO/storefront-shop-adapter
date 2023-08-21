@@ -25,12 +25,12 @@ import {
   ShopwareLogoutRes,
   ShopwareUser,
 } from '../types'
-import { StorefrontShopAdapterShopware5 } from './main'
+import { StorefrontShopAdapterShopware6 } from './main'
 
-export class StorefrontShopAdapterShopware5User
+export class StorefrontShopAdapterShopware6User
   implements MakairaShopProviderUser
 {
-  constructor(private mainAdapter: StorefrontShopAdapterShopware5) {}
+  constructor(private mainAdapter: StorefrontShopAdapterShopware6) {}
 
   login: MakairaLogin<unknown, ShopwareLoginRaw, Error> = async ({
     input: { password, username },
@@ -138,7 +138,7 @@ export class StorefrontShopAdapterShopware5User
           action: USER_ACTION_GET_CURRENT,
         })
 
-      // shopware5 returns an 403 if no user is logged in.
+      // shopware6 returns an 403 if no user is logged in.
       // Or it returns ok=false when no user is logged in.
       // Therefore return an empty user without error
       if ((response as { ok: boolean }).ok === false) {
