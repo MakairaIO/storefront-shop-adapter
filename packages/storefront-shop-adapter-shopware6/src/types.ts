@@ -1,3 +1,5 @@
+import { MakairaStorage } from '@makaira/storefront-types'
+
 //#region general shopware6 types
 export type ShopwareProduct = {
   id: string
@@ -22,6 +24,11 @@ export type ShopwareReview = {
   comment: string
   points: number
   date: string
+}
+
+export type ShopwareBaseResponse = Record<string, unknown> & {
+  token?: string
+  contextToken?: string
 }
 
 //#region cart provider
@@ -146,9 +153,19 @@ export type ShopwareCreateReviewRaw = {
 
 export type AdditionalShopware6Options = {
   url: string
+  /**
+   * The access token to make authenticated requests against shopware6
+   */
+  accessToken: string
+  /**
+   * The storage engine to store and receive persistent data. This is
+   * for example used to store the checkoutId.
+   */
+  storage?: MakairaStorage
 }
 
 export type FetchParameters = {
+  method?: 'GET' | 'POST' | 'DELETE' | 'PUT' | 'PATCH'
   path: string
   action: string
   body?: object

@@ -66,6 +66,7 @@ export class StorefrontShopAdapterShopware6Cart
 
       return { data: { items }, raw: { getCart: response }, error: undefined }
     } catch (e) {
+      console.log('getCart', e)
       return { data: undefined, raw: { getCart: undefined }, error: e as Error }
     }
   }
