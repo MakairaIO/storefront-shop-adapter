@@ -1,0 +1,48 @@
+{
+  "name": "@makaira/storefront-shop-adapter-shopware6",
+  "version": "1.0.5",
+  "description": "Contains the makaira shopware5 shop adapter to connect your storefront",
+  "main": "./dist/esm/index.js",
+  "typings": "./dist/types/index.d.ts",
+  "exports": {
+    "import": "./dist/esm/index.js",
+    "require": "./dist/cjs/index.js",
+    "default": "./dist/esm/index.js"
+  },
+  "files": [
+    "./dist"
+  ],
+  "engines": {
+    "node": ">=15.0.0"
+  },
+  "scripts": {
+    "clean": "rimraf ./dist",
+    "lint:eslint": "eslint src --fix",
+    "lint:tsc": "tsc --project tsconfig.json --noEmit --skipLibCheck",
+    "build": "tsc --project tsconfig.build.esm.json & tsc --project tsconfig.build.cjs.json",
+    "release": "semantic-release",
+    "test": "jest --passWithNoTests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MakairaIO/storefront-shop-adapter.git"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "storefront",
+    "makaira",
+    "shopware"
+  ],
+  "author": "Jonas Embach <je@marmalade.group>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MakairaIO/storefront-shop-adapter/issues"
+  },
+  "homepage": "https://github.com/MakairaIO/storefront-shop-adapter#readme",
+  "dependencies": {
+    "@makaira/storefront-types": "1.10.0",
+    "isomorphic-unfetch": "^3.1.0"
+  }
+}
