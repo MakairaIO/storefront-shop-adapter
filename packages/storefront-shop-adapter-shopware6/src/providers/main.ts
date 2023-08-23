@@ -131,7 +131,7 @@ export class StorefrontShopAdapterShopware6<
     const json: ShopwareBaseResponse = await response.json()
 
     if (json.contextToken) {
-      this.setContextIds(json.contextToken, contextIds)
+      this.setContextIds(json.contextToken, '')
     } else if (json.token) {
       this.setContextIds(json.token, contextIds)
     }
