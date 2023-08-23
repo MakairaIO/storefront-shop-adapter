@@ -11,12 +11,13 @@ import {
   UserLogoutEvent,
 } from '@makaira/storefront-types'
 import {
-  USER_ACTION_GET_CURRENT,
-  USER_ACTION_LOGIN,
-  USER_ACTION_LOGOUT,
-  USER_PATH,
+  USER_LOGIN,
+  USER_GET,
+  USER_LOGOUT,
+  USER_PASSWORD_RECOVERY,
 } from '../paths'
 import {
+  ShopwarePasswordRecoveryRes,
   ShopwareGetUserRaw,
   ShopwareGetUserRes,
   ShopwareLoginRaw,
@@ -24,6 +25,8 @@ import {
   ShopwareLogoutRaw,
   ShopwareLogoutRes,
   ShopwareUser,
+  ShopwarePasswordRecoveryRaw,
+  ShopwarePasswordRecoveryAdditionalInput,
 } from '../types'
 import { StorefrontShopAdapterShopware6 } from './main'
 
@@ -38,10 +41,11 @@ export class StorefrontShopAdapterShopware6User
     try {
       const { response, status } =
         await this.mainAdapter.fetchFromShop<ShopwareLoginRes>({
-          path: USER_PATH,
+          method: 'POST',
+          path: USER_LOGIN,
           body: {
             password,
-            email: username,
+            username,
           },
         })
 
@@ -99,7 +103,8 @@ export class StorefrontShopAdapterShopware6User
     try {
       const { response, status } =
         await this.mainAdapter.fetchFromShop<ShopwareLogoutRes>({
-          path: USER_PATH,
+          method: 'POST',
+          path: USER_LOGOUT,
         })
 
       if (status !== 200) {
@@ -132,7 +137,8 @@ export class StorefrontShopAdapterShopware6User
     try {
       const { response, status } =
         await this.mainAdapter.fetchFromShop<ShopwareGetUserRes>({
-          path: USER_PATH,
+          method: 'POST',
+          path: USER_GET,
         })
 
       // shopware6 returns an 403 if no user is logged in.
@@ -158,8 +164,8 @@ export class StorefrontShopAdapterShopware6User
         data: {
           user: {
             id: (response as ShopwareUser).id,
-            firstname: (response as ShopwareUser).firstname,
-            lastname: (response as ShopwareUser).lastname,
+            firstname: (response as ShopwareUser).firstName,
+            lastname: (response as ShopwareUser).lastName,
             email: (response as ShopwareUser).email,
           },
         },
@@ -171,8 +177,40 @@ export class StorefrontShopAdapterShopware6User
     }
   }
 
-  forgotPassword: MakairaForgotPassword<unknown, undefined, Error> =
-    async () => {
-      return { error: new NotImplementedError(), raw: undefined }
+  forgotPassword: MakairaForgotPassword<
+    ShopwarePasswordRecoveryAdditionalInput,
+    ShopwarePasswordRecoveryRaw,
+    Error
+  > = async ({ input: { email } }) => {
+    try {
+      const { response, status } =
+        await this.mainAdapter.fetchFromShop<ShopwarePasswordRecoveryRes>({
+          method: 'POST',
+          path: USER_PASSWORD_RECOVERY,
+          body: {
+            email,
+          },
+        })
+
+      if (status !== 200 || response.ok !== true) {
+        return {
+          data: undefined,
+          raw: { passwordRecovery: response },
+          error: new BadHttpStatusError(),
+        }
+      }
+
+      this.mainAdapter.dispatchEvent(
+        new UserLogoutEvent<ShopwareLogoutRaw>(undefined, { logout: response })
+      )
+
+      return { data: undefined, raw: { logout: response }, error: undefined }
+    } catch (e) {
+      return {
+        data: undefined,
+        raw: { passwordRecovery: undefined },
+        error: e as Error,
+      }
     }
+  }
 }

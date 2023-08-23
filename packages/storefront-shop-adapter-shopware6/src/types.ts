@@ -12,8 +12,8 @@ export type ShopwareProduct = {
 
 export type ShopwareUser = {
   id: string
-  firstname: string
-  lastname: string
+  firstName: string
+  lastName: string
   email: string
 }
 
@@ -97,6 +97,17 @@ export type ShopwareLogoutRes = { ok: true }
 
 export type ShopwareLogoutRaw = {
   logout?: ShopwareLoginRes
+}
+
+export type ShopwarePasswordRecoveryRes = { ok: true }
+
+export type ShopwarePasswordRecoveryAdditionalInput = {
+  email: string
+  storefrontUrl: string
+}
+
+export type ShopwarePasswordRecoveryRaw = {
+  passwordRecovery?: ShopwarePasswordRecoveryRes
 }
 
 //#endregion

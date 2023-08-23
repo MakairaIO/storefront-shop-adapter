@@ -1,9 +1,9 @@
 export const CONTEXT = '/store-api/context'
 
-export const USER_PATH = '/frontend/user'
-export const USER_ACTION_GET_CURRENT = 'getCurrentUser'
-export const USER_ACTION_LOGOUT = 'logout'
-export const USER_ACTION_LOGIN = 'login'
+export const USER_LOGIN = '/store-api/account/login'
+export const USER_LOGOUT = '/store-api/account/logout'
+export const USER_GET = '/store-api/account/customer'
+export const USER_PASSWORD_RECOVERY = '/store-api/account/recovery-password'
 
 export const CART_PATH = '/store-api/checkout/cart'
 export const CART_ACTION_GET = ''
