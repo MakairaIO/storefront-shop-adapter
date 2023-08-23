@@ -137,7 +137,7 @@ export class StorefrontShopAdapterShopware6<
     }
 
     return {
-      response: await response.json(),
+      response: json as Response,
       status: response.status,
     }
   }
