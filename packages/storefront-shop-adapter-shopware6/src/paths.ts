@@ -6,10 +6,8 @@ export const USER_ACTION_LOGOUT = 'logout'
 export const USER_ACTION_LOGIN = 'login'
 
 export const CART_PATH = '/store-api/checkout/cart'
-export const CART_ACTION_GET = ''
-export const CART_ACTION_ADD = 'line-item'
-export const CART_ACTION_REMOVE = 'deleteCartItem'
-export const CART_ACTION_UPDATE = 'updateArticleInCart'
+export const CART_ACTION_GET = CART_PATH
+export const CART_ACTION_UPDATE = CART_PATH + '/line-item'
 
 export const REVIEW_PATH = '/frontend/review'
 export const REVIEW_ACTION_GET = 'getArticleReviews'

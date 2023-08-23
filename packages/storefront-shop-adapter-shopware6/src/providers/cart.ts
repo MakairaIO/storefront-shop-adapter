@@ -12,16 +12,12 @@ import {
   MakairaUpdateItemFromCart,
   MakairaUpdateItemFromCartResData,
 } from '@makaira/storefront-types'
+import { CART_ACTION_UPDATE, CART_PATH } from '../paths'
 import {
-  CART_ACTION_ADD,
-  CART_ACTION_GET,
-  CART_ACTION_REMOVE,
-  CART_ACTION_UPDATE,
-  CART_PATH,
-} from '../paths'
-import {
+  ShopWareUpdateCartItemAdditional,
   ShopwareAddItemRaw,
   ShopwareAddItemRes,
+  ShopwareCartRes,
   ShopwareGetCartRaw,
   ShopwareGetCartRes,
   ShopwareRemoveItemRaw,
@@ -31,6 +27,7 @@ import {
 } from '../types'
 
 import { StorefrontShopAdapterShopware6 } from './main'
+import { lineItemsToMakairaCartItems } from '../utils/lineItemsToMakairaCartItems'
 
 export class StorefrontShopAdapterShopware6Cart
   implements MakairaShopProviderCart
@@ -52,46 +49,90 @@ export class StorefrontShopAdapterShopware6Cart
         }
       }
 
-      const items = response.map((item) => ({
-        quantity: item.quantity,
-        product: {
-          id: item.id,
-          price: item.price,
-          title: item.name,
-          images: [item.image_path],
-          url: '',
-        },
-      }))
-
-      return { data: { items }, raw: { getCart: response }, error: undefined }
+      return {
+        data: { items: lineItemsToMakairaCartItems(response.lineItems) },
+        raw: { getCart: response },
+        error: undefined,
+      }
     } catch (e) {
       console.log('getCart', e)
       return { data: undefined, raw: { getCart: undefined }, error: e as Error }
     }
   }
 
-  addItem: MakairaAddItemToCart<unknown, ShopwareAddItemRaw, Error> = async ({
-    input: { product, quantity },
-  }) => {
+  /**
+   * Support add item to cart (product/promotion)
+   *
+   * @example
+   * // Example 1: add product to cart
+   * addItem({
+   *    input: {
+   *        product: {
+   *            id: ""
+   *        }
+   *        referencedId: "" // should be same with product's id
+   *        good: true/false,
+   *        type: "product"
+   *    }
+   * })
+   *
+   * // Example 2: add promotion to cart
+   * addItem({
+   *    input: {
+   *        product: {
+   *            id: ""
+   *        }
+   *        referencedId: "" // should be same with product's id
+   *        good: false,
+   *        type: "promotion"
+   *    }
+   * })
+   */
+  addItem: MakairaAddItemToCart<
+    ShopWareUpdateCartItemAdditional,
+    ShopwareAddItemRaw,
+    Error
+  > = async ({ input }) => {
     try {
+      const {
+        good,
+        product,
+        quantity,
+        referencedId,
+        type,
+        description,
+        label,
+        removable = true,
+        stackable = true,
+      } = input
+
+      const rawItem: any = {
+        id: product.id,
+        referencedId: referencedId ?? product.id,
+        quantity,
+        type,
+        good,
+        description,
+        removable,
+        stackable,
+      }
+
+      if (label) {
+        rawItem.label = label
+      }
+
       const { response, status } =
         await this.mainAdapter.fetchFromShop<ShopwareAddItemRes>({
-          path: CART_PATH,
+          path: CART_ACTION_UPDATE,
+          method: 'POST',
           body: {
-            article_id: product.id,
-            quantity,
+            apiAlias: 'cart',
+            items: [rawItem],
           },
         })
 
-      if (status !== 200 || !Array.isArray(response)) {
-        return {
-          data: undefined,
-          raw: { addItem: response },
-          error:
-            (response as { ok: boolean }).ok === false
-              ? new Error((response as { message: string }).message)
-              : new BadHttpStatusError(),
-        }
+      if (status !== 200) {
+        return this.handleResponseError(response, 'addItem')
       }
 
       const raw: ShopwareAddItemRaw = {
@@ -99,21 +140,16 @@ export class StorefrontShopAdapterShopware6Cart
       }
 
       const data: MakairaAddItemToCartResData = {
-        items: response.map((item) => ({
-          product: {
-            id: item.id,
-            images: [item.image_path],
-            price: item.price,
-            title: item.name,
-            url: '',
-          },
-          quantity: item.quantity,
-        })),
+        items: lineItemsToMakairaCartItems(response.lineItems),
       }
 
       this.mainAdapter.dispatchEvent(
         new CartAddItemEvent<ShopwareAddItemRaw>(data, raw)
       )
+
+      if (this.isErrorResponse(response)) {
+        return this.handleResponseError(response, 'addItem')
+      }
 
       return { data, raw, error: undefined }
     } catch (e) {
@@ -121,39 +157,28 @@ export class StorefrontShopAdapterShopware6Cart
     }
   }
 
+  /**
+   * @deprecated
+   * Supporting for <= Shopware 6.5
+   */
   removeItem: MakairaRemoveItemFromCart<unknown, ShopwareRemoveItemRaw, Error> =
     async ({ input: { product } }) => {
       try {
         const { response, status } =
           await this.mainAdapter.fetchFromShop<ShopwareRemoveItemRes>({
-            path: CART_PATH,
+            path: CART_ACTION_UPDATE + `?ids[0]=${product.id}`,
+            method: 'DELETE',
             body: {
-              cart_item_id: product.id,
+              ids: [product.id],
             },
           })
 
-        if (status !== 200 || !Array.isArray(response)) {
-          return {
-            data: undefined,
-            raw: { removeItem: response },
-            error:
-              (response as { ok: boolean }).ok === false
-                ? new Error((response as { message: string }).message)
-                : new BadHttpStatusError(),
-          }
+        if (status !== 200) {
+          return this.handleResponseError(response, 'removeItem')
         }
 
         const data: MakairaRemoveItemFromCartResData = {
-          items: response.map((item) => ({
-            product: {
-              id: item.id,
-              images: [item.image_path],
-              price: item.price,
-              title: item.name,
-              url: '',
-            },
-            quantity: item.quantity,
-          })),
+          items: lineItemsToMakairaCartItems(response.lineItems),
         }
 
         const raw: ShopwareRemoveItemRaw = { removeItem: response }
@@ -161,6 +186,10 @@ export class StorefrontShopAdapterShopware6Cart
         this.mainAdapter.dispatchEvent(
           new CartRemoveItemEvent<ShopwareRemoveItemRaw>(data, raw)
         )
+
+        if (this.isErrorResponse(response)) {
+          return this.handleResponseError(response, 'removeItem')
+        }
 
         return { data, raw, error: undefined }
       } catch (e) {
@@ -172,57 +201,74 @@ export class StorefrontShopAdapterShopware6Cart
       }
     }
 
-  updateItem: MakairaUpdateItemFromCart<unknown, ShopwareUpdateItemRaw, Error> =
-    async ({ input: { product, quantity } }) => {
-      try {
-        const { response, status } =
-          await this.mainAdapter.fetchFromShop<ShopwareUpdateItemRes>({
-            path: CART_PATH,
-            body: {
-              cart_item_id: product.id,
-              quantity,
-            },
-          })
+  updateItem: MakairaUpdateItemFromCart<
+    Partial<ShopWareUpdateCartItemAdditional>,
+    ShopwareUpdateItemRaw,
+    Error
+  > = async ({ input }) => {
+    try {
+      const { product, quantity, ...remaining } = input
 
-        if (status !== 200 || !Array.isArray(response)) {
-          return {
-            data: undefined,
-            raw: { updateItem: response },
-            error:
-              (response as { ok: boolean }).ok === false
-                ? new Error((response as { message: string }).message)
-                : new BadHttpStatusError(),
-          }
-        }
+      const { response, status } =
+        await this.mainAdapter.fetchFromShop<ShopwareUpdateItemRes>({
+          path: CART_ACTION_UPDATE,
+          method: 'PATCH',
+          body: {
+            apiAlias: 'cart',
+            items: [{ quantity: quantity, id: product.id, ...remaining }],
+          },
+        })
 
-        const raw: ShopwareUpdateItemRaw = {
-          updateItem: response,
-        }
+      if (status !== 200) {
+        return this.handleResponseError(response, 'updateItem')
+      }
 
-        const data: MakairaUpdateItemFromCartResData = {
-          items: response.map((item) => ({
-            product: {
-              id: item.id,
-              images: [item.image_path],
-              price: item.price,
-              title: item.name,
-              url: '',
-            },
-            quantity: item.quantity,
-          })),
-        }
+      const raw: ShopwareUpdateItemRaw = {
+        updateItem: response,
+      }
 
-        this.mainAdapter.dispatchEvent(
-          new CartUpdateItemEvent<ShopwareUpdateItemRaw>(data, raw)
-        )
+      const data: MakairaUpdateItemFromCartResData = {
+        items: lineItemsToMakairaCartItems(response.lineItems),
+      }
 
-        return { data, raw, error: undefined }
-      } catch (e) {
-        return {
-          data: undefined,
-          raw: { updateItem: undefined },
-          error: e as Error,
-        }
+      this.mainAdapter.dispatchEvent(
+        new CartUpdateItemEvent<ShopwareUpdateItemRaw>(data, raw)
+      )
+
+      if (status !== 200 || this.isErrorResponse(response)) {
+        return this.handleResponseError(response, 'updateItem')
+      }
+
+      return { data, raw, error: undefined }
+    } catch (e) {
+      return {
+        data: undefined,
+        raw: { updateItem: undefined },
+        error: e as Error,
       }
     }
+  }
+
+  private isErrorResponse(response: ShopwareCartRes) {
+    if (response.errors && Object.keys(response.errors).length > 0) return true
+    return false
+  }
+
+  private handleResponseError(response: ShopwareCartRes, action: string) {
+    const { errors } = response
+    if (Array.isArray(errors)) {
+      return {
+        data: undefined,
+        raw: { [action]: response },
+        error: new Error(errors[0].code),
+      }
+    } else {
+      const keys = Object.keys(errors)
+      return {
+        data: undefined,
+        raw: { [action]: response },
+        error: new Error(errors[keys[0]].messageKey),
+      }
+    }
+  }
 }
