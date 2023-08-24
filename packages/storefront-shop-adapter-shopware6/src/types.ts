@@ -18,17 +18,73 @@ export type ShopwareUser = {
 }
 
 export type ShopwareReview = {
-  active: boolean
-  name: string
-  headline: string
-  comment: string
+  id: string
+  productId: string
+  productVersionId: string
+  salesChannelId: string
+  languageId: string
+  title: string
+  content: string
   points: number
-  date: string
+  status: boolean
+  comment: string
+  customFields: object
+  createdAt: Date
+  updatedAt: Date
 }
 
 export type ShopwareBaseResponse = Record<string, unknown> & {
   token?: string
   contextToken?: string
+}
+
+export type ShopwareFilter = {
+  type: string
+  field: string
+  value: unknown
+}
+
+export type ShopwareSort = {
+  field: string
+  order?: string
+  naturalSorting?: boolean
+}
+
+export type ShopwareAggregation = {
+  name: string
+  type: string
+  field: string
+}
+
+export type ShopwareError = {
+  status: number | string
+  detail: string
+  title: string
+  code: string
+}
+
+export type ShopwareSearchBody = {
+  filter?: ShopwareFilter[]
+  sort?: ShopwareSort[]
+  'post-filter'?: ShopwareFilter[]
+  associations?: object
+  aggregations?: ShopwareAggregation[]
+  grouping?: string[]
+  fields?: string[]
+  'total-count-mode'?: 'none' | 'exact' | 'next-pages'
+}
+
+export type ShopwareSearchResponse<T> = {
+  elements: T[]
+  apiAlias: string
+  entity: string
+  total: number
+  aggregations: ShopwareAggregation[]
+  page: number
+  limit: number
+  currentFilters?: object
+  availableSortings?: ShopwareSort[]
+  errors?: ShopwareError[]
 }
 
 //#region cart provider
@@ -123,9 +179,7 @@ export type ShopwareLoginRaw = {
 
 //#region getReviews method
 
-export type ShopwareGetReviewsRes =
-  | ShopwareReview[]
-  | { ok: false; message: string }
+export type ShopwareGetReviewsRes = ShopwareSearchResponse<ShopwareReview>
 
 export type ShopwareGetReviewsRaw = { getReviews?: ShopwareGetReviewsRes }
 
@@ -135,13 +189,11 @@ export type ShopwareGetReviewsRaw = { getReviews?: ShopwareGetReviewsRes }
 
 export type ShopwareCreateReviewAdditionalInput = {
   name?: string
-  headline?: string
+  title: string
   email?: string
 }
 
-export type ShopwareCreateReviewRes =
-  | { ok: true }
-  | { ok: false; message: string }
+export type ShopwareCreateReviewRes = { errors?: ShopwareError[] }
 
 export type ShopwareCreateReviewRaw = {
   createReview?: ShopwareCreateReviewRes
