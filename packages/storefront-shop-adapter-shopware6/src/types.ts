@@ -93,21 +93,48 @@ export type ShopwareGetUserRaw = { getUser?: ShopwareGetUserRes }
 
 //#region logout method
 
-export type ShopwareLogoutRes = { ok: true }
+export type ShopwareLogoutRes = { ok: boolean }
 
 export type ShopwareLogoutRaw = {
-  logout?: ShopwareLoginRes
+  logout?: ShopwareLogoutRes
 }
 
-export type ShopwarePasswordRecoveryRes = { ok: true }
+//#endregion
 
-export type ShopwarePasswordRecoveryAdditionalInput = {
+//#region forgot password method
+
+export type ShopwareForgotPasswordRes = { ok: boolean }
+
+export type ShopwareForgotPasswordAdditionalInput = {
   email: string
   storefrontUrl: string
 }
 
-export type ShopwarePasswordRecoveryRaw = {
-  passwordRecovery?: ShopwarePasswordRecoveryRes
+export type ShopwareForgotPasswordRaw = {
+  forgotPassword?: ShopwareForgotPasswordRes
+}
+
+//#endregion
+
+//#region forgot password method
+
+export type ShopwareSignupRes = { ok: boolean } & Record<string, any>
+
+export type ShopwareSignupAdditionalInput = {
+  email: string
+  password: string
+  firstName: string
+  lastName: string
+  storefrontUrl: string
+  billingAddress: {
+    countryId: string
+    city: string
+    street: string
+  } & Record<string, any>
+} & Record<string, any>
+
+export type ShopwareSignupRaw = {
+  signup?: ShopwareSignupRes
 }
 
 //#endregion

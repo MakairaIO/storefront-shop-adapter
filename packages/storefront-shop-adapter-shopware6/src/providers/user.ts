@@ -6,18 +6,19 @@ import {
   MakairaLogout,
   MakairaShopProviderUser,
   MakairaSignup,
-  NotImplementedError,
   UserLoginEvent,
   UserLogoutEvent,
+  UserSignupEvent,
 } from '@makaira/storefront-types'
 import {
   USER_LOGIN,
   USER_GET,
   USER_LOGOUT,
   USER_PASSWORD_RECOVERY,
+  USER_SIGNUP,
 } from '../paths'
 import {
-  ShopwarePasswordRecoveryRes,
+  ShopwareForgotPasswordRes,
   ShopwareGetUserRaw,
   ShopwareGetUserRes,
   ShopwareLoginRaw,
@@ -25,8 +26,11 @@ import {
   ShopwareLogoutRaw,
   ShopwareLogoutRes,
   ShopwareUser,
-  ShopwarePasswordRecoveryRaw,
-  ShopwarePasswordRecoveryAdditionalInput,
+  ShopwareForgotPasswordRaw,
+  ShopwareForgotPasswordAdditionalInput,
+  ShopwareSignupAdditionalInput,
+  ShopwareSignupRaw,
+  ShopwareSignupRes,
 } from '../types'
 import { StorefrontShopAdapterShopware6 } from './main'
 
@@ -107,7 +111,7 @@ export class StorefrontShopAdapterShopware6User
           path: USER_LOGOUT,
         })
 
-      if (status !== 200) {
+      if (status !== 200 || response.ok === false) {
         return {
           data: undefined,
           raw: { logout: response },
@@ -129,8 +133,49 @@ export class StorefrontShopAdapterShopware6User
     }
   }
 
-  signup: MakairaSignup<unknown, undefined, Error> = async () => {
-    return { error: new NotImplementedError(), raw: undefined }
+  signup: MakairaSignup<
+    ShopwareSignupAdditionalInput,
+    ShopwareSignupRaw,
+    Error
+  > = async ({ input }) => {
+    try {
+      const { response, status } =
+        await this.mainAdapter.fetchFromShop<ShopwareSignupRes>({
+          method: 'POST',
+          path: USER_SIGNUP,
+          body: input,
+        })
+
+      if (status !== 200 || response.ok === false) {
+        return {
+          data: undefined,
+          raw: { signup: response },
+          error: new BadHttpStatusError(),
+        }
+      }
+
+      this.mainAdapter.dispatchEvent(
+        new UserSignupEvent<ShopwareSignupRaw>(
+          {
+            user: {
+              id: response.id,
+              firstname: response.firstName,
+              lastname: response.lastName,
+              email: response.email,
+            },
+          },
+          { signup: response }
+        )
+      )
+
+      return { data: undefined, raw: { signup: response }, error: undefined }
+    } catch (e) {
+      return {
+        data: undefined,
+        raw: { signup: undefined },
+        error: e as Error,
+      }
+    }
   }
 
   getUser: MakairaGetUser<unknown, ShopwareGetUserRaw, Error> = async () => {
@@ -178,37 +223,38 @@ export class StorefrontShopAdapterShopware6User
   }
 
   forgotPassword: MakairaForgotPassword<
-    ShopwarePasswordRecoveryAdditionalInput,
-    ShopwarePasswordRecoveryRaw,
+    ShopwareForgotPasswordAdditionalInput,
+    ShopwareForgotPasswordRaw,
     Error
-  > = async ({ input: { email } }) => {
+  > = async ({ input: { email, storefrontUrl } }) => {
     try {
       const { response, status } =
-        await this.mainAdapter.fetchFromShop<ShopwarePasswordRecoveryRes>({
+        await this.mainAdapter.fetchFromShop<ShopwareForgotPasswordRes>({
           method: 'POST',
           path: USER_PASSWORD_RECOVERY,
           body: {
             email,
+            storefrontUrl,
           },
         })
 
-      if (status !== 200 || response.ok !== true) {
+      if (status !== 200 || response.ok === false) {
         return {
           data: undefined,
-          raw: { passwordRecovery: response },
+          raw: { forgotPassword: response },
           error: new BadHttpStatusError(),
         }
       }
 
-      this.mainAdapter.dispatchEvent(
-        new UserLogoutEvent<ShopwareLogoutRaw>(undefined, { logout: response })
-      )
-
-      return { data: undefined, raw: { logout: response }, error: undefined }
+      return {
+        data: undefined,
+        raw: { forgotPassword: response },
+        error: undefined,
+      }
     } catch (e) {
       return {
         data: undefined,
-        raw: { passwordRecovery: undefined },
+        raw: { forgotPassword: undefined },
         error: e as Error,
       }
     }
