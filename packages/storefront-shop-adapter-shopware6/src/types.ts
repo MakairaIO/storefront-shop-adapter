@@ -11,10 +11,53 @@ export type ShopwareProduct = {
 }
 
 export type ShopwareUser = {
-  id: string
+  groupId: string
+  defaultPaymentMethodId: string
+  salesChannelId: string
+  languageId: string
+  defaultBillingAddressId: string
+  defaultShippingAddressId: string
+  customerNumber: string
   firstName: string
   lastName: string
   email: string
+  accountType: string
+  createdAt: string
+  id?: string
+  lastPaymentMethodId?: string
+  salutationId?: string
+  company?: string
+  title?: string
+  vatId?: string[]
+  affiliateCode?: string
+  campaignCode?: string
+  active?: boolean
+  doubleOptInRegistration?: boolean
+  doubleOptInEmailSentDate?: string
+  doubleOptInConfirmDate?: string
+  hash?: string
+  guest?: boolean
+  firstLogin?: string
+  lastLogin?: string
+  birthday?: string
+  lastOrderDate?: string
+  orderCount?: number
+  orderTotalAmount?: number
+  reviewCount?: number
+  customFields?: Record<string, any>
+  tagIds?: string[]
+  createdById?: string
+  updatedById?: string
+  updatedAt?: string
+  extensions?: Record<string, any>
+  group?: Record<string, any>
+  defaultPaymentMethod?: Record<string, any>
+  language?: Record<string, any>
+  lastPaymentMethod?: Record<string, any>
+  defaultBillingAddress?: Record<string, any>
+  defaultShippingAddress?: Record<string, any>
+  salutation?: Record<string, any>
+  addresses?: Record<string, any>
 }
 
 export type ShopwareReview = {
@@ -29,6 +72,13 @@ export type ShopwareReview = {
 export type ShopwareBaseResponse = Record<string, unknown> & {
   token?: string
   contextToken?: string
+}
+
+export type ShopwareError = {
+  status: number | string
+  detail: string
+  title: string
+  code: string
 }
 
 //#region cart provider
@@ -83,9 +133,7 @@ export type ShopwareUpdateItemRaw = {
 
 //#region getUser method
 
-export type ShopwareGetUserRes =
-  | ShopwareUser
-  | { ok: false; message?: 'Forbidden' | string }
+export type ShopwareGetUserRes = ShopwareUser & { errors: ShopwareError[] }
 
 export type ShopwareGetUserRaw = { getUser?: ShopwareGetUserRes }
 
@@ -93,7 +141,11 @@ export type ShopwareGetUserRaw = { getUser?: ShopwareGetUserRes }
 
 //#region logout method
 
-export type ShopwareLogoutRes = { ok: boolean }
+export type ShopwareLogoutRes = {
+  contextToken: string
+  redirectUrl?: string
+  errors?: ShopwareError[]
+}
 
 export type ShopwareLogoutRaw = {
   logout?: ShopwareLogoutRes
@@ -103,10 +155,9 @@ export type ShopwareLogoutRaw = {
 
 //#region forgot password method
 
-export type ShopwareForgotPasswordRes = { ok: boolean }
+export type ShopwareForgotPasswordRes = { success: boolean }
 
 export type ShopwareForgotPasswordAdditionalInput = {
-  email: string
   storefrontUrl: string
 }
 
@@ -118,20 +169,185 @@ export type ShopwareForgotPasswordRaw = {
 
 //#region forgot password method
 
-export type ShopwareSignupRes = { ok: boolean } & Record<string, any>
+export type ShopwareSignupRes = ShopwareUser & { errors?: ShopwareError[] }
 
 export type ShopwareSignupAdditionalInput = {
-  email: string
-  password: string
+  storefrontUrl: string
   firstName: string
   lastName: string
-  storefrontUrl: string
+  salutationId?: string
+  acceptedDataProtection?: boolean
   billingAddress: {
     countryId: string
     city: string
     street: string
-  } & Record<string, any>
-} & Record<string, any>
+    id?: string
+    customerId?: string
+    countryStateId?: string
+    salutationId?: string
+    firstName?: string
+    lastName?: string
+    zipcode?: string
+    company?: string
+    department?: string
+    title?: string
+    phoneNumber?: string
+    additionalAddressLine1?: string
+    additionalAddressLine2?: string
+    customFields?: Record<string, any>
+    country?: {
+      id?: string
+      name?: string
+      iso?: string
+      position?: number
+      active?: boolean
+      shippingAvailable?: boolean
+      iso3?: string
+      displayStateInRegistration?: boolean
+      forceStateInRegistration?: boolean
+      checkVatIdPattern?: boolean
+      vatIdRequired?: boolean
+      vatIdPattern?: string
+      customFields?: Record<string, any>
+      customerTax?: {
+        enabled?: boolean
+        currencyId?: string
+        amount?: number
+      }
+      companyTax?: {
+        enabled?: boolean
+        currencyId?: string
+        amount?: number
+      }
+      postalCodeRequired?: boolean
+      checkPostalCodePattern?: boolean
+      checkAdvancedPostalCodePattern?: boolean
+      advancedPostalCodePattern?: string
+      addressFormat?: Record<string, any>
+      defaultPostalCodePattern?: string
+      translated?: Record<string, any>
+      states?: {
+        id?: string
+        countryId?: string
+        shortCode?: string
+        name?: string
+        position?: number
+        active?: boolean
+        customFields?: Record<string, any>
+        translated?: Record<string, any>
+      }
+      companyTaxFree?: null
+      taxFree?: null
+    }
+    countryState?: {
+      id?: string
+      countryId?: string
+      shortCode?: string
+      name?: string
+      position?: number
+      active?: boolean
+      customFields?: Record<string, any>
+      translated?: Record<string, any>
+    }
+    salutation?: {
+      id?: string
+      salutationKey?: string
+      displayName?: string
+      letterName?: string
+      customFields?: Record<string, any>
+      translated?: Record<string, any>
+    }
+  }
+  shippingAddress?: {
+    id?: string
+    customerId?: string
+    countryId?: string
+    countryStateId?: string
+    salutationId?: string
+    firstName?: string
+    lastName?: string
+    zipcode?: string
+    city?: string
+    company?: string
+    street?: string
+    department?: string
+    title?: string
+    phoneNumber?: string
+    additionalAddressLine1?: string
+    additionalAddressLine2?: string
+    customFields?: Record<string, any>
+    country?: {
+      id?: string
+      name?: string
+      iso?: string
+      position?: number
+      active?: boolean
+      shippingAvailable?: boolean
+      iso3?: string
+      displayStateInRegistration?: boolean
+      forceStateInRegistration?: boolean
+      checkVatIdPattern?: boolean
+      vatIdRequired?: boolean
+      vatIdPattern?: string
+      customFields?: Record<string, any>
+      customerTax?: {
+        enabled?: boolean
+        currencyId?: string
+        amount?: number
+      }
+      companyTax?: {
+        enabled?: boolean
+        currencyId?: string
+        amount?: number
+      }
+      postalCodeRequired?: boolean
+      checkPostalCodePattern?: boolean
+      checkAdvancedPostalCodePattern?: boolean
+      advancedPostalCodePattern?: string
+      addressFormat?: Record<string, any>
+      defaultPostalCodePattern?: string
+      translated?: Record<string, any>
+      states?: {
+        id?: string
+        countryId?: string
+        shortCode?: string
+        name?: string
+        position?: number
+        active?: boolean
+        customFields?: Record<string, any>
+        translated?: Record<string, any>
+      }
+      companyTaxFree?: null
+      taxFree?: null
+    }
+    countryState?: {
+      id?: string
+      countryId?: string
+      shortCode?: string
+      name?: string
+      position?: number
+      active?: boolean
+      customFields?: Record<string, any>
+      translated?: Record<string, any>
+    }
+    salutation?: {
+      id?: string
+      salutationKey?: string
+      displayName?: string
+      letterName?: string
+      customFields?: Record<string, any>
+      translated?: Record<string, any>
+    }
+  }
+  accountType?: 'private' | 'business'
+  guest?: false
+  birthdayDay?: number
+  birthdayMonth?: number
+  birthdayYear?: number
+  title?: string
+  affiliateCode?: string
+  campaignCode?: string
+}
 
 export type ShopwareSignupRaw = {
   signup?: ShopwareSignupRes
@@ -141,10 +357,11 @@ export type ShopwareSignupRaw = {
 
 //#region login method
 
-export type ShopwareLoginRes =
-  | { ok: true }
-  | { ok: false; message: string }
-  | { ok: false; errors: any }
+export type ShopwareLoginRes = {
+  contextToken: string
+  redirectUrl?: string
+  errors?: ShopwareError
+}
 
 export type ShopwareLoginRaw = {
   login?: ShopwareLoginRes

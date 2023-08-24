@@ -53,15 +53,16 @@ export class StorefrontShopAdapterShopware6User
           },
         })
 
-      if (status !== 200 || response.ok === false) {
+      if (
+        status !== 200 ||
+        (Array.isArray(response.errors) && response.errors.length > 0)
+      ) {
         return {
           data: undefined,
           raw: { login: response },
           error:
-            response.ok === false
-              ? new Error(
-                  (response as { message?: string }).message ?? 'Unknown error'
-                )
+            Array.isArray(response.errors) && response.errors.length > 0
+              ? new Error(response.errors[0].detail)
               : new BadHttpStatusError(),
         }
       }
@@ -111,11 +112,17 @@ export class StorefrontShopAdapterShopware6User
           path: USER_LOGOUT,
         })
 
-      if (status !== 200 || response.ok === false) {
+      if (
+        status !== 200 ||
+        (Array.isArray(response.errors) && response.errors.length > 0)
+      ) {
         return {
           data: undefined,
           raw: { logout: response },
-          error: new BadHttpStatusError(),
+          error:
+            Array.isArray(response.errors) && response.errors.length > 0
+              ? new Error(response.errors[0].detail)
+              : new BadHttpStatusError(),
         }
       }
 
@@ -137,20 +144,29 @@ export class StorefrontShopAdapterShopware6User
     ShopwareSignupAdditionalInput,
     ShopwareSignupRaw,
     Error
-  > = async ({ input }) => {
+  > = async ({ input: { username, ...rest } }) => {
     try {
       const { response, status } =
         await this.mainAdapter.fetchFromShop<ShopwareSignupRes>({
           method: 'POST',
           path: USER_SIGNUP,
-          body: input,
+          body: {
+            email: username,
+            ...rest,
+          },
         })
 
-      if (status !== 200 || response.ok === false) {
+      if (
+        status !== 200 ||
+        (Array.isArray(response.errors) && response.errors.length > 0)
+      ) {
         return {
           data: undefined,
           raw: { signup: response },
-          error: new BadHttpStatusError(),
+          error:
+            Array.isArray(response.errors) && response.errors.length > 0
+              ? new Error(response.errors[0].detail)
+              : new BadHttpStatusError(),
         }
       }
 
@@ -158,7 +174,7 @@ export class StorefrontShopAdapterShopware6User
         new UserSignupEvent<ShopwareSignupRaw>(
           {
             user: {
-              id: response.id,
+              id: response.id || response.customerNumber,
               firstname: response.firstName,
               lastname: response.lastName,
               email: response.email,
@@ -189,11 +205,17 @@ export class StorefrontShopAdapterShopware6User
       // shopware6 returns an 403 if no user is logged in.
       // Or it returns ok=false when no user is logged in.
       // Therefore return an empty user without error
-      if ((response as { ok: boolean }).ok === false) {
+      if (
+        status !== 200 ||
+        (Array.isArray(response.errors) && response.errors.length > 0)
+      ) {
         return {
           data: undefined,
           raw: { getUser: response },
-          error: undefined,
+          error:
+            Array.isArray(response.errors) && response.errors.length > 0
+              ? new Error(response.errors[0].detail)
+              : new BadHttpStatusError(),
         }
       }
 
@@ -208,10 +230,10 @@ export class StorefrontShopAdapterShopware6User
       return {
         data: {
           user: {
-            id: (response as ShopwareUser).id,
-            firstname: (response as ShopwareUser).firstName,
-            lastname: (response as ShopwareUser).lastName,
-            email: (response as ShopwareUser).email,
+            id: response.id || response.customerNumber,
+            firstname: response.firstName,
+            lastname: response.lastName,
+            email: response.email,
           },
         },
         raw: { getUser: response },
@@ -226,19 +248,19 @@ export class StorefrontShopAdapterShopware6User
     ShopwareForgotPasswordAdditionalInput,
     ShopwareForgotPasswordRaw,
     Error
-  > = async ({ input: { email, storefrontUrl } }) => {
+  > = async ({ input: { username, storefrontUrl } }) => {
     try {
       const { response, status } =
         await this.mainAdapter.fetchFromShop<ShopwareForgotPasswordRes>({
           method: 'POST',
           path: USER_PASSWORD_RECOVERY,
           body: {
-            email,
+            email: username,
             storefrontUrl,
           },
         })
 
-      if (status !== 200 || response.ok === false) {
+      if (status !== 200 || !response.success) {
         return {
           data: undefined,
           raw: { forgotPassword: response },
