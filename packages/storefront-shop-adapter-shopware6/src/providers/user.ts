@@ -260,11 +260,18 @@ export class StorefrontShopAdapterShopware6User
           },
         })
 
-      if (status !== 200 || !response.success) {
+      if (
+        status !== 200 ||
+        !response.success ||
+        (Array.isArray(response.errors) && response.errors.length > 0)
+      ) {
         return {
           data: undefined,
           raw: { forgotPassword: response },
-          error: new BadHttpStatusError(),
+          error:
+            Array.isArray(response.errors) && response.errors.length > 0
+              ? new Error(response.errors[0].detail)
+              : new BadHttpStatusError(),
         }
       }
 

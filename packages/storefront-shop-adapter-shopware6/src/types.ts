@@ -155,7 +155,10 @@ export type ShopwareLogoutRaw = {
 
 //#region forgot password method
 
-export type ShopwareForgotPasswordRes = { success: boolean }
+export type ShopwareForgotPasswordRes = {
+  success: boolean
+  errors?: ShopwareError[]
+}
 
 export type ShopwareForgotPasswordAdditionalInput = {
   storefrontUrl: string
@@ -360,7 +363,7 @@ export type ShopwareSignupRaw = {
 export type ShopwareLoginRes = {
   contextToken: string
   redirectUrl?: string
-  errors?: ShopwareError
+  errors?: ShopwareError[]
 }
 
 export type ShopwareLoginRaw = {
