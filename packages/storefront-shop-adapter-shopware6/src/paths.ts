@@ -15,3 +15,7 @@ export const CART_ACTION_UPDATE = 'updateArticleInCart'
 export const REVIEW_PATH = '/frontend/review'
 export const REVIEW_ACTION_GET = 'getArticleReviews'
 export const REVIEW_ACTION_CREATE = 'createArticleReview'
+
+export const WISHLIST_GET = '/store-api/customer/wishlist'
+export const WISHLIST_ADD = '/store-api/customer/wishlist/add'
+export const WISHLIST_REMOVE = '/store-api/customer/wishlist/delete'
