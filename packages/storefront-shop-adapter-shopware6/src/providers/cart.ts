@@ -14,7 +14,7 @@ import {
 } from '@makaira/storefront-types'
 import { CART_ACTION_UPDATE, CART_PATH } from '../paths'
 import {
-  ShopWareUpdateCartItemAdditional,
+  ShopwareUpdateCartItemAdditionalInput,
   ShopwareAddItemRaw,
   ShopwareAddItemRes,
   ShopwareCartRes,
@@ -24,6 +24,8 @@ import {
   ShopwareRemoveItemRes,
   ShopwareUpdateItemRaw,
   ShopwareUpdateItemRes,
+  ShopwareErrorArray,
+  ShopwareErrorObject,
 } from '../types'
 
 import { StorefrontShopAdapterShopware6 } from './main'
@@ -45,17 +47,16 @@ export class StorefrontShopAdapterShopware6Cart
         return {
           data: undefined,
           raw: { getCart: response },
-          error: new BadHttpStatusError(),
+          error: this.getError(response) || new BadHttpStatusError(),
         }
       }
 
       return {
         data: { items: lineItemsToMakairaCartItems(response.lineItems) },
         raw: { getCart: response },
-        error: undefined,
+        error: this.getError(response),
       }
     } catch (e) {
-      console.log('getCart', e)
       return { data: undefined, raw: { getCart: undefined }, error: e as Error }
     }
   }
@@ -69,10 +70,11 @@ export class StorefrontShopAdapterShopware6Cart
    *    input: {
    *        product: {
    *            id: ""
-   *        }
-   *        referencedId: "" // should be same with product's id
+   *        },
+   *        quantity: 1,
+   *        referencedId: "", // should be same with product's id
    *        good: true/false,
-   *        type: "product"
+   *        type: "product",
    *    }
    * })
    *
@@ -81,15 +83,15 @@ export class StorefrontShopAdapterShopware6Cart
    *    input: {
    *        product: {
    *            id: ""
-   *        }
-   *        referencedId: "" // should be same with product's id
+   *        },
+   *        referencedId: "", // should be same with product's id
    *        good: false,
-   *        type: "promotion"
+   *        type: "promotion",
    *    }
    * })
    */
   addItem: MakairaAddItemToCart<
-    ShopWareUpdateCartItemAdditional,
+    ShopwareUpdateCartItemAdditionalInput,
     ShopwareAddItemRaw,
     Error
   > = async ({ input }) => {
@@ -132,7 +134,11 @@ export class StorefrontShopAdapterShopware6Cart
         })
 
       if (status !== 200) {
-        return this.handleResponseError(response, 'addItem')
+        return {
+          data: undefined,
+          raw: { addItem: response },
+          error: this.getError(response) || new BadHttpStatusError(),
+        }
       }
 
       const raw: ShopwareAddItemRaw = {
@@ -147,11 +153,7 @@ export class StorefrontShopAdapterShopware6Cart
         new CartAddItemEvent<ShopwareAddItemRaw>(data, raw)
       )
 
-      if (this.isErrorResponse(response)) {
-        return this.handleResponseError(response, 'addItem')
-      }
-
-      return { data, raw, error: undefined }
+      return { data, raw, error: this.getError(response) }
     } catch (e) {
       return { data: undefined, raw: { addItem: undefined }, error: e as Error }
     }
@@ -174,7 +176,11 @@ export class StorefrontShopAdapterShopware6Cart
           })
 
         if (status !== 200) {
-          return this.handleResponseError(response, 'removeItem')
+          return {
+            data: undefined,
+            raw: { removeItem: response },
+            error: this.getError(response) || new BadHttpStatusError(),
+          }
         }
 
         const data: MakairaRemoveItemFromCartResData = {
@@ -187,11 +193,7 @@ export class StorefrontShopAdapterShopware6Cart
           new CartRemoveItemEvent<ShopwareRemoveItemRaw>(data, raw)
         )
 
-        if (this.isErrorResponse(response)) {
-          return this.handleResponseError(response, 'removeItem')
-        }
-
-        return { data, raw, error: undefined }
+        return { data, raw, error: this.getError(response) }
       } catch (e) {
         return {
           data: undefined,
@@ -202,7 +204,7 @@ export class StorefrontShopAdapterShopware6Cart
     }
 
   updateItem: MakairaUpdateItemFromCart<
-    Partial<ShopWareUpdateCartItemAdditional>,
+    Partial<ShopwareUpdateCartItemAdditionalInput>,
     ShopwareUpdateItemRaw,
     Error
   > = async ({ input }) => {
@@ -220,7 +222,11 @@ export class StorefrontShopAdapterShopware6Cart
         })
 
       if (status !== 200) {
-        return this.handleResponseError(response, 'updateItem')
+        return {
+          data: undefined,
+          raw: { updateItem: response },
+          error: this.getError(response) || new BadHttpStatusError(),
+        }
       }
 
       const raw: ShopwareUpdateItemRaw = {
@@ -235,11 +241,7 @@ export class StorefrontShopAdapterShopware6Cart
         new CartUpdateItemEvent<ShopwareUpdateItemRaw>(data, raw)
       )
 
-      if (status !== 200 || this.isErrorResponse(response)) {
-        return this.handleResponseError(response, 'updateItem')
-      }
-
-      return { data, raw, error: undefined }
+      return { data, raw, error: this.getError(response) }
     } catch (e) {
       return {
         data: undefined,
@@ -249,26 +251,19 @@ export class StorefrontShopAdapterShopware6Cart
     }
   }
 
-  private isErrorResponse(response: ShopwareCartRes) {
-    if (response.errors && Object.keys(response.errors).length > 0) return true
-    return false
-  }
-
-  private handleResponseError(response: ShopwareCartRes, action: string) {
+  private getError(response: ShopwareCartRes) {
     const { errors } = response
-    if (Array.isArray(errors)) {
-      return {
-        data: undefined,
-        raw: { [action]: response },
-        error: new Error(errors[0].code),
-      }
-    } else {
-      const keys = Object.keys(errors)
-      return {
-        data: undefined,
-        raw: { [action]: response },
-        error: new Error(errors[keys[0]].messageKey),
+    for (const key of Object.keys(errors)) {
+      if (!Array.isArray(errors)) {
+        const err = errors[key as keyof typeof errors]
+        if ((err as ShopwareErrorObject).resolved === false) {
+          return new Error((err as ShopwareErrorObject).messageKey)
+        }
+      } else {
+        const err: ShopwareErrorArray = errors[parseInt(key)]
+        return new Error(err.code)
       }
     }
+    return undefined
   }
 }

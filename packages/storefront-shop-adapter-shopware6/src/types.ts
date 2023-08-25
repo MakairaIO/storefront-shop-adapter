@@ -111,6 +111,7 @@ export type ShopwareErrorArray = {
 export type ShopwareErrorObject = {
   message: string
   messageKey: string
+  resolved: boolean
 }
 
 export type ShopwareCartRes = {
@@ -122,7 +123,7 @@ export type ShopwareCartRes = {
   campaignCode: string
 }
 
-export type ShopWareUpdateCartItemAdditional = {
+export type ShopwareUpdateCartItemAdditionalInput = {
   referencedId: string
   type: string
   good: boolean
