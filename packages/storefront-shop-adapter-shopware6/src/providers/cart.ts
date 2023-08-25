@@ -170,9 +170,6 @@ export class StorefrontShopAdapterShopware6Cart
           await this.mainAdapter.fetchFromShop<ShopwareRemoveItemRes>({
             path: CART_ACTION_UPDATE + `?ids[0]=${product.id}`,
             method: 'DELETE',
-            body: {
-              ids: [product.id],
-            },
           })
 
         if (status !== 200) {
