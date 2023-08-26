@@ -2,8 +2,11 @@ import {
   BadHttpStatusError,
   MakairaAddItemToWishlist,
   MakairaGetWishlist,
+  MakairaProduct,
   MakairaRemoveItemFromWishlist,
   MakairaShopProviderWishlist,
+  WishlistAddItemEvent,
+  WishlistRemoveItemEvent,
 } from '@makaira/storefront-types'
 import { StorefrontShopAdapterShopware6 } from './main'
 import {
@@ -91,6 +94,15 @@ export class StorefrontShopAdapterShopware6Wishlist
           }
         }
 
+        this.mainAdapter.dispatchEvent(
+          new WishlistAddItemEvent<ShopwareWishlistAddRaw>(
+            {
+              items: [{ product: product as MakairaProduct }],
+            },
+            { addItem: response }
+          )
+        )
+
         return {
           data: undefined,
           raw: { addItem: response },
@@ -130,6 +142,15 @@ export class StorefrontShopAdapterShopware6Wishlist
               : new BadHttpStatusError(),
         }
       }
+
+      this.mainAdapter.dispatchEvent(
+        new WishlistRemoveItemEvent<ShopwareWishlistRemoveRaw>(
+          {
+            items: [{ product: product as MakairaProduct }],
+          },
+          { removeItem: response }
+        )
+      )
 
       return {
         data: undefined,
