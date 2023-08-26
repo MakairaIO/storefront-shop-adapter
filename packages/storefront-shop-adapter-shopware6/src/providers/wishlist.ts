@@ -45,7 +45,17 @@ export class StorefrontShopAdapterShopware6Wishlist
         }
 
         return {
-          data: undefined,
+          data: {
+            items: response.products?.elements?.map((p) => ({
+              product: {
+                id: p.id,
+                title: p.name,
+                price: p.calculatedPrice?.unitPrice,
+                url: '',
+                images: [],
+              },
+            })),
+          },
           raw: { wishlist: response },
           error: undefined,
         }

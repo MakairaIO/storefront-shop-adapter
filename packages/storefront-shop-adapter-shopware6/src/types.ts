@@ -375,7 +375,12 @@ export type ShopwareLoginRaw = {
 
 //#region wishlist method
 
-export type ShopwareWishlistGetRes = { errors?: ShopwareError[] }
+export type ShopwareWishlistGetRes = {
+  products: {
+    elements: any[]
+  }
+  errors?: ShopwareError[]
+}
 
 export type ShopwareWishlistGetRaw = {
   wishlist?: ShopwareWishlistGetRes
