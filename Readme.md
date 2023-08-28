@@ -68,6 +68,10 @@ Hello and welcome to the Makaira shop adapters. These well tested and in product
       - [Unified Input Parameters](#unified-input-parameters-13)
       - [Unified Data Response](#unified-data-response-13)
       - [Event Listener](#event-listener-13)
+    - [Create a customer wishlist](#create-a-customer-wishlist)
+      - [Unified Input Parameters](#unified-input-parameters-14)
+      - [Unified Data Response](#unified-data-response-14)
+      - [Event Listener](#event-listener-14)
   - [Unified data types](#unified-data-types)
     - [MakairaUser](#makairauser)
     - [MakairaProduct](#makairaproduct)
@@ -662,20 +666,14 @@ const { data, error, raw } = result
 
 #### Unified Input Parameters
 
-| Parameters     | Required/Optional | Description                                                                                                                  | Type       |
-| -------------- | ----------------- | ---------------------------------------------------------------------------------------------------------------------------- | ---------- |
-| product        | required          | The product to remove from the wishlist.                                                                                     | `object[]` |
-| - id           | required          | The id of the product. For most shop adapters this is the `productId`. But for Shopify for example might be the `variantId`. | `string`   |
-| - attributes[] | optional          | An optional list of attributes that are associated the product. Not every shop adapter supports them.                        | `object[]` |
-| -- key         | required          | The reference key to associate the value with.                                                                               | `string`   |
-| -- value       | required          | The value to be set to the key.                                                                                              | `string`   |
+No input parameters needed.
 
 #### Unified `Data` Response
 
-| Property  | Required/Optional | Description                                               | Type                                |
-| --------- | ----------------- | --------------------------------------------------------- | ----------------------------------- |
-| items[]   | required          | An array containing the items currently in the wishlist.  | `object[]`                          |
-| - product | required          | The product in the wishlist. Is of type `MakairaProduct`. | [`MakairaProduct`](#makairaproduct) |
+| Property | Required/Optional | Description                            | Type                                |
+| -------- | ----------------- | -------------------------------------- | ----------------------------------- |
+| success  | required          | Returns a success response.            | `boolean`                           |
+| errors   | optional          | List of errors returned from Shopware. | [`ShopwareError[]`](#shopwareerror) |
 
 #### Event Listener
 
@@ -688,6 +686,29 @@ client.addEventListener(WishlistRemoveItemEvent.eventName, setNewWishlist)
 ```
 
 _The data property is equivalent to the unified data response_
+
+### Create a customer wishlist
+
+```typescript
+const result = await client.wishlist.createWishlist()
+
+const { data, error, raw } = result
+```
+
+#### Unified Input Parameters
+
+No input parameters needed.
+
+#### Unified `Data` Response
+
+| Property | Required/Optional | Description                            | Type                                |
+| -------- | ----------------- | -------------------------------------- | ----------------------------------- |
+| success  | required          | Returns a success response.            | `boolean`                           |
+| errors   | optional          | List of errors returned from Shopware. | [`ShopwareError[]`](#shopwareerror) |
+
+#### Event Listener
+
+Getters don't have an event listener
 
 ## Unified data types
 
