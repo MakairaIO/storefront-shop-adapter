@@ -453,6 +453,15 @@ export type ShopwareWishlistRemoveRaw = {
   removeItem?: ShopwareWishlistRemoveRes
 }
 
+export type ShopwareWishlistCreateRes = {
+  success: boolean
+  errors?: ShopwareError[]
+}
+
+export type ShopwareWishlistCreateRaw = {
+  createWishlist?: ShopwareWishlistCreateRes
+}
+
 //#endregion
 
 //#endregion
