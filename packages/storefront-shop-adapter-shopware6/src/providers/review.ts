@@ -6,13 +6,14 @@ import {
   MakairaShopProviderReview,
   ReviewCreateEvent,
 } from '@makaira/storefront-types'
-import { REVIEW_ACTION_CREATE, REVIEW_ACTION_GET, REVIEW_PATH } from '../paths'
+import { REVIEW_ACTION_GET, PRODUCT_PATH, REVIEW_ACTION_CREATE } from '../paths'
 import {
   ShopwareCreateReviewAdditionalInput,
   ShopwareCreateReviewRaw,
   ShopwareCreateReviewRes,
   ShopwareGetReviewsRaw,
   ShopwareGetReviewsRes,
+  ShopwareSearchBody,
 } from '../types'
 import { StorefrontShopAdapterShopware6 } from './main'
 
@@ -21,77 +22,135 @@ export class StorefrontShopAdapterShopware6Review
 {
   constructor(private mainAdapter: StorefrontShopAdapterShopware6) {}
 
-  getReviews: MakairaGetReviews<unknown, ShopwareGetReviewsRaw, Error> =
-    async ({ input: { product } }) => {
-      try {
-        const { response, status } =
-          await this.mainAdapter.fetchFromShop<ShopwareGetReviewsRes>({
-            path: REVIEW_PATH,
-            body: {
-              article_id: product.id,
-            },
-          })
+  /**
+   * Get Review of product
+   *
+   * @example
+   *
+   * // Example 1: Get review of product with pagination
+   * getReviews({
+   *    input: {
+   *      product: { id: '<product id>' },
+   *      pagination: {
+   *        limit: 20,
+   *        offset: 0
+   *      },
+   *    }
+   *  })
+   *
+   *  //Example 2: Get visible review of product
+   *  getReviews({
+   *    input: {
+   *      product: { id: '<product id>' },
+   *      pagination: {
+   *        limit: 20,
+   *        offset: 0
+   *      },
+   *      filter: [
+   *        {
+   *          field: 'status',
+   *          type: 'equals',
+   *          value: true
+   *        }
+   *      ]
+   *    }
+   *  })
+   */
+  getReviews: MakairaGetReviews<
+    ShopwareSearchBody,
+    ShopwareGetReviewsRaw,
+    Error
+  > = async ({ input: { product, pagination, ...rest } }) => {
+    const paginationWithDefaults = Object.assign(
+      { limit: 20, offset: 0 },
+      pagination
+    )
 
-        if (status !== 200 || !Array.isArray(response)) {
-          return {
-            data: undefined,
-            raw: { getReviews: response },
-            error:
-              !Array.isArray(response) && response?.message
-                ? new Error(response.message)
-                : new BadHttpStatusError(),
-          }
-        }
-
-        const items: { review: MakairaReview }[] = response.map((item) => ({
-          review: {
-            id: '', // TODO
-            product: { id: product.id },
-            rating: item.points,
-            text: item.comment,
+    try {
+      const { response, status } =
+        await this.mainAdapter.fetchFromShop<ShopwareGetReviewsRes>({
+          path: `${PRODUCT_PATH}/${product.id}/${REVIEW_ACTION_GET}`,
+          method: 'POST',
+          body: {
+            page:
+              Math.ceil(
+                paginationWithDefaults.offset / paginationWithDefaults.limit
+              ) + 1,
+            limit: paginationWithDefaults.limit,
+            ...rest,
           },
-        }))
+        })
 
-        return {
-          data: { items },
-          raw: { getReviews: response },
-          error: undefined,
-        }
-      } catch (e) {
+      if (
+        status !== 200 ||
+        (Array.isArray(response.errors) && response.errors.length > 0)
+      ) {
         return {
           data: undefined,
-          raw: { getReviews: undefined },
-          error: e as Error,
+          raw: { getReviews: response },
+          error:
+            Array.isArray(response.errors) && response.errors.length > 0
+              ? new Error(response.errors[0].detail)
+              : new BadHttpStatusError(),
         }
       }
+
+      const items: { review: MakairaReview }[] = response.elements.map(
+        (item) => ({
+          review: {
+            id: item.id,
+            product: { id: product.id },
+            rating: item.points,
+            text: item.content,
+          },
+        })
+      )
+
+      return {
+        data: { items },
+        raw: { getReviews: response },
+        error: undefined,
+      }
+    } catch (e) {
+      return {
+        data: undefined,
+        raw: { getReviews: undefined },
+        error: e as Error,
+      }
     }
+  }
 
   createReview: MakairaCreateReview<
     ShopwareCreateReviewAdditionalInput,
     ShopwareCreateReviewRaw,
     Error
-  > = async ({ input: { review, email, headline, name } }) => {
+  > = async ({ input: { review, email, title, name } }) => {
     try {
       const { response, status } =
         await this.mainAdapter.fetchFromShop<ShopwareCreateReviewRes>({
-          path: REVIEW_PATH,
+          path: `${PRODUCT_PATH}/${review.product.id}/${REVIEW_ACTION_CREATE}`,
+          method: 'POST',
           body: {
-            article_id: review.product.id,
-            comment: review.text,
+            content: review.text,
             points: review.rating,
             name,
-            headline,
+            title,
             email,
           },
         })
 
-      if (status !== 200 || response.ok === false) {
+      if (
+        ![200, 204, 201].includes(status) ||
+        (response &&
+          Array.isArray(response.errors) &&
+          response.errors.length > 0)
+      ) {
         return {
           data: undefined,
-          raw: { createReview: response },
+          raw: { getReviews: response },
           error:
-            response.ok === false
-              ? new Error(response.message)
+            Array.isArray(response.errors) && response.errors.length > 0
+              ? new Error(response.errors[0].detail)
               : new BadHttpStatusError(),
         }
       }

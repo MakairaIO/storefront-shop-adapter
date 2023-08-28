@@ -128,16 +128,24 @@ export class StorefrontShopAdapterShopware6<
     }
 
     const response = await fetch(requestUrl, options)
-    const json: ShopwareBaseResponse = await response.json()
 
-    if (json.contextToken) {
-      this.setContextIds(json.contextToken, '')
-    } else if (json.token) {
-      this.setContextIds(json.token, contextIds)
+    if (response.status !== 204) {
+      const json: ShopwareBaseResponse = await response.json()
+
+      if (json.contextToken) {
+        this.setContextIds(json.contextToken, '')
+      } else if (json.token) {
+        this.setContextIds(json.token, contextIds)
+      }
+
+      return {
+        response: json as Response,
+        status: response.status,
+      }
     }
 
     return {
-      response: json as Response,
+      response: {} as Response,
       status: response.status,
     }
   }

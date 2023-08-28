@@ -12,9 +12,9 @@ export const CART_ACTION_ADD = 'line-item'
 export const CART_ACTION_REMOVE = 'deleteCartItem'
 export const CART_ACTION_UPDATE = 'updateArticleInCart'
 
-export const REVIEW_PATH = '/frontend/review'
-export const REVIEW_ACTION_GET = 'getArticleReviews'
-export const REVIEW_ACTION_CREATE = 'createArticleReview'
+export const PRODUCT_PATH = '/store-api/product'
+export const REVIEW_ACTION_GET = 'reviews'
+export const REVIEW_ACTION_CREATE = 'review'
 
 export const WISHLIST_GET = '/store-api/customer/wishlist'
 export const WISHLIST_ADD = '/store-api/customer/wishlist/add'
