@@ -1,13 +1,82 @@
 import { MakairaStorage } from '@makaira/storefront-types'
 
 //#region general shopware6 types
+export type ShopwareTax = {
+  tax: number
+  taxRate: number
+  price: number
+}
+
+export type ShopwareTaxRule = {
+  percentage: number
+  taxRate: number
+}
+
+export type ShopwareCartPrice = {
+  netPrice: number
+  totalPrice: number
+  positionPrice: number
+  taxStatus: number
+  rawTotal: number
+  calculatedTaxes: ShopwareTax[]
+  taxRules: ShopwareTaxRule[]
+}
+
+export type ShopwareProductOption = {
+  group: string
+  option: string
+}
+
+export type ShopwareLineItemPayload = {
+  customFields: any[]
+  productNumber: string
+  manufacturerId: string
+  options: ShopwareProductOption[]
+  stock: number
+}
+
+export type ShopwareLineItemPrice = {
+  unitPrice: number
+  quantity: number
+  totalPrice: number
+  calculatedTaxes: ShopwareTax[]
+  taxRules: ShopwareTaxRule[]
+}
+
+export type ShopwareQuantityInformation = {
+  minPurchase: number
+  maxPurchase: number
+  purchaseSteps: number
+}
+
+export type ShopwareThumbnail = {
+  url: string
+  width: number
+  height: number
+}
+
 export type ShopwareProduct = {
   id: string
-  name: string
-  price: number
-  base_price: string
+  referencedId: string
+  label: string
   quantity: number
-  image_path: string
+  type: string
+  good: boolean
+  description: string
+  removable: boolean
+  stackable: boolean
+  modified: boolean
+  payload: ShopwareLineItemPayload
+  price: ShopwareLineItemPrice
+  quantityInformation: ShopwareQuantityInformation
+  cover: {
+    url: string
+    metaData: {
+      width: number
+      height: number
+    }
+    thumbnails: ShopwareThumbnail[]
+  }
 }
 
 export type ShopwareUser = {
@@ -132,9 +201,41 @@ export type ShopwareSearchResponse<T> = {
 
 //#region cart provider
 
+export type ShopwareErrorArray = {
+  code: string
+  title: string
+  detail: string
+}
+
+export type ShopwareErrorObject = {
+  message: string
+  messageKey: string
+  resolved: boolean
+}
+
+export type ShopwareCartRes = {
+  lineItems: ShopwareProduct[]
+  price: ShopwareCartPrice
+  errors: ShopwareErrorArray[] | Record<string, ShopwareErrorObject>
+  customerComment: string
+  affiliateCode: string
+  campaignCode: string
+}
+
+export type ShopwareUpdateCartItemAdditionalInput = {
+  referencedId: string
+  type: string
+  good: boolean
+  description?: string
+  removable?: boolean
+  stackable?: boolean
+  label?: string
+  modified?: boolean
+}
+
 //#region getCart method
 
-export type ShopwareGetCartRes = ShopwareProduct[]
+export type ShopwareGetCartRes = ShopwareCartRes
 
 export type ShopwareGetCartRaw = { getCart?: ShopwareGetCartRes }
 
@@ -142,21 +243,16 @@ export type ShopwareGetCartRaw = { getCart?: ShopwareGetCartRes }
 
 //#region addItem method
 
-export type ShopwareAddItemRes =
-  | ShopwareProduct[]
-  | { ok: false; message: string }
-
+export type ShopwareAddItemRes = ShopwareCartRes
 export type ShopwareAddItemRaw = {
   addItem?: ShopwareAddItemRes
 }
 
 //#endregion
 
-//#region addItem method
+//#region removeItem method
 
-export type ShopwareRemoveItemRes =
-  | ShopwareProduct[]
-  | { ok: false; message: string }
+export type ShopwareRemoveItemRes = ShopwareCartRes
 
 export type ShopwareRemoveItemRaw = {
   removeItem?: ShopwareRemoveItemRes
@@ -166,10 +262,7 @@ export type ShopwareRemoveItemRaw = {
 
 //#region updateItem method
 
-export type ShopwareUpdateItemRes =
-  | ShopwareProduct[]
-  | { ok: false; message: string }
-
+export type ShopwareUpdateItemRes = ShopwareCartRes
 export type ShopwareUpdateItemRaw = {
   updateItem?: ShopwareUpdateItemRes
 }
