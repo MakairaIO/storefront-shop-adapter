@@ -13,3 +13,8 @@ export const CART_ACTION_UPDATE = CART_PATH + '/line-item'
 export const PRODUCT_PATH = '/store-api/product'
 export const REVIEW_ACTION_GET = 'reviews'
 export const REVIEW_ACTION_CREATE = 'review'
+
+export const WISHLIST_GET = '/store-api/customer/wishlist'
+export const WISHLIST_ADD = '/store-api/customer/wishlist/add'
+export const WISHLIST_REMOVE = '/store-api/customer/wishlist/delete'
+export const WISHLIST_CREATE = '/store-api/customer/wishlist/merge'

@@ -87,6 +87,7 @@ declare module '@makaira/storefront-react' {
 | - getWishlist    | ✅        |
 | - addItem        | ✅        |
 | - removeItem     | ✅        |
+| - createWishlist | ✅        |
 | checkout         |           |
 | - getCheckout    | ❌        |
 | - submit         | ❌        |
@@ -187,12 +188,32 @@ Other properties check on [document](https://shopware.stoplight.io/docs/store-ap
 
 #### getWishlist
 
-_Not implemented_
+| Property                                                                                                                     | Required/Optional | Description                                                                                                                         | Type     |
+| ---------------------------------------------------------------------------------------------------------------------------- | ----------------- | ----------------------------------------------------------------------------------------------------------------------------------- | -------- |
+| search-queries: `filter, associations, includes, total-count-mode, post-filter, query, sort, aggregations, grouping, fields` | Optional          | Query to filter response with [condition](https://shopware.stoplight.io/docs/store-api/cf710bf73d0cd-search-queries#search-queries) | `object` |
+
+Other properties check on [document](https://shopware.stoplight.io/docs/store-api/14f94ff26ea3b-fetch-a-wishlist)
 
 #### addItem
 
-_Not implemented_
+| Property  | Required/Optional | Description                            | Type     |
+| --------- | ----------------- | -------------------------------------- | -------- |
+| productId | Required          | Identifier of the product to be added. | `string` |
+
+Other properties check on [document](https://shopware.stoplight.io/docs/store-api/b2d281de3cdd6-add-a-product-to-a-wishlist)
 
 #### removeItem
 
-_Not implemented_
+| Property  | Required/Optional | Description                                                    | Type     |
+| --------- | ----------------- | -------------------------------------------------------------- | -------- |
+| productId | Required          | The identifier of the product to be removed from the wishlist. | `string` |
+
+Other properties check on [document](https://shopware.stoplight.io/docs/store-api/e4e034e43e4d3-remove-a-product-from-a-wishlist)
+
+#### createWishlist
+
+| Property   | Required/Optional | Description      | Type            |
+| ---------- | ----------------- | ---------------- | --------------- |
+| productIds | Optional          | List product id. | `array[string]` |
+
+Other properties check on [document](https://shopware.stoplight.io/docs/store-api/e1d8a35023a23-create-a-wishlist-for-a-customer)

@@ -515,6 +515,48 @@ export type ShopwareLoginRaw = {
 
 //#endregion
 
+//#region wishlist method
+
+export type ShopwareWishlistGetRes = {
+  products: {
+    elements: any[]
+  }
+  errors?: ShopwareError[]
+}
+
+export type ShopwareWishlistGetRaw = {
+  wishlist?: ShopwareWishlistGetRes
+}
+
+export type ShopwareWishlistAddRes = {
+  success: boolean
+  errors?: ShopwareError[]
+}
+
+export type ShopwareWishlistAddRaw = {
+  addItem?: ShopwareWishlistAddRes
+}
+
+export type ShopwareWishlistRemoveRes = {
+  success: boolean
+  errors?: ShopwareError[]
+}
+
+export type ShopwareWishlistRemoveRaw = {
+  removeItem?: ShopwareWishlistRemoveRes
+}
+
+export type ShopwareWishlistCreateRes = {
+  success: boolean
+  errors?: ShopwareError[]
+}
+
+export type ShopwareWishlistCreateRaw = {
+  createWishlist?: ShopwareWishlistCreateRes
+}
+
+//#endregion
+
 //#endregion
 
 //#endregion
