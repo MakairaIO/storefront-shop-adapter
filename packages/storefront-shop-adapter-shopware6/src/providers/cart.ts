@@ -101,7 +101,7 @@ export class StorefrontShopAdapterShopware6Cart
         product,
         quantity,
         referencedId,
-        type,
+        type = 'product',
         description,
         label,
         removable = true,

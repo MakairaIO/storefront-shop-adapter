@@ -224,7 +224,7 @@ export type ShopwareCartRes = {
 
 export type ShopwareUpdateCartItemAdditionalInput = {
   referencedId: string
-  type: string
+  type?: string
   good: boolean
   description?: string
   removable?: boolean
