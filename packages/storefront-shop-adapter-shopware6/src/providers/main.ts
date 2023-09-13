@@ -75,7 +75,6 @@ export class StorefrontShopAdapterShopware6<
     this.additionalOptions = {
       url: options.url,
       accessToken: options.accessToken,
-      storefrontUrl: options.storefrontUrl,
       storage: options.storage ?? LocalStorageSsrSafe,
     }
 

@@ -106,7 +106,7 @@ export class StorefrontShopAdapterShopware6User
 
   logout: MakairaLogout<ShopwareLogoutRequest, ShopwareLogoutRaw, Error> =
     async ({
-      input: { redirectUrl = this.mainAdapter.additionalOptions.storefrontUrl },
+      input: { redirectUrl = this.mainAdapter.additionalOptions.url },
     }) => {
       try {
         const { response, status } =
@@ -257,10 +257,7 @@ export class StorefrontShopAdapterShopware6User
     ShopwareForgotPasswordRaw,
     Error
   > = async ({
-    input: {
-      username,
-      storefrontUrl = this.mainAdapter.additionalOptions.storefrontUrl,
-    },
+    input: { username, storefrontUrl = this.mainAdapter.additionalOptions.url },
   }) => {
     try {
       const { response, status } =

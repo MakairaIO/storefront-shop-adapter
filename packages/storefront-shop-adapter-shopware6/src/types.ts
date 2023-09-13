@@ -609,10 +609,6 @@ export type AdditionalShopware6Options = {
    */
   accessToken: string
   /**
-   * The default storefront using for signup/forgot password/logout...
-   */
-  storefrontUrl: string
-  /**
    * The storage engine to store and receive persistent data. This is
    * for example used to store the checkoutId.
    */
