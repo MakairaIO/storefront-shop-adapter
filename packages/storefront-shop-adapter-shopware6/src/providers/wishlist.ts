@@ -100,15 +100,18 @@ export class StorefrontShopAdapterShopware6Wishlist
 
       return {
         data: {
-          items: response.products?.elements?.map((p) => ({
-            product: {
-              id: p.id,
-              title: p.name,
-              price: p.calculatedPrice?.unitPrice,
-              url: '',
-              images: [],
-            },
-          })),
+          items: response.products?.elements?.map((p) => {
+            const image = p.cover?.media?.url
+            return {
+              product: {
+                id: p.id,
+                title: p.name,
+                price: p.calculatedPrice?.unitPrice,
+                url: '',
+                images: image ? [image] : [],
+              },
+            }
+          }),
         },
         raw: { wishlist: response },
         error: undefined,
@@ -145,17 +148,21 @@ export class StorefrontShopAdapterShopware6Wishlist
           }
         }
 
+        const { data } = await this.getWishlist({ input: {} })
+
         this.mainAdapter.dispatchEvent(
           new WishlistAddItemEvent<ShopwareWishlistAddRaw>(
             {
-              items: [{ product: product as MakairaProduct }],
+              items: data?.items || [],
             },
             { addItem: response }
           )
         )
 
         return {
-          data: undefined,
+          data: {
+            items: data?.items || [],
+          },
           raw: { addItem: response },
           error: undefined,
         }
@@ -194,17 +201,21 @@ export class StorefrontShopAdapterShopware6Wishlist
         }
       }
 
+      const { data } = await this.getWishlist({ input: {} })
+
       this.mainAdapter.dispatchEvent(
         new WishlistRemoveItemEvent<ShopwareWishlistRemoveRaw>(
           {
-            items: [{ product: product as MakairaProduct }],
+            items: data?.items || [],
           },
           { removeItem: response }
         )
       )
 
       return {
-        data: undefined,
+        data: {
+          items: data?.items || [],
+        },
         raw: { removeItem: response },
         error: undefined,
       }
