@@ -134,7 +134,7 @@ export class StorefrontShopAdapterShopware6Review
             content: review.text,
             points: review.rating,
             name,
-            title,
+            title: title || review.text?.split('\n')[0],
             email,
           },
         })
