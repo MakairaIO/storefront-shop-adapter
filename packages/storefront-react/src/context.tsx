@@ -362,7 +362,9 @@ const ShopProvider: React.FC<ShopProviderProps> = ({
   ) {
     const { data: eventData } = event
 
-    setUser(eventData.data)
+    if (eventData.data) {
+      setUser(eventData.data)
+    }
 
     if (eventData.raw) {
       setRawUser(eventData.raw)
