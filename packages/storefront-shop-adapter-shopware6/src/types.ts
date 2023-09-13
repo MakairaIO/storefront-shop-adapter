@@ -283,6 +283,19 @@ export type ShopwareGetUserRaw = { getUser?: ShopwareGetUserRes }
 
 //#region logout method
 
+export type ShopwareLogoutRequest = {
+  /**
+   * @deprecated Deprecated since v6.6.0.0. The context token added in header instead.
+   */
+  contextToken?: string
+
+  /**
+   * Define the URL which browser will be redirected to
+   * @default window.location.origin
+   */
+  redirectUrl?: string
+}
+
 export type ShopwareLogoutRes = {
   contextToken: string
   redirectUrl?: string
@@ -303,7 +316,7 @@ export type ShopwareForgotPasswordRes = {
 }
 
 export type ShopwareForgotPasswordAdditionalInput = {
-  storefrontUrl: string
+  storefrontUrl?: string
 }
 
 export type ShopwareForgotPasswordRaw = {
@@ -595,6 +608,10 @@ export type AdditionalShopware6Options = {
    * The access token to make authenticated requests against shopware6
    */
   accessToken: string
+  /**
+   * The default storefront using for signup/forgot password/logout...
+   */
+  storefrontUrl: string
   /**
    * The storage engine to store and receive persistent data. This is
    * for example used to store the checkoutId.

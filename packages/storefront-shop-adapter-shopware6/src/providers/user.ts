@@ -25,12 +25,12 @@ import {
   ShopwareLoginRes,
   ShopwareLogoutRaw,
   ShopwareLogoutRes,
-  ShopwareUser,
   ShopwareForgotPasswordRaw,
   ShopwareForgotPasswordAdditionalInput,
   ShopwareSignupAdditionalInput,
   ShopwareSignupRaw,
   ShopwareSignupRes,
+  ShopwareLogoutRequest,
 } from '../types'
 import { StorefrontShopAdapterShopware6 } from './main'
 
@@ -104,41 +104,49 @@ export class StorefrontShopAdapterShopware6User
     }
   }
 
-  logout: MakairaLogout<unknown, ShopwareLogoutRaw, Error> = async () => {
-    try {
-      const { response, status } =
-        await this.mainAdapter.fetchFromShop<ShopwareLogoutRes>({
-          method: 'POST',
-          path: USER_LOGOUT,
-        })
+  logout: MakairaLogout<ShopwareLogoutRequest, ShopwareLogoutRaw, Error> =
+    async ({
+      input: { redirectUrl = this.mainAdapter.additionalOptions.storefrontUrl },
+    }) => {
+      try {
+        const { response, status } =
+          await this.mainAdapter.fetchFromShop<ShopwareLogoutRes>({
+            method: 'POST',
+            path: USER_LOGOUT,
+            body: {
+              redirectUrl: redirectUrl,
+            },
+          })
 
-      if (
-        status !== 200 ||
-        (Array.isArray(response.errors) && response.errors.length > 0)
-      ) {
+        if (
+          status !== 200 ||
+          (Array.isArray(response.errors) && response.errors.length > 0)
+        ) {
+          return {
+            data: undefined,
+            raw: { logout: response },
+            error:
+              Array.isArray(response.errors) && response.errors.length > 0
+                ? new Error(response.errors[0].detail)
+                : new BadHttpStatusError(),
+          }
+        }
+
+        this.mainAdapter.dispatchEvent(
+          new UserLogoutEvent<ShopwareLogoutRaw>(undefined, {
+            logout: response,
+          })
+        )
+
+        return { data: undefined, raw: { logout: response }, error: undefined }
+      } catch (e) {
         return {
           data: undefined,
-          raw: { logout: response },
-          error:
-            Array.isArray(response.errors) && response.errors.length > 0
-              ? new Error(response.errors[0].detail)
-              : new BadHttpStatusError(),
+          raw: { logout: undefined },
+          error: e as Error,
         }
       }
-
-      this.mainAdapter.dispatchEvent(
-        new UserLogoutEvent<ShopwareLogoutRaw>(undefined, { logout: response })
-      )
-
-      return { data: undefined, raw: { logout: response }, error: undefined }
-    } catch (e) {
-      return {
-        data: undefined,
-        raw: { logout: undefined },
-        error: e as Error,
-      }
     }
-  }
 
   signup: MakairaSignup<
     ShopwareSignupAdditionalInput,
@@ -248,7 +256,12 @@ export class StorefrontShopAdapterShopware6User
     ShopwareForgotPasswordAdditionalInput,
     ShopwareForgotPasswordRaw,
     Error
-  > = async ({ input: { username, storefrontUrl } }) => {
+  > = async ({
+    input: {
+      username,
+      storefrontUrl = this.mainAdapter.additionalOptions.storefrontUrl,
+    },
+  }) => {
     try {
       const { response, status } =
         await this.mainAdapter.fetchFromShop<ShopwareForgotPasswordRes>({
