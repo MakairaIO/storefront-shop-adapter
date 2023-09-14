@@ -1,6 +1,6 @@
 {
   "name": "@makaira/storefront-react",
-  "version": "1.6.6",
+  "version": "1.6.7",
   "description": "Contains the makaira react layer to connect makaira shop adapters to connect your storefront with",
   "main": "./dist/esm/index.js",
   "typings": "./dist/types/index.d.ts",
