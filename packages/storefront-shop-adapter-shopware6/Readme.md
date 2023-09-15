@@ -1,6 +1,6 @@
 # @makaira/storefront-shop-adapter-shopware6
 
-This shop adapter can be used to connect your shopware6 shop with your storefront. This adapter is developed based on the [shopware-store-api](https://shopware.stoplight.io/docs/store-api).
+This shop adapter can be used to connect your shopware6 shop with your storefront. This adapter is developed based on the [shopware store-api](https://shopware.stoplight.io/docs/store-api).
 
 ## Installation
 
