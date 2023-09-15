@@ -2,7 +2,6 @@ import {
   BadHttpStatusError,
   MakairaAddItemToWishlist,
   MakairaGetWishlist,
-  MakairaProduct,
   MakairaRemoveItemFromWishlist,
   MakairaShopProviderWishlist,
   WishlistAddItemEvent,
@@ -89,7 +88,7 @@ export class StorefrontShopAdapterShopware6Wishlist
         (Array.isArray(response.errors) && response.errors.length > 0)
       ) {
         return {
-          data: undefined,
+          data: { items: [] },
           raw: { wishlist: response },
           error:
             Array.isArray(response.errors) && response.errors.length > 0
@@ -118,7 +117,7 @@ export class StorefrontShopAdapterShopware6Wishlist
       }
     } catch (e) {
       return {
-        data: undefined,
+        data: { items: [] },
         raw: { wishlist: undefined },
         error: e as Error,
       }
