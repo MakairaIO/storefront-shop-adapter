@@ -2,7 +2,6 @@ import {
   LocalStorageSsrSafe,
   MakairaAddItemToWishlist,
   MakairaGetWishlist,
-  MakairaProduct,
   MakairaRemoveItemFromWishlist,
   MakairaShopProviderWishlist,
   WishlistAddItemEvent,
