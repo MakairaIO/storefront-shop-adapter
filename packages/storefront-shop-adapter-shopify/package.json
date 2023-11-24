@@ -1,6 +1,6 @@
 {
   "name": "@makaira/storefront-shop-adapter-shopify",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "Contains the makaira shopify shop adapter to connect your storefront with your shopify shop",
   "main": "./dist/esm/index.js",
   "typings": "./dist/types/index.d.ts",
