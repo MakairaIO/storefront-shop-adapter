@@ -301,11 +301,6 @@ export class StorefrontShopAdapterShopifyUser
   activate: MakairaActivateUser<unknown, ShopifyActivateUserRaw, Error> =
     async ({ input: { activationUrl, password } }) => {
       try {
-        const { customerAccessToken } = this.getCustomerAccessToken()
-
-        if (!customerAccessToken) {
-          return { raw: {} }
-        }
         const responseCustomerActivate = await this.mainAdapter.fetchFromShop<
           CustomerActivateMutationData,
           CustomerActivateMutationVariables
