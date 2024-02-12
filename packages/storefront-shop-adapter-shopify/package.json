@@ -46,7 +46,7 @@
     "isomorphic-unfetch": "^3.1.0"
   },
   "devDependencies": {
-    "msw": "^0.43.0"
+    "msw": "2.0.8"
   },
   "jest": {
     "preset": "ts-jest",
