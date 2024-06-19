@@ -1,241 +1,282 @@
 import { getInContextAnnotation } from '../utils/getInContextAnnotation'
-import { ContextOptions, StorefrontShopifyFragments } from '../types'
+import {
+  ContextOptions,
+  ShopifyAttribute,
+  StorefrontShopifyFragments,
+} from '../types'
 
+// this item input type is only to be used with Cart mutations, not with Checkout Mutations
 export type LineItemInput = {
-  quantity: number
-  variantId: string
-  customAttributes?: { key: string; value: string }[]
+  quantity?: number
+  merchandiseId: string
+  attributes?: { key: string; value?: string }[]
+  sellingPlanId?: string
+  id: string
 }
+
+export type LineItemInputWithoutId = Omit<LineItemInput, 'id'>
+
+//#region cartCreate
+
+export const CartCreateMutation = ({
+  cartCreateFragment,
+  contextOptions = {},
+}: {
+  cartCreateFragment: string
+  contextOptions?: ContextOptions | null
+}) => {
+  const inContextAnnotation = getInContextAnnotation(contextOptions)
+
+  return `
+  mutation cartCreate($input: CartInput!) ${inContextAnnotation} {
+    cartCreate(input: $input) {
+      cart {
+        ...CartCreate
+      }
+
+      userErrors {
+        field
+        message
+      }
+    }
+  }
+
+  ${cartCreateFragment}
+  `
+}
+
+export type CartCreateMutationVariables = {
+  input: {
+    lineItems?: LineItemInputWithoutId[]
+    presentmentCurrencyCode?: string | null
+  }
+}
+
+export type CartCreateMutationData = {
+  cartCreate: {
+    userErrors: StorefrontShopifyFragments['checkoutUserErrorFragment'][]
+    cart: StorefrontShopifyFragments['cartFragment']
+  }
+}
+
+export type CartCreateInput = Partial<{
+  attributes: { key: string; value: string }[]
+  buyerIdentity: Partial<{
+    companyLocationId: string
+    countryCode: string
+    customerAccessToken: string
+    email: string
+    phone: string
+    walletPreferences: string[]
+  }>
+  discountCodes: string[]
+  lines: LineItemInputWithoutId[]
+  metafields: {
+    key: string
+    value: string
+    // see: https://shopify.dev/docs/apps/custom-data/metafields/types#supported-types
+    type:
+      | 'boolean'
+      | 'color'
+      | 'date'
+      | 'date_time'
+      | 'dimension'
+      | 'json'
+      | 'money'
+      | 'multi_line_text_field'
+      | 'number_decimal'
+      | 'number_integer'
+      | 'rating'
+      | 'rich_text_field'
+      | 'single_line_text_field'
+      | 'url'
+      | 'volume'
+      | 'weight'
+  }[]
+  note: string
+}>
+
+//#endregion
 
 //#region base definition of common used fragments
 
-export const CheckoutFragment = `
-    fragment CheckoutFragment on Checkout {
-        id
-        lineItems(first: 50) {
-            edges {
-                node {
-                    id
-                    title
-                    quantity
-                    variant {
-                        id
-                        priceV2 {
-                            amount
-                            currencyCode
-                        }
-                        product {
-                            featuredImage {
-                                url
-                            }
-                        }
-                    }
-                    customAttributes {
-                        key
-                        value
-                    }
-                }
-            }
-        }
-        completedAt
-        webUrl
-    }
+export const CartFragment = `
+fragment CartCreate on Cart {
+  id
+  cost {
+      totalAmount {
+          amount
+      }
+  }
+  checkoutUrl
+  attributes {
+      key
+      value
+  }
+  lines(first: 50) {
+      nodes {
+          id
+          quantity
+          merchandise {
+              ... on ProductVariant {
+                  product {
+                      id
+                      title
+                      featuredImage {
+                          url
+                      }
+                  }
+                  price {
+                      amount
+                  }
+              }
+          }
+          attributes {
+              key
+              value
+          }
+      }
+  }
+}
 `
 
-export type CheckoutFragmentData = {
+export type CartFragmentData = {
   id: string
-  lineItems: {
-    edges: {
-      node: {
-        id: string
-        title: string
-        quantity: number
-        variant?: {
+  cost: {
+    totalAmount: {
+      amount: number
+    }
+  }
+  checkoutUrl: string
+  attributes: ShopifyAttribute[]
+  lines: {
+    nodes: {
+      id: string
+      quantity: number
+      merchandise: {
+        product: {
           id: string
-          priceV2: {
-            amount: number
-            currencyCode: number
-          }
-          product: {
-            featuredImage: {
-              url: string
-            }
+          title: string
+          featuredImage: {
+            url: string
           }
         }
-        customAttributes: {
-          key: string
-          value?: string
-        }[]
+        price: {
+          amount: number
+        }
       }
+      attributes: ShopifyAttribute[]
     }[]
   }
-  completedAt?: string
-  webUrl: string
 }
 
-export const CheckoutUserErrorFragment = `
-    fragment CheckoutUserErrorFragment on CheckoutUserError {
-        field
-        message
-    }
-`
-
-export type CheckoutUserErrorFragmentData = {
+export type CartUserErrorFragmentData = {
   field?: string[]
   message: string
 }
 
 //#endregion
 
-//#region createCheckout
-
-export const CheckoutCreateMutation = ({
-  checkoutUserErrorFragment,
-  checkoutFragment,
-  contextOptions = {},
-}: {
-  checkoutUserErrorFragment: string
-  checkoutFragment: string
-  contextOptions?: ContextOptions | null
-}) => {
-  const inContextAnnotation = getInContextAnnotation(contextOptions)
-
-  return `
-  mutation checkoutCreate($input: CheckoutCreateInput!) ${inContextAnnotation} {
-      checkoutCreate(input: $input) {
-          checkoutUserErrors {
-              ...CheckoutUserErrorFragment
-          }
-          checkout {
-              ...CheckoutFragment
-          }
-      }
-  }
-  ${checkoutUserErrorFragment}
-  ${checkoutFragment}
-`
-}
-
-export type CheckoutCreateMutationVariables = {
-  input: {
-    lineItems?: LineItemInput[]
-    presentmentCurrencyCode?: string | null
-  }
-}
-
-export type CheckoutCreateMutationData = {
-  checkoutCreate: {
-    checkoutUserErrors: StorefrontShopifyFragments['checkoutUserErrorFragment'][]
-    checkout: StorefrontShopifyFragments['checkoutFragment']
-  }
-}
-
-//#endregion
-
 //#region getCart
 
-export const CheckoutGetQuery = ({
-  checkoutFragment,
+export const CartGetQuery = ({
+  cartFragment,
   contextOptions = {},
 }: {
-  checkoutFragment: string
+  cartFragment: string
   contextOptions?: ContextOptions | null
 }) => `
-    query node($id: ID!) ${getInContextAnnotation(contextOptions)} {
-        node(id: $id) {
-            ...CheckoutFragment
-        }
+  query cart($id: ID!) ${getInContextAnnotation(contextOptions)} {
+    cart(id: $id) {
+      ...CartCreate
     }
-    ${checkoutFragment}
+  }
+  ${cartFragment}
 `
 
-export type CheckoutGetQueryVariables = {
+export type CartGetQueryVariables = {
   id: string
 }
 
-export type CheckoutGetQueryData = {
-  node: StorefrontShopifyFragments['checkoutFragment']
+export type CartGetQueryData = {
+  cart: StorefrontShopifyFragments['cartFragment']
 }
 
 //#endregion
 
 //#region addItem
 
-export const CheckoutLineItemsAddMutation = ({
-  checkoutUserErrorFragment,
-  checkoutFragment,
+export const CartLineItemsAddMutation = ({
+  cartFragment,
   contextOptions = {},
 }: {
-  checkoutUserErrorFragment: string
-  checkoutFragment: string
+  cartFragment: string
   contextOptions?: ContextOptions | null
 }) => `
-    mutation ($checkoutId: ID!, $lineItems: [CheckoutLineItemInput!]!) ${getInContextAnnotation(
+    mutation cartLinesAdd($cartId: ID!, $lines: [CartLineInput!]!) ${getInContextAnnotation(
       contextOptions
     )} {
-      checkoutLineItemsAdd(checkoutId: $checkoutId, lineItems: $lineItems) {
-          checkoutUserErrors {
-              ...CheckoutUserErrorFragment
-          }
-          checkout {
-              ...CheckoutFragment
-          }
+      cartLinesAdd(cartId: $cartId, lines: $lines) {
+        cart {
+            ...CartCreate
+        }
+        userErrors {
+          field
+          message
+        }
       }
     }
-    ${checkoutUserErrorFragment}
-    ${checkoutFragment}
+    ${cartFragment}
 `
 
-export type CheckoutLineItemsAddMutationVariables = {
-  checkoutId: string
-  lineItems: LineItemInput[]
+export type CartLinesAddMutationVariables = {
+  cartId: string
+  lines: LineItemInputWithoutId[]
 }
 
-export type CheckoutLineItemsAddMutationData = {
-  checkoutLineItemsAdd: {
-    checkoutUserErrors: StorefrontShopifyFragments['checkoutUserErrorFragment'][]
-    checkout: StorefrontShopifyFragments['checkoutFragment']
+export type CartLinesAddMutationData = {
+  cartLinesAdd: {
+    userErrors: StorefrontShopifyFragments['checkoutUserErrorFragment'][]
+    cart: StorefrontShopifyFragments['cartFragment']
   }
 }
 
 //#endregion
 
-//#region addItem
+//#region removeItem
 
 export const CheckoutLineItemsRemoveMutation = ({
-  checkoutUserErrorFragment,
-  checkoutFragment,
+  cartFragment,
   contextOptions = {},
 }: {
-  checkoutUserErrorFragment: string
-  checkoutFragment: string
+  cartFragment: string
   contextOptions?: ContextOptions | null
 }) => `
-mutation ($checkoutId: ID!, $lineItemIds: [ID!]!) ${getInContextAnnotation(
+mutation cartLinesRemove($cartId: ID!, $lineIds: [ID!]!) ${getInContextAnnotation(
   contextOptions
 )} {
-  checkoutLineItemsRemove(checkoutId: $checkoutId, lineItemIds: $lineItemIds) {
-      checkoutUserErrors {
-          ...CheckoutUserErrorFragment
-      }
-      checkout {
-          ...CheckoutFragment
-      }
+  cartLinesRemove(cartId: $cartId, lineIds: $lineIds) {
+    cart {
+      ...CartCreate
+    }
+    userErrors {
+      field
+      message
+    }
   }
 }
-${checkoutUserErrorFragment}
-${checkoutFragment}
+${cartFragment}
 `
 
-export type CheckoutLineItemsRemoveMutationVariables = {
-  checkoutId: string
-  lineItemIds: string[]
+export type CartLinesRemoveMutationVariables = {
+  cartId: string
+  lineIds: string[]
 }
 
-export type CheckoutLineItemsRemoveMutationData = {
-  checkoutLineItemsRemove: {
-    checkoutUserErrors: StorefrontShopifyFragments['checkoutUserErrorFragment'][]
-    checkout: StorefrontShopifyFragments['checkoutFragment']
+export type CartLinesRemoveMutationData = {
+  cartLinesRemove: {
+    userErrors: StorefrontShopifyFragments['checkoutUserErrorFragment'][]
+    cart: StorefrontShopifyFragments['cartFragment']
   }
 }
 
@@ -243,45 +284,38 @@ export type CheckoutLineItemsRemoveMutationData = {
 
 //#region udapteItem
 
-export const CheckoutLineItemsUpdateMutation = ({
-  checkoutUserErrorFragment,
-  checkoutFragment,
+export const CartLineItemsUpdateMutation = ({
+  cartFragment,
   contextOptions = {},
 }: {
-  checkoutUserErrorFragment: string
-  checkoutFragment: string
+  cartFragment: string
   contextOptions?: ContextOptions | null
 }) => `
-mutation ($checkoutId: ID!, $lineItems: [CheckoutLineItemUpdateInput!]!) ${getInContextAnnotation(
+mutation cartLinesUpdate($cartId: ID!, $lines: [CartLineUpdateInput!]!) ${getInContextAnnotation(
   contextOptions
 )} {
-  checkoutLineItemsUpdate(checkoutId: $checkoutId, lineItems: $lineItems) {
-      checkoutUserErrors {
-          ...CheckoutUserErrorFragment
-      }
-      checkout {
-          ...CheckoutFragment
-      }
+  cartLinesUpdate(cartId: $cartId, lines: $lines) {
+    cart {
+      ...CartCreate
+    }
+    userErrors {
+      field
+      message
+    }
   }
 }
-${checkoutUserErrorFragment}
-${checkoutFragment}
+${cartFragment}
 `
 
-export type CheckoutLineItemsUpdateMutationVariables = {
-  checkoutId: string
-  lineItems: {
-    id?: string
-    quantity?: number
-    variantId?: string
-    customAttributes?: { key: string; value: string }[]
-  }[]
+export type CartLinesUpdateMutationVariables = {
+  cartId: string
+  lines: Omit<LineItemInput, 'merchandiseId'>[]
 }
 
-export type CheckoutLineItemsUpdateMutationData = {
-  checkoutLineItemsUpdate: {
-    checkoutUserErrors: StorefrontShopifyFragments['checkoutUserErrorFragment'][]
-    checkout: StorefrontShopifyFragments['checkoutFragment']
+export type CartLinesUpdateMutationData = {
+  cartLinesUpdate: {
+    userErrors: StorefrontShopifyFragments['checkoutUserErrorFragment'][]
+    cart: StorefrontShopifyFragments['cartFragment']
   }
 }
 

@@ -26,7 +26,7 @@ import {
   ShopifyUpdateItemRaw,
 } from '../types'
 import { StorefrontShopAdapterShopifyReview } from './review'
-import { CheckoutFragment, CheckoutUserErrorFragment } from './cart.queries'
+import { CartCreateInput, CartFragment } from './cart.queries'
 import {
   CustomerFragment,
   CustomerUserErrorFragment,
@@ -92,11 +92,7 @@ export class StorefrontShopAdapterShopify<
       accessToken: options.accessToken,
       storage: options.storage ?? LocalStorageSsrSafe,
       fragments: {
-        checkoutFragment:
-          options.fragments?.checkoutFragment ?? CheckoutFragment,
-        checkoutUserErrorFragment:
-          options.fragments?.checkoutUserErrorFragment ??
-          CheckoutUserErrorFragment,
+        cartFragment: options.fragments?.cartFragment ?? CartFragment,
         customerFragment:
           options.fragments?.customerFragment ?? CustomerFragment,
         customerUserErrorFragment:
@@ -106,6 +102,7 @@ export class StorefrontShopAdapterShopify<
           options.fragments?.userErrorFragment ?? UserErrorFragment,
       },
       contextOptions: options.contextOptions ?? null,
+      buyerIdentity: options.buyerIdentity ?? null,
     }
 
     // @ts-expect-error https://stackoverflow.com/questions/56505560/how-to-fix-ts2322-could-be-instantiated-with-a-different-subtype-of-constraint
@@ -163,21 +160,23 @@ export class StorefrontShopAdapterShopify<
       )
     }
 
-    const responseCheckoutCreate = await this.cart.createCheckoutAndStoreId({
-      input: {
-        lineItems: lineItems.map((lineItem) => ({
-          quantity: lineItem.quantity,
-          variantId: lineItem.product.id,
-          customAttributes: lineItem.product.attributes,
-        })),
-      },
+    const input: CartCreateInput = {
+      lines: lineItems.map((lineItem) => ({
+        quantity: lineItem.quantity,
+        merchandiseId: lineItem.product.id,
+        attributes: lineItem.product.attributes,
+      })),
+    }
+
+    const responseCheckoutCreate = await this.cart.createCartAndStoreId({
+      input,
     })
 
     if (responseCheckoutCreate.error || !responseCheckoutCreate.data) {
       return {
         error: responseCheckoutCreate.error,
         raw: {
-          checkoutCreate: responseCheckoutCreate.raw.createCheckout,
+          cartCreate: responseCheckoutCreate.raw.createCart,
         },
       }
     }
@@ -189,7 +188,7 @@ export class StorefrontShopAdapterShopify<
     }
 
     const raw: ShopifyUpdateItemRaw = {
-      checkoutCreate: responseCheckoutCreate.raw.createCheckout,
+      cartCreate: responseCheckoutCreate.raw.createCheckout,
     }
 
     this.dispatchEvent(new CartUpdateItemEvent<ShopifyUpdateItemRaw>(data, raw))

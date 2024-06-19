@@ -1,12 +1,13 @@
 import { MakairaStorage } from '@makaira/storefront-types'
 import {
-  CheckoutCreateMutationData,
-  CheckoutFragmentData,
-  CheckoutGetQueryData,
-  CheckoutLineItemsAddMutationData,
-  CheckoutLineItemsRemoveMutationData,
-  CheckoutLineItemsUpdateMutationData,
-  CheckoutUserErrorFragmentData,
+  CartCreateInput,
+  CartCreateMutationData,
+  CartFragmentData,
+  CartGetQueryData,
+  CartLinesAddMutationData,
+  CartLinesRemoveMutationData,
+  CartLinesUpdateMutationData,
+  CartUserErrorFragmentData,
 } from './providers/cart.queries'
 import {
   AddressUpdateMutationData,
@@ -32,8 +33,8 @@ export interface StorefrontShopifyCustomFragments {}
 
 export type StorefrontShopifyFragments = MergeBy<
   {
-    checkoutFragment: CheckoutFragmentData
-    checkoutUserErrorFragment: CheckoutUserErrorFragmentData
+    cartFragment: CartFragmentData
+    checkoutUserErrorFragment: CartUserErrorFragmentData
     customerFragment: CustomerFragmentData
     userErrorFragment: UserErrorFragmentData
     customerUserErrorFragment: CustomerUserErrorFragmentData
@@ -51,11 +52,11 @@ export type GraphqlResWithError<GraphqlData> = {
 
 //#region cart provider
 
-//#region getCart method
+//#region getCheckout method
 
 export type ShopifyGetCartRaw = {
-  createCheckout?: GraphqlResWithError<CheckoutCreateMutationData>
-  getCheckout?: GraphqlResWithError<CheckoutGetQueryData>
+  createCart?: GraphqlResWithError<CartCreateMutationData>
+  getCart?: GraphqlResWithError<CartGetQueryData> // TODO: change this for cart get
 }
 
 //#endregion
@@ -63,8 +64,8 @@ export type ShopifyGetCartRaw = {
 //#region addItem method
 
 export type ShopifyAddItemRaw = {
-  checkoutLineItemsAdd?: GraphqlResWithError<CheckoutLineItemsAddMutationData>
-  checkoutCreate?: GraphqlResWithError<CheckoutCreateMutationData>
+  cartLinesAdd?: GraphqlResWithError<CartLinesAddMutationData> // TODO
+  cartCreate?: GraphqlResWithError<CartCreateMutationData>
 }
 
 //#endregion
@@ -72,8 +73,8 @@ export type ShopifyAddItemRaw = {
 //#region removeItem method
 
 export type ShopifyRemoveItemRaw = {
-  checkoutLineItemsRemove?: GraphqlResWithError<CheckoutLineItemsRemoveMutationData>
-  checkoutCreate?: GraphqlResWithError<CheckoutCreateMutationData>
+  cartLinesRemove?: GraphqlResWithError<CartLinesRemoveMutationData>
+  cartCreate?: GraphqlResWithError<CartCreateMutationData>
 }
 
 export type ShopifyRemoveItemInput = {
@@ -88,8 +89,8 @@ export type ShopifyRemoveItemInput = {
 //#region updateItem method
 
 export type ShopifyUpdateItemRaw = {
-  checkoutLineItemsUpdate?: GraphqlResWithError<CheckoutLineItemsUpdateMutationData>
-  checkoutCreate?: GraphqlResWithError<CheckoutCreateMutationData>
+  cartLinesUpdate?: GraphqlResWithError<CartLinesUpdateMutationData>
+  cartCreate?: GraphqlResWithError<CartCreateMutationData>
 }
 
 //#endregion
@@ -198,12 +199,14 @@ export type AdditionalShopifyOptions = {
    *
    */
   fragments?: {
-    checkoutFragment?: string
-    checkoutUserErrorFragment?: string
+    cartFragment?: string
     customerFragment?: string
     userErrorFragment?: string
     customerUserErrorFragment?: string
   }
+
+  buyerIdentity?: CartCreateInput['buyerIdentity'] | null
+
   /**
    * <p>
    * If set will change the `@inContext` graphql directive during the creation of a checkout.
@@ -237,3 +240,5 @@ export type MakairaUpdateContextOptionsInput = {
   }[]
   options: ContextOptions
 }
+
+export type ShopifyAttribute = { key: string; value: string }

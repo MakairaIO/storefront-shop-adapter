@@ -117,5 +117,5 @@ export type MakairaShopifyShopProviderCart = {
   getCart: MakairaGetCart
   removeItem: MakairaRemoveItemFromCart
   updateItem: MakairaUpdateItemFromCart
-  createCheckoutAndStoreId: MakairaCreateCheckoutAndStoreId
+  createCartAndStoreId: MakairaCreateCheckoutAndStoreId
 }
