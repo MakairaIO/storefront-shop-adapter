@@ -2,19 +2,18 @@ import { MakairaGetCartResData } from '@makaira/storefront-types'
 import { CheckoutFragmentData } from '../providers/cart.queries'
 
 export function lineItemsToMakairaCartItems(
-  lineItems: CheckoutFragmentData['lines']
+  lineItems: CheckoutFragmentData['lineItems']
 ): MakairaGetCartResData['items'] {
   return lineItems.edges.map(({ node }) => ({
     product: {
-      id: node.id ?? '',
-      merchandiseId: node.merchandise?.id,
-      images: node.merchandise?.product.featuredImage?.url
-        ? [node.merchandise?.product.featuredImage?.url]
+      id: node.variant?.id ?? '',
+      images: node.variant?.product.featuredImage?.url
+        ? [node.variant?.product.featuredImage?.url]
         : [],
-      price: node.merchandise?.price.amount ?? 0,
-      title: node.merchandise?.title,
+      price: node.variant?.priceV2.amount ?? 0,
+      title: node.title,
       url: '', // TODO
-      attributes: node.attributes,
+      attributes: node.customAttributes,
     },
     quantity: node.quantity,
   }))
