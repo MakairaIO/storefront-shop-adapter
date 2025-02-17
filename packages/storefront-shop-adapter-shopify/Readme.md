@@ -2,6 +2,15 @@
 
 This shop adapter can be used to connect your shopify shop with your storefront. This adapter is developed based on the shopify storefront api.
 
+### Table of contents
+
+- [Installation](#installation)
+- [Project setup](#adding-to-your-project)
+- [Supported features](#feature-map)
+- [Additional properties](#additional-input-properties)
+- [Release notes](#releasenotes)
+- [Migration guides](#migration-guides)
+
 ## Installation
 
 `yarn install @makaira/storefront-types @makaira/storefront-shop-adapter-shopify`
@@ -10,9 +19,11 @@ or
 
 `npm install @makaira/storefront-types @makaira/storefront-shop-adapter-shopify`
 
-## Adding to your project
+---
 
-### Basic usage
+### Adding to your project
+
+#### Basic usage
 
 ```typescript
 import { StorefrontShopAdapterShopify } from '@makaira/storefront-shop-adapter-shopify'
@@ -23,7 +34,7 @@ const client = new StorefrontShopAdapterShopify({
 })
 ```
 
-### Usage with `@makaira/storefront-react`
+#### Usage with `@makaira/storefront-react`
 
 ```tsx
 import { StorefrontShopAdapterShopify } from '@makaira/storefront-shop-adapter-shopify'
@@ -56,7 +67,7 @@ declare module '@makaira/storefront-react' {
 }
 ```
 
-## Additional constructor arguments
+#### Additional constructor arguments
 
 | Argument | Required/Optional | Description | Type |
 | -------- | ----------------- | ----------- | ---- |
@@ -127,53 +138,53 @@ _No additional properties_
 | ---------- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------- |
 | lineItemId | required          | In Shopify it is not possible to update a product in the shopping cart only by its variantId. Instead both IDs are required. The `lineItemId` can be accessed through the `raw` property on `getCart`. | `string` |
 
-### Review
+#### Review
 
-#### getReviews
-
-_Not implemented_
-
-#### createReview
+##### getReviews
 
 _Not implemented_
 
-### User
-
-#### getUser
-
-_No additional properties_
-
-#### login
-
-_No additional properties_
-
-#### logout
-
-_No additional properties_
-
-#### signup
-
-_No additional properties_
-
-#### forgotPassword
-
-_No additional properties_
-
-### Wishlist
-
-#### getWishlist
+##### createReview
 
 _Not implemented_
 
-#### addItem
+#### User
+
+##### getUser
+
+_No additional properties_
+
+##### login
+
+_No additional properties_
+
+##### logout
+
+_No additional properties_
+
+##### signup
+
+_No additional properties_
+
+##### forgotPassword
+
+_No additional properties_
+
+#### Wishlist
+
+##### getWishlist
 
 _Not implemented_
 
-#### removeItem
+##### addItem
 
 _Not implemented_
 
-## Customize used Fragments
+##### removeItem
+
+_Not implemented_
+
+### Customize used Fragments
 
 In graphql you get what your request. Our base implementation only requests the minium amount of data to get the unified data response collected.
 
@@ -183,14 +194,7 @@ In the following explanation is shown, how to set a custom fragment and what is 
 
 You can then access the data through the returned `raw` data on each functionality method.
 
-### ⚠️ Deprecation Notice
-
-Shopify has deprecated the `Checkout` API in favor of the `Cart` API.  
-If you're migrating your storefront, ensure you update your custom fragments accordingly.
-
-🔗 **Migration Guide:** [Migrate from Checkout API to Cart API](https://shopify.dev/docs/storefronts/headless/building-with-the-storefront-api/cart/migrate-to-cart-api/migrate-your-app)
-
-### checkoutFragment
+#### checkoutFragment
 
 ```typescript
 import { StorefrontShopAdapterShopify } from '@makaira/storefront-shop-adapter-shopify'
@@ -259,7 +263,7 @@ declare module '@makaira/storefront-shop-adapter-shopify' {
 }
 ```
 
-### checkoutUserErrorFragment
+#### checkoutUserErrorFragment
 
 ```typescript
 import { StorefrontShopAdapterShopify } from '@makaira/storefront-shop-adapter-shopify'
@@ -299,7 +303,7 @@ declare module '@makaira/storefront-shop-adapter-shopify' {
 }
 ```
 
-### customerFragment
+#### customerFragment
 
 ```typescript
 import { StorefrontShopAdapterShopify } from '@makaira/storefront-shop-adapter-shopify'
@@ -341,7 +345,7 @@ declare module '@makaira/storefront-shop-adapter-shopify' {
 }
 ```
 
-### userErrorFragment
+#### userErrorFragment
 
 ```typescript
 import { StorefrontShopAdapterShopify } from '@makaira/storefront-shop-adapter-shopify'
@@ -381,7 +385,7 @@ declare module '@makaira/storefront-shop-adapter-shopify' {
 }
 ```
 
-### customerUserErrorFragment
+#### customerUserErrorFragment
 
 ```typescript
 import { StorefrontShopAdapterShopify } from '@makaira/storefront-shop-adapter-shopify'
@@ -421,7 +425,7 @@ declare module '@makaira/storefront-shop-adapter-shopify' {
 }
 ```
 
-## Update language and country of checkout
+### Update language and country of checkout
 
 The `StorefrontShopAdapterShopify` exposes for changing the country and language of a checkout this method
 
@@ -460,3 +464,18 @@ function updateContext() {
 
 The correct country codes can be found at the [Shopify Documentation](https://shopify.dev/api/storefront/2022-07/enums/CountryCode)
 The same applies to the [language codes](https://shopify.dev/api/storefront/2022-07/enums/LanguageCode)
+
+# Releasenotes
+
+## 2.0.0
+
+- Shopify API Compatibility to 2025-01 ( [Shopify API docs](https://shopify.dev/docs/api/storefront/2025-01), [Shopify Release notes](https://shopify.dev/docs/api/release-notes/2025-01), [Migration guide](#from-1x-to-2x))
+
+---
+
+# Migration guides
+
+### From 1.x to 2.x
+
+- The structure defined by the shop adapter was kept
+- ⚠️ Deprecation Notice: Shopify has deprecated the `Checkout` API in favor of the `Cart` API. If you're migrating your storefront, ensure you update your custom fragments accordingly. [Migrate from Checkout API to Cart API](https://shopify.dev/docs/storefronts/headless/building-with-the-storefront-api/cart/migrate-to-cart-api/migrate-your-app)
