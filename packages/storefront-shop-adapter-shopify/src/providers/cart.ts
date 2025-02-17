@@ -111,10 +111,7 @@ export class StorefrontShopAdapterShopifyCart
         }
       }
 
-      if (
-        responseGetCheckout.data.node == null ||
-        responseGetCheckout.data.node.completedAt
-      ) {
+      if (responseGetCheckout.data.node == null) {
         return createCheckout({ input: {} })
       }
 
@@ -137,8 +134,8 @@ export class StorefrontShopAdapterShopifyCart
     try {
       const lineItems: LineItemInput[] = [
         {
-          variantId: this.transformToShopifyVariantId(product.id),
-          customAttributes: product.attributes,
+          merchandiseId: this.transformToShopifyVariantId(product.id),
+          attributes: product.attributes?.filter((att) => att.value !== ''),
           quantity,
         },
       ]
@@ -189,7 +186,7 @@ export class StorefrontShopAdapterShopifyCart
               .checkoutUserErrorFragment,
           contextOptions: this.mainAdapter.getContextOptions(),
         }),
-        variables: { checkoutId, lineItems },
+        variables: { cartId: checkoutId, lines: lineItems },
       })
 
       if (responseCheckoutLineItemsAdd.errors?.length) {
@@ -207,13 +204,13 @@ export class StorefrontShopAdapterShopifyCart
       }
 
       if (
-        responseCheckoutLineItemsAdd.data.checkoutLineItemsAdd
-          .checkoutUserErrors.length > 0
+        responseCheckoutLineItemsAdd.data.checkoutLineItemsAdd.userErrors
+          .length > 0
       ) {
         return {
           raw: { checkoutLineItemsAdd: responseCheckoutLineItemsAdd },
           error: new Error(
-            responseCheckoutLineItemsAdd.data.checkoutLineItemsAdd.checkoutUserErrors[0].message
+            responseCheckoutLineItemsAdd.data.checkoutLineItemsAdd.userErrors[0].message
           ),
         }
       }
@@ -297,7 +294,7 @@ export class StorefrontShopAdapterShopifyCart
                 .checkoutUserErrorFragment,
             contextOptions: this.mainAdapter.getContextOptions(),
           }),
-          variables: { checkoutId, lineItemIds },
+          variables: { cartId: checkoutId, lineIds: lineItemIds },
         })
 
       if (responseCheckoutLineItemsRemove.errors?.length) {
@@ -315,13 +312,13 @@ export class StorefrontShopAdapterShopifyCart
       }
 
       if (
-        responseCheckoutLineItemsRemove.data.checkoutLineItemsRemove
-          .checkoutUserErrors.length > 0
+        responseCheckoutLineItemsRemove.data.checkoutLineItemsRemove.userErrors
+          .length > 0
       ) {
         return {
           raw: { checkoutLineItemsRemove: responseCheckoutLineItemsRemove },
           error: new Error(
-            responseCheckoutLineItemsRemove.data.checkoutLineItemsRemove.checkoutUserErrors[0].message
+            responseCheckoutLineItemsRemove.data.checkoutLineItemsRemove.userErrors[0].message
           ),
         }
       }
@@ -364,8 +361,10 @@ export class StorefrontShopAdapterShopifyCart
             lineItems: [
               {
                 quantity,
-                variantId: this.transformToShopifyVariantId(product.id),
-                customAttributes: product.attributes,
+                merchandiseId: this.transformToShopifyVariantId(product.id),
+                attributes: product.attributes?.filter(
+                  (att) => att.value !== ''
+                ),
               },
             ],
           },
@@ -411,12 +410,11 @@ export class StorefrontShopAdapterShopifyCart
             contextOptions: this.mainAdapter.getContextOptions(),
           }),
           variables: {
-            checkoutId,
-            lineItems: [
+            cartId: checkoutId,
+            lines: [
               {
                 id: lineItemId,
-                variantId: this.transformToShopifyVariantId(product.id),
-                customAttributes: product.attributes,
+                merchandiseId: this.transformToShopifyVariantId(product.id),
                 quantity,
               },
             ],
@@ -438,13 +436,13 @@ export class StorefrontShopAdapterShopifyCart
       }
 
       if (
-        responseCheckoutLineItemsUpdate.data.checkoutLineItemsUpdate
-          .checkoutUserErrors.length > 0
+        responseCheckoutLineItemsUpdate.data.checkoutLineItemsUpdate.userErrors
+          .length > 0
       ) {
         return {
           raw: { checkoutLineItemsUpdate: responseCheckoutLineItemsUpdate },
           error: new Error(
-            responseCheckoutLineItemsUpdate.data.checkoutLineItemsUpdate.checkoutUserErrors[0].message
+            responseCheckoutLineItemsUpdate.data.checkoutLineItemsUpdate.userErrors[0].message
           ),
         }
       }
@@ -472,7 +470,7 @@ export class StorefrontShopAdapterShopifyCart
 
   public createCheckoutAndStoreId: MakairaShopProviderInteractor<
     CheckoutCreateMutationVariables['input'],
-    CheckoutCreateMutationData['checkoutCreate'],
+    CheckoutCreateMutationData['getCheckout'],
     { createCheckout: GraphqlResWithError<CheckoutCreateMutationData> },
     Error
   > = async (variables) => {
@@ -505,13 +503,11 @@ export class StorefrontShopAdapterShopifyCart
       }
     }
 
-    if (
-      responseCreateCheckout.data.checkoutCreate.checkoutUserErrors.length > 0
-    ) {
+    if (responseCreateCheckout.data.getCheckout.userErrors.length > 0) {
       return {
         raw: { createCheckout: responseCreateCheckout },
         error: new Error(
-          responseCreateCheckout.data.checkoutCreate.checkoutUserErrors[0].message
+          responseCreateCheckout.data.getCheckout.userErrors[0].message
         ),
       }
     }
@@ -520,12 +516,12 @@ export class StorefrontShopAdapterShopifyCart
       this.mainAdapter.additionalOptions.url
     )
     this.setCheckoutId(
-      responseCreateCheckout.data.checkoutCreate.checkout.id,
+      responseCreateCheckout.data.getCheckout.checkout.id,
       shopInstanceIdentifier
     )
 
     return {
-      data: responseCreateCheckout.data.checkoutCreate,
+      data: responseCreateCheckout.data.getCheckout,
       raw: { createCheckout: responseCreateCheckout },
     }
   }
