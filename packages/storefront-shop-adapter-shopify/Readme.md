@@ -183,40 +183,51 @@ In the following explanation is shown, how to set a custom fragment and what is 
 
 You can then access the data through the returned `raw` data on each functionality method.
 
+### ⚠️ Deprecation Notice
+
+Shopify has deprecated the `Checkout` API in favor of the `Cart` API.  
+If you're migrating your storefront, ensure you update your custom fragments accordingly.
+
+🔗 **Migration Guide:** [Migrate from Checkout API to Cart API](https://shopify.dev/docs/storefronts/headless/building-with-the-storefront-api/cart/migrate-to-cart-api/migrate-your-app)
+
 ### checkoutFragment
 
 ```typescript
 import { StorefrontShopAdapterShopify } from '@makaira/storefront-shop-adapter-shopify'
 
 const minimumCheckoutFragment = `
-    fragment CheckoutFragment on Checkout {
+    fragment CheckoutFragment on Cart {
         id
-        lineItems(first: 50) {
+        lines(first: 50): lineItems {
             edges {
                 node {
                     id
-                    title
-                    quantity
-                    variant {
-                        priceV2 {
-                            amount
-                            currencyCode
-                        }
-                        product {
-                            featuredImage {
-                                url
+                    merchandise: variant {
+                        ... on ProductVariant {
+                            id
+                            title
+                            price: priceV2 {
+                                amount
+                                currencyCode
+                            }
+                            product {
+                                featuredImage {
+                                    url
+                                }
                             }
                         }
                     }
-                    customAttributes {
+                    quantity
+                    attributes: customAttributes {
                         key
                         value
                     }
                 }
             }
         }
-        completedAt
-        webUrl
+        createdAt
+        updatedAt
+        checkoutUrl
     }
 `
 
