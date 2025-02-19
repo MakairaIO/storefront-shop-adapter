@@ -8,7 +8,7 @@
     "lint:eslint": "turbo run lint:eslint",
     "lint:tsc": "turbo run lint:tsc",
     "test": "turbo run test",
-    "prepare": "husky install",
+    "prepare": "husky",
     "lint-staged": "lint-staged",
     "commitlint": "commitlint",
     "create-new-shop-provider": "node ./cli/create-new-shop-provider/index.js"
