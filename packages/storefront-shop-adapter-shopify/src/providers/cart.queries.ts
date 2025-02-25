@@ -4,7 +4,7 @@ import { ContextOptions, StorefrontShopifyFragments } from '../types'
 export type LineItemInput = {
   quantity: number
   merchandiseId: string
-  attributes?: { key: string; value: string }[]
+  customAttributes?: { key: string; value: string }[]
 }
 
 //#region base definition of common used fragments
@@ -12,15 +12,15 @@ export type LineItemInput = {
 export const CheckoutFragment = `
     fragment CheckoutFragment on Cart {
         id
-        lines(first: 50): lineItems {
+        lines(first: 50) {
             edges {
                 node {
                     id
-                    merchandise: variant {
+                    merchandise {
                         ... on ProductVariant {
                             id
                             title
-                            price: priceV2 {
+                            price {
                                 amount
                                 currencyCode
                             }
@@ -32,7 +32,7 @@ export const CheckoutFragment = `
                         }
                     }
                     quantity
-                    attributes: customAttributes {
+                    attributes {
                         key
                         value
                     }
@@ -47,17 +47,16 @@ export const CheckoutFragment = `
 
 export type CheckoutFragmentData = {
   id: string
-  lineItems: {
+  lines: {
     edges: {
       node: {
         id: string
-        title: string
-        quantity: number
-        variant?: {
+        merchandise: {
           id: string
-          priceV2: {
+          title: string
+          price: {
             amount: number
-            currencyCode: number
+            currencyCode: string
           }
           product: {
             featuredImage: {
@@ -65,7 +64,8 @@ export type CheckoutFragmentData = {
             }
           }
         }
-        customAttributes: {
+        quantity: number
+        attributes: {
           key: string
           value?: string
         }[]
@@ -106,11 +106,11 @@ export const CheckoutCreateMutation = ({
 
   return `
   mutation cartCreate($input: CartInput!) ${inContextAnnotation} {
-      getCheckout: cartCreate(input: $input) {
+      cartCreate(input: $input) {
           userErrors {
               ...CheckoutUserErrorFragment
           }
-          checkout: cart {
+          cart {
               ...CheckoutFragment
           }
       }
@@ -128,9 +128,9 @@ export type CheckoutCreateMutationVariables = {
 }
 
 export type CheckoutCreateMutationData = {
-  getCheckout: {
+  cartCreate: {
     userErrors: StorefrontShopifyFragments['checkoutUserErrorFragment'][]
-    checkout: StorefrontShopifyFragments['checkoutFragment']
+    cart: StorefrontShopifyFragments['checkoutFragment']
   }
 }
 
@@ -177,11 +177,11 @@ export const CheckoutLineItemsAddMutation = ({
     mutation ($cartId: ID!, $lines: [CartLineInput!]!) ${getInContextAnnotation(
       contextOptions
     )} {
-      checkoutLineItemsAdd: cartLinesAdd(cartId: $cartId, lines: $lines) {
+      cartLinesAdd(cartId: $cartId, lines: $lines) {
           userErrors {
               ...CheckoutUserErrorFragment
           }
-          checkout: cart {
+          cart {
               ...CheckoutFragment
           }
       }
@@ -196,9 +196,9 @@ export type CheckoutLineItemsAddMutationVariables = {
 }
 
 export type CheckoutLineItemsAddMutationData = {
-  checkoutLineItemsAdd: {
+  cartLinesAdd: {
     userErrors: StorefrontShopifyFragments['checkoutUserErrorFragment'][]
-    checkout: StorefrontShopifyFragments['checkoutFragment']
+    cart: StorefrontShopifyFragments['checkoutFragment']
   }
 }
 
@@ -218,11 +218,11 @@ export const CheckoutLineItemsRemoveMutation = ({
 mutation ($cartId: ID!, $lineIds: [ID!]!) ${getInContextAnnotation(
   contextOptions
 )} {
-  checkoutLineItemsRemove: cartLinesRemove(cartId: $cartId, lineIds: $lineIds) {
+  cartLinesRemove(cartId: $cartId, lineIds: $lineIds) {
       userErrors {
           ...CheckoutUserErrorFragment
       }
-      checkout: cart {
+      cart {
           ...CheckoutFragment
       }
   }
@@ -237,9 +237,9 @@ export type CheckoutLineItemsRemoveMutationVariables = {
 }
 
 export type CheckoutLineItemsRemoveMutationData = {
-  checkoutLineItemsRemove: {
+  cartLinesRemove: {
     userErrors: StorefrontShopifyFragments['checkoutUserErrorFragment'][]
-    checkout: StorefrontShopifyFragments['checkoutFragment']
+    cart: StorefrontShopifyFragments['checkoutFragment']
   }
 }
 
@@ -259,11 +259,11 @@ export const CheckoutLineItemsUpdateMutation = ({
 mutation ($cartId: ID!, $lines: [CartLineUpdateInput!]!) ${getInContextAnnotation(
   contextOptions
 )} {
-  checkoutLineItemsUpdate: cartLinesUpdate(cartId: $cartId, lines: $lines) {
+  cartLinesUpdate(cartId: $cartId, lines: $lines) {
       userErrors {
           ...CheckoutUserErrorFragment
       }
-      checkout: cart {
+      checkout {
           ...CheckoutFragment
       }
   }
@@ -283,9 +283,9 @@ export type CheckoutLineItemsUpdateMutationVariables = {
 }
 
 export type CheckoutLineItemsUpdateMutationData = {
-  checkoutLineItemsUpdate: {
+  cartLinesUpdate: {
     userErrors: StorefrontShopifyFragments['checkoutUserErrorFragment'][]
-    checkout: StorefrontShopifyFragments['checkoutFragment']
+    cart: StorefrontShopifyFragments['checkoutFragment']
   }
 }
 
