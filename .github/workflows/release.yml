@@ -55,16 +55,16 @@ jobs:
           GIT_COMMITTER_NAME: ${{ secrets.GIT_USERNAME }}
           GIT_COMMITTER_EMAIL: ${{ secrets.GIT_EMAIL }}
 
-      - name: Run renovate
-        uses: renovatebot/github-action@v41.0.14
-        with:
-          configurationFile: ./renovate.config.js
-          token: ${{ secrets.RENOVATE_TOKEN }}
-          gitAuthor: ${{ secrets.GIT_AUTHOR }}
-        env:
-          GIT_AUTHOR: ${{ secrets.GIT_AUTHOR }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          LOG_LEVEL: debug
+      # - name: Run renovate
+      #   uses: renovatebot/github-action@v41.0.14
+      #   with:
+      #     configurationFile: ./renovate.config.js
+      #     token: ${{ secrets.RENOVATE_TOKEN }}
+      #     gitAuthor: ${{ secrets.GIT_AUTHOR }}
+      #   env:
+      #     GIT_AUTHOR: ${{ secrets.GIT_AUTHOR }}
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #     LOG_LEVEL: debug
 
       - name: Fetch latest version
         run: |
