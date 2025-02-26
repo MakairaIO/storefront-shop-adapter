@@ -1,8 +1,10 @@
 name: Release a new version
 on:
-  push:
-    branches:
-      - stable
+  workflow_dispatch: # Allows manual trigger
+#on:
+#  push:
+#    branches:
+#      - stable
 
 jobs:
   release:

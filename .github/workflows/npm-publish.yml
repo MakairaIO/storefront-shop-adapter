@@ -26,20 +26,7 @@ jobs:
         run: |
           echo "PACKAGES=$(ls -d packages/* | tr '\n' ' ')" >> $GITHUB_ENV
 
-      - name: Publish packages
+      - name: Print list of packages
+        run: echo "$PACKAGES"
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: |
-          for package in $(echo $PACKAGES | jq -r '.[]'); do
-            PACKAGE_NAME=$(node -p "require('./$package/package.json').name")
-            PACKAGE_VERSION=$(node -p "require('./$package/package.json').version")
-
-            echo "Checking $PACKAGE_NAME@$PACKAGE_VERSION..."
-            
-            if npm view "$PACKAGE_NAME@$PACKAGE_VERSION" > /dev/null 2>&1; then
-              echo "$PACKAGE_NAME@$PACKAGE_VERSION is already published. Skipping..."
-            else
-              echo "Publishing $PACKAGE_NAME@$PACKAGE_VERSION..."
-              npm publish --workspace "$package"
-            fi
-          done
+          PACKAGES: ${{ env.PACKAGES }}
