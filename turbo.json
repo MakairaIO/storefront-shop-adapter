@@ -18,8 +18,7 @@
     },
     "release": {
       "outputs": ["package.json"],
-      "dependsOn": ["build"],
-      "branch": "stable"
+      "dependsOn": ["build"]
     }
   }
 }
