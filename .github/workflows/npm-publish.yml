@@ -15,7 +15,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
           registry-url: 'https://registry.npmjs.org/'
 
       - name: Install dependencies
@@ -42,3 +42,9 @@ jobs:
               npm publish --workspace "$package"
             fi
           done
+
+      - name: Push latest git tags
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git push --tags
