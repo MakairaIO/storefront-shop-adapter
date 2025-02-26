@@ -60,6 +60,7 @@ jobs:
         with:
           configurationFile: ./renovate.config.js
           token: ${{ secrets.RENOVATE_TOKEN }}
+          gitAuthor: ${{ secrets.GIT_AUTHOR }}
         env:
           GIT_AUTHOR: ${{ secrets.GIT_AUTHOR }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
