@@ -3,3 +3,4 @@ src
 tsconfig.json
 tsconfig.build.cjs.json
 tsconfig.build.esm.json
+.releaserc.json

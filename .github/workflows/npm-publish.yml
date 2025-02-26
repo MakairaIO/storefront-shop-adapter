@@ -23,7 +23,8 @@ jobs:
 
       - name: Get list of packages
         id: get-packages
-        run: echo "PACKAGES=$(ls -d packages/* | jq -R -s -c 'split(\"\\n\")[:-1]')" >> $GITHUB_ENV
+        run: |
+          echo "PACKAGES=$(ls -d packages/* | tr '\n' ' ')" >> $GITHUB_ENV
 
       - name: Publish packages
         env:
@@ -42,9 +43,3 @@ jobs:
               npm publish --workspace "$package"
             fi
           done
-
-      - name: Push latest git tags
-        run: |
-          git config --global user.name "github-actions"
-          git config --global user.email "github-actions@github.com"
-          git push --tags
