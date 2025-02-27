@@ -479,4 +479,3 @@ The same applies to the [language codes](https://shopify.dev/api/storefront/2022
 
 - The structure defined by the shop adapter was kept
 - ⚠️ Deprecation Notice: Shopify has deprecated the `Checkout` API in favor of the `Cart` API. If you're migrating your storefront, ensure you update your custom fragments accordingly. [Migrate from Checkout API to Cart API](https://shopify.dev/docs/storefronts/headless/building-with-the-storefront-api/cart/migrate-to-cart-api/migrate-your-app)
-
