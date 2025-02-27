@@ -45,6 +45,7 @@ jobs:
         run: ./node_modules/.bin/turbo run release --filter=@makaira/storefront-types
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
@@ -76,6 +77,7 @@ jobs:
         run: ./node_modules/.bin/turbo run release --filter="!@makaira/storefront-types" --concurrency=1
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
