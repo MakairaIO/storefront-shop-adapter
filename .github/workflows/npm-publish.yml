@@ -11,6 +11,28 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          submodules: true
+
+      - name: Check working directory
+        run: |
+          pwd
+          ls -lah
+
+      - name: Get list of packages with versions
+        id: get-packages
+        run: |
+          PACKAGES=""
+          for package in ${{ github.workspace }}/packages/*; do
+            PACKAGE_NAME=$(node -p "require('$package/package.json').name")
+            PACKAGE_VERSION=$(node -p "require('$package/package.json').version")
+            PACKAGES+="$PACKAGE_NAME@$PACKAGE_VERSION $package\n"
+          done
+          echo -e "PACKAGES<<EOF\n$PACKAGES\nEOF" >> $GITHUB_ENV
+
+      - name: Print list of packages with versions
+        run: echo -e "$PACKAGES"
+        env:
+          PACKAGES: ${{ env.PACKAGES }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -21,12 +43,22 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Get list of packages
-        id: get-packages
-        run: |
-          echo "PACKAGES=$(ls -d packages/* | tr '\n' ' ')" >> $GITHUB_ENV
-
-      - name: Print list of packages
-        run: echo "$PACKAGES"
+      - name: Publish packages
         env:
-          PACKAGES: ${{ env.PACKAGES }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          while IFS= read -r line; do
+            [[ -z "$line" ]] && continue
+            PACKAGE_INFO=($line)
+            PACKAGE_NAME_VERSION=${PACKAGE_INFO[0]}
+            PACKAGE_DIR=${PACKAGE_INFO[1]}
+
+            echo "Checking $PACKAGE_NAME_VERSION..."
+            
+            if npm view "$PACKAGE_NAME_VERSION" > /dev/null 2>&1; then
+              echo "$PACKAGE_NAME_VERSION is already published. Skipping..."
+            else
+              echo "Publishing $PACKAGE_NAME_VERSION..."
+              (cd "$PACKAGE_DIR" && npm publish)
+            fi
+          done <<< "$PACKAGES"
