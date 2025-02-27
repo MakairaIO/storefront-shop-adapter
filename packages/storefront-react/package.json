@@ -17,7 +17,7 @@
     "lint:eslint": "eslint src --fix",
     "lint:tsc": "tsc --project tsconfig.json --noEmit --skipLibCheck",
     "build": "tsc --project tsconfig.build.esm.json & tsc --project tsconfig.build.cjs.json",
-    "release": "semantic-release",
+    "release": "semantic-release -e semantic-release-monorepo --debug",
     "test": "jest --passWithNoTests"
   },
   "repository": {
