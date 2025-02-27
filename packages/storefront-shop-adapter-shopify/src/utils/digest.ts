@@ -7,3 +7,7 @@ export async function digest(message: string) {
     .map((char) => ('0' + char.toString(16)).slice(-2))
     .join('')
 }
+
+export function noop() {
+  // This function does nothing
+}
