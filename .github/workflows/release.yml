@@ -11,10 +11,19 @@ jobs:
       !(github.event_name == 'push' && contains(github.event.head_commit.message, '[skip ci]')) &&
       !(github.event_name == 'pull_request' && contains(join(github.event.pull_request.title, github.event.pull_request.body), '[skip ci]'))
     runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
+
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      GIT_AUTHOR_NAME: ${{ secrets.GIT_USERNAME }}
+      GIT_AUTHOR_EMAIL: ${{ secrets.GIT_EMAIL }}
+      GIT_COMMITTER_NAME: ${{ secrets.GIT_USERNAME }}
+      GIT_COMMITTER_EMAIL: ${{ secrets.GIT_EMAIL }}
+
     steps:
       - uses: actions/checkout@v4
-        with:
-          persist-credentials: false
 
       - name: Import GPG key
         uses: crazy-max/ghaction-import-gpg@v6
@@ -43,16 +52,6 @@ jobs:
 
       - name: Semantic release storefront-types
         run: ./node_modules/.bin/turbo run release --filter=@makaira/storefront-types
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
-
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-          GIT_AUTHOR_NAME: ${{ secrets.GIT_USERNAME }}
-          GIT_AUTHOR_EMAIL: ${{ secrets.GIT_EMAIL }}
-          GIT_COMMITTER_NAME: ${{ secrets.GIT_USERNAME }}
-          GIT_COMMITTER_EMAIL: ${{ secrets.GIT_EMAIL }}
 
       # - name: Run renovate
       #   uses: renovatebot/github-action@v41.0.14
