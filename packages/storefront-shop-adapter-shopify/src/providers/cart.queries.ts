@@ -4,7 +4,7 @@ import { ContextOptions, StorefrontShopifyFragments } from '../types'
 export type LineItemInput = {
   quantity: number
   merchandiseId: string
-  customAttributes?: { key: string; value: string }[]
+  attributes?: { key: string; value: string }[]
 }
 
 //#region base definition of common used fragments
@@ -263,7 +263,7 @@ mutation ($cartId: ID!, $lines: [CartLineUpdateInput!]!) ${getInContextAnnotatio
       userErrors {
           ...CheckoutUserErrorFragment
       }
-      checkout {
+      cart {
           ...CheckoutFragment
       }
   }

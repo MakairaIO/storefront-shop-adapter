@@ -1,4 +1,4 @@
-import { rest } from 'msw'
+import { http, HttpResponse } from 'msw'
 import { setupServer } from 'msw/node'
 import { StorefrontShopAdapterOxid } from './'
 import {
@@ -20,14 +20,16 @@ const USER_OBJECT = {
 }
 
 const userSuccessServer = setupServer(
-  rest.post(`${TARGET_HOST}/index.php`, (req, res, context) => {
-    const pathWithSearch = req.url.pathname + '?' + req.url.searchParams
+  http.post(`${TARGET_HOST}/index.php`, ({ request: req }) => {
+    const url = new URL(req.url)
+    const pathWithSearch = url.pathname + '?' + url.searchParams
 
     switch (pathWithSearch) {
       case PATHS.USER_GET_CURRENT:
-        return res(
-          context.json({ ...USER_OBJECT, additionalParameter: 'test123' })
-        )
+        return HttpResponse.json({
+          ...USER_OBJECT,
+          additionalParameter: 'test123',
+        })
       case PATHS.USER_LOGIN: {
         const successful =
           typeof req.body === 'string' &&
@@ -37,26 +39,27 @@ const userSuccessServer = setupServer(
           ? { success: true }
           : { success: false, message: 'ERROR_MESSAGE_USER_NOVALIDLOGIN' }
 
-        return res(context.json(responseData))
+        return HttpResponse.json(responseData)
       }
       case PATHS.USER_LOGOUT:
-        return res(context.json({ success: true }))
+        return HttpResponse.json({ success: true })
       default:
-        return res(context.status(500), context.json({}))
+        return HttpResponse.json({}, { status: 500 })
     }
   }),
-  rest.post(`${FAILURE_TARGET_HOST}/index.php`, (req, res, context) => {
-    const pathWithSearch = req.url.pathname + '?' + req.url.searchParams
+  http.post(`${FAILURE_TARGET_HOST}/index.php`, ({ request: req }) => {
+    const url = new URL(req.url)
+    const pathWithSearch = url.pathname + '?' + url.searchParams
 
     switch (pathWithSearch) {
       case PATHS.USER_LOGIN:
-        return res(context.json({ success: true }))
+        return HttpResponse.json({ success: true })
       case PATHS.USER_GET_CURRENT:
-        return res(context.status(403), context.json({ message: 'Forbidden' }))
+        return HttpResponse.json({ message: 'Forbidden' }, { status: 403 })
       case PATHS.USER_LOGOUT:
-        return res(context.status(400), context.json({}))
+        return HttpResponse.json({}, { status: 400 })
       default:
-        return res(context.status(500), context.json({}))
+        return HttpResponse.json({}, { status: 500 })
     }
   })
 )

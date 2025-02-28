@@ -135,7 +135,9 @@ export class StorefrontShopAdapterShopifyCart
       const lineItems: LineItemInput[] = [
         {
           merchandiseId: this.transformToShopifyVariantId(product.id),
-          customAttributes: product.attributes,
+          attributes: product.attributes
+            ? product.attributes?.filter((p) => p.value !== '')
+            : [],
           quantity,
         },
       ]
@@ -359,7 +361,9 @@ export class StorefrontShopAdapterShopifyCart
               {
                 quantity,
                 merchandiseId: this.transformToShopifyVariantId(product.id),
-                customAttributes: product.attributes,
+                attributes: product.attributes
+                  ? product.attributes?.filter((p) => p.value !== '')
+                  : [],
               },
             ],
           },
