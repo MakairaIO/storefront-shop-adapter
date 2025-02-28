@@ -20,7 +20,7 @@
     "lint:eslint": "eslint src --fix",
     "lint:tsc": "tsc --project tsconfig.json --noEmit --skipLibCheck",
     "build": "tsc --project tsconfig.build.esm.json & tsc --project tsconfig.build.cjs.json",
-    "release": "semantic-release",
+    "release": "semantic-release -e semantic-release-monorepo --debug",
     "test": "jest --passWithNoTests"
   },
   "repository": {
@@ -42,7 +42,7 @@
   },
   "homepage": "https://github.com/MakairaIO/storefront-shop-adapter#readme",
   "dependencies": {
-    "@makaira/storefront-types": "1.10.0",
+    "@makaira/storefront-types": "1.10.1",
     "isomorphic-unfetch": "^3.1.0"
   }
 }
