@@ -2,7 +2,16 @@
   "branches": ["stable"],
   "extends": "semantic-release-monorepo",
   "plugins": [
-    "@semantic-release/commit-analyzer",
+    [
+      "@semantic-release/commit-analyzer",
+      {
+        "preset": "angular",
+        "releaseRules": [
+          { "type": "major", "release": "major" },
+          { "type": "BREAKING CHANGE", "release": "major" }
+        ]
+      }
+    ],
     "@semantic-release/release-notes-generator",
     "@semantic-release/npm",
     ["@semantic-release/github", { "assets": "dist/*.tgz" }],
