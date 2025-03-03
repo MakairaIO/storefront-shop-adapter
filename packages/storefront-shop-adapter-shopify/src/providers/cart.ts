@@ -414,7 +414,9 @@ export class StorefrontShopAdapterShopifyCart
               {
                 id: lineItemId,
                 merchandiseId: this.transformToShopifyVariantId(product.id),
-                customAttributes: product.attributes,
+                attributes: product.attributes
+                  ? product.attributes?.filter((p) => p.value !== '')
+                  : [],
                 quantity,
               },
             ],
