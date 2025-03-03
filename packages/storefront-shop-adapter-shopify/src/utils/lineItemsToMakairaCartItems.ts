@@ -12,7 +12,10 @@ export function lineItemsToMakairaCartItems(
         ? [node.merchandise?.product.featuredImage?.url]
         : [],
       price: node.merchandise?.price.amount ?? 0,
-      title: node.merchandise?.title,
+      title:
+        node.merchandise?.title !== 'Default Title'
+          ? node.merchandise?.title
+          : node.merchandise?.product?.title,
       url: '', // TODO
       attributes: node.attributes,
     },

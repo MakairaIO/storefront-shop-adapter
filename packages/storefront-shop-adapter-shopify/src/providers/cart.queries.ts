@@ -59,6 +59,7 @@ export type CheckoutFragmentData = {
             currencyCode: string
           }
           product: {
+            title: string
             featuredImage: {
               url: string
             }
@@ -278,7 +279,7 @@ export type CheckoutLineItemsUpdateMutationVariables = {
     id?: string
     quantity?: number
     merchandiseId?: string
-    customAttributes?: { key: string; value: string }[]
+    attributes?: { key: string; value: string }[]
   }[]
 }
 
