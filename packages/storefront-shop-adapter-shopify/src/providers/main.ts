@@ -149,7 +149,7 @@ export class StorefrontShopAdapterShopify<
     MakairaUpdateContextOptionsInput,
     MakairaUpdateItemFromCartResData,
     ShopifyUpdateItemRaw
-  > = async ({ input: { options, lineItems = [] } }) => {
+  > = async ({ input: { options, lines = [] } }) => {
     this.additionalOptions.contextOptions = options
 
     if (options === null) {
@@ -165,11 +165,7 @@ export class StorefrontShopAdapterShopify<
 
     const responseCheckoutCreate = await this.cart.createCheckoutAndStoreId({
       input: {
-        lineItems: lineItems.map((lineItem) => ({
-          quantity: lineItem.quantity,
-          variantId: lineItem.product.id,
-          customAttributes: lineItem.product.attributes,
-        })),
+        lines,
       },
     })
 
@@ -184,7 +180,7 @@ export class StorefrontShopAdapterShopify<
 
     const data: MakairaUpdateItemFromCartResData = {
       items: lineItemsToMakairaCartItems(
-        responseCheckoutCreate.data.checkout.lineItems
+        responseCheckoutCreate.data.cart.lines
       ),
     }
 

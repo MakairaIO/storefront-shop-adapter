@@ -7,6 +7,7 @@ import {
   CheckoutLineItemsRemoveMutationData,
   CheckoutLineItemsUpdateMutationData,
   CheckoutUserErrorFragmentData,
+  LineItemInput,
 } from './providers/cart.queries'
 import {
   AddressUpdateMutationData,
@@ -231,9 +232,6 @@ export type ContextOptions = Partial<
 >
 
 export type MakairaUpdateContextOptionsInput = {
-  lineItems?: {
-    product: { id: string; attributes?: { key: string; value?: string }[] }
-    quantity: number
-  }[]
+  lines?: LineItemInput[]
   options: ContextOptions
 }
