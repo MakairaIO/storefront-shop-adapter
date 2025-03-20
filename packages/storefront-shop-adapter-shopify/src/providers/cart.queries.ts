@@ -7,6 +7,10 @@ export type LineItemInput = {
   attributes?: { key: string; value: string }[]
 }
 
+export type CartBuyerIdentityInput = {
+  countryCode: string
+}
+
 //#region base definition of common used fragments
 
 export const CheckoutFragment = `
@@ -123,8 +127,8 @@ export const CheckoutCreateMutation = ({
 
 export type CheckoutCreateMutationVariables = {
   input: {
-    lineItems?: LineItemInput[]
-    presentmentCurrencyCode?: string | null
+    lines?: LineItemInput[]
+    buyerIdentity?: CartBuyerIdentityInput
   }
 }
 
