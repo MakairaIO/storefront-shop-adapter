@@ -149,7 +149,7 @@ export class StorefrontShopAdapterShopifyCart
 
       if (!checkoutId) {
         const responseCheckoutCreate = await this.createCheckoutAndStoreId({
-          input: { lineItems },
+          input: { lines: lineItems },
         })
 
         if (responseCheckoutCreate.error || !responseCheckoutCreate.data) {
@@ -357,7 +357,7 @@ export class StorefrontShopAdapterShopifyCart
       if (!checkoutId) {
         const responseCheckoutCreate = await this.createCheckoutAndStoreId({
           input: {
-            lineItems: [
+            lines: [
               {
                 quantity,
                 merchandiseId: this.transformToShopifyVariantId(product.id),
