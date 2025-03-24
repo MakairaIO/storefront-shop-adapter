@@ -55,8 +55,18 @@ export class StorefrontShopAdapterShopifyCart
         ShopifyGetCartRaw,
         Error
       > = async () => {
+        const contextOptions = this.mainAdapter.getContextOptions()
+
+        let input = {}
+
+        if (contextOptions?.buyer) {
+          input = {
+            buyerIdentity: contextOptions.buyer,
+          }
+        }
+
         const createCheckoutResponse = await this.createCheckoutAndStoreId({
-          input: {},
+          input,
         })
 
         if (createCheckoutResponse.error || !createCheckoutResponse.data) {
