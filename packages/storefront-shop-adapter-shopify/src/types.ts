@@ -227,9 +227,16 @@ export type FetchParameters<GraphqlInputVariables = any> = {
   variables?: GraphqlInputVariables
 }
 
-export type ContextOptions = Partial<
-  Record<'language' | 'country', string | null>
->
+type Buyer = {
+  companyLocationId?: string
+  customerAccessToken: string
+}
+
+export type ContextOptions = Partial<{
+  language: string | null
+  country: string | null
+  buyer: Buyer
+}>
 
 export type MakairaUpdateContextOptionsInput = {
   lines?: LineItemInput[]
