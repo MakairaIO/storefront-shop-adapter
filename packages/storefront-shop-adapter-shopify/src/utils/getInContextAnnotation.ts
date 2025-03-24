@@ -1,27 +1,22 @@
 import { ContextOptions } from '../types'
 
-function serializeValue(value: unknown): string {
-  if (typeof value === 'object' && value !== null) {
-    const entries = Object.entries(value).map(
-      ([k, v]) => `${k}: ${serializeValue(v)}`
-    )
-    return `{ ${entries.join(', ')} }`
-  }
-  return String(value)
-}
+export function getInContextAnnotation(
+  contextOptions: ContextOptions | null
+): string {
+  if (!contextOptions) return ''
 
-export function getInContextAnnotation(contextOptions: ContextOptions | null) {
-  let inContext = ''
-  if (contextOptions !== null) {
-    const contextParams: Array<string> = []
-    for (const [key, value] of Object.entries(contextOptions)) {
-      contextParams.push(`${key}: ${serializeValue(value)}`)
-    }
+  const params: string[] = []
 
-    if (contextParams.length > 0) {
-      inContext = `@inContext( ${contextParams.join(', ')} )`
-    }
+  if (contextOptions.language)
+    params.push(`language: ${contextOptions.language}`)
+  if (contextOptions.country) params.push(`country: ${contextOptions.country}`)
+  if (contextOptions.buyer) {
+    const { customerAccessToken, companyLocationId } = contextOptions.buyer
+    const buyerParams = [`customerAccessToken: "${customerAccessToken}"`]
+    if (companyLocationId)
+      buyerParams.push(`companyLocationId: "${companyLocationId}"`)
+    params.push(`buyer: { ${buyerParams.join(', ')} }`)
   }
 
-  return inContext
+  return params.length > 0 ? `@inContext( ${params.join(', ')} )` : ''
 }
