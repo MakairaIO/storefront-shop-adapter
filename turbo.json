@@ -1,6 +1,6 @@
 {
   "$schema": "https://turborepo.org/schema.json",
-  "globalEnv": ["GITHUB_TOKEN", "NPM_TOKEN", "GH_TOKEN"],
+  "globalEnv": ["GITHUB_TOKEN", "GH_TOKEN"],
   "tasks": {
     "lint:eslint": { "outputs": ["src/**"] },
     "lint:tsc": { "outputs": [] },

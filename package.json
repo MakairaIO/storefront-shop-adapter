@@ -11,8 +11,7 @@
     "prepare": "husky",
     "lint-staged": "lint-staged",
     "commitlint": "commitlint",
-    "create-new-shop-provider": "node ./cli/create-new-shop-provider/index.js",
-    "semantic-release": "semantic-release.js"
+    "create-new-shop-provider": "node ./cli/create-new-shop-provider/index.js"
   },
   "repository": {
     "type": "git",
