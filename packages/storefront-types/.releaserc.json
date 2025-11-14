@@ -1,4 +1,12 @@
 {
   "branches": ["stable"],
-  "extends": "semantic-release-monorepo"
+  "extends": "semantic-release-monorepo",
+  "plugins": [
+    [
+      "@semantic-release/npm",
+      {
+        "failOnVersionConflict": false
+      }
+    ]
+  ]
 }
