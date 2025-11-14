@@ -4,6 +4,10 @@ on:
     branches:
       - stable
 
+permissions:
+  contents: write
+  id-token: write
+
 jobs:
   release:
     name: Release
