@@ -1,3 +1,4 @@
 {
-  "branches": ["stable"]
+  "branches": ["stable"],
+  "extends": "semantic-release-monorepo"
 }
