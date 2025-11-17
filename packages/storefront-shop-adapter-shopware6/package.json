@@ -41,7 +41,7 @@
   },
   "homepage": "https://github.com/MakairaIO/storefront-shop-adapter#readme",
   "dependencies": {
-    "@makaira/storefront-types": "1.10.1",
+    "@makaira/storefront-types": "1.10.3",
     "isomorphic-unfetch": "^3.1.0"
   }
 }
