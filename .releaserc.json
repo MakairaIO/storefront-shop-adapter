@@ -17,6 +17,13 @@
     ],
     "@semantic-release/release-notes-generator",
     [
+      "@semantic-release/npm",
+      {
+        "npmPublish": false,
+        "failOnVersionConflict": false
+      }
+    ],
+    [
       "@semantic-release/github",
       {
         "assets": "dist/*.tgz"
