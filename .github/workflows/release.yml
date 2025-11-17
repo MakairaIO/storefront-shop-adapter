@@ -53,6 +53,10 @@ jobs:
           GIT_COMMITTER_NAME: ${{ secrets.GIT_USERNAME }}
           GIT_COMMITTER_EMAIL: ${{ secrets.GIT_EMAIL }}
 
+      - name: Publish storefront-types to npm
+        working-directory: ./packages/storefront-types
+        run: npm publish
+
       # - name: Run renovate
       #   uses: renovatebot/github-action@v41.0.14
       #   with:
