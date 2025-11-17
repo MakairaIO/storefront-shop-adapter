@@ -69,8 +69,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Semantic release
-        run: npx semantic-release -e semantic-release-monorepo --filter="!@makaira/storefront-types" --concurrency=1
+      - name: Run semantic-release for all packages except storefront-types
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
@@ -78,3 +77,16 @@ jobs:
           GIT_AUTHOR_EMAIL: ${{ secrets.GIT_EMAIL }}
           GIT_COMMITTER_NAME: ${{ secrets.GIT_USERNAME }}
           GIT_COMMITTER_EMAIL: ${{ secrets.GIT_EMAIL }}
+        run: |
+          # Loop through each directory in packages/
+          for dir in packages/*; do
+            # Check if it's a directory AND not the one we want to skip
+            if [ -d "$dir" ] && [ "$dir" != "packages/storefront-types" ]; then
+              echo "--- Processing $dir ---"
+              # Use a subshell ( ... ) to cd, run, and automatically cd back
+              (cd "$dir" && npx semantic-release)
+              echo "--- Finished $dir ---"
+            else
+              echo "--- Skipping $dir ---"
+            fi
+          done
