@@ -28,7 +28,8 @@
     "url": "git+https://github.com/MakairaIO/storefront-shop-adapter.git"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "provenance": false
   },
   "keywords": [
     "storefront",
