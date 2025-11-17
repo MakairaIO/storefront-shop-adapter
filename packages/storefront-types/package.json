@@ -41,5 +41,6 @@
   "bugs": {
     "url": "https://github.com/MakairaIO/storefront-shop-adapter/issues"
   },
-  "homepage": "https://github.com/MakairaIO/storefront-shop-adapter#readme"
+  "homepage": "https://github.com/MakairaIO/storefront-shop-adapter#readme",
+  "private": true
 }
