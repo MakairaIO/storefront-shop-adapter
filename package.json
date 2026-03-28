@@ -41,7 +41,7 @@
     "@semantic-release/npm": "^13.1.1",
     "@types/debug": "4.1.7",
     "@types/jest": "28.1.4",
-    "@types/node-fetch": "2.6.2",
+    "@types/node-fetch": "2.6.9",
     "@typescript-eslint/eslint-plugin": "5.33.0",
     "@typescript-eslint/parser": "5.33.0",
     "commitlint": "17.0.3",
