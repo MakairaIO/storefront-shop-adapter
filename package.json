@@ -89,5 +89,5 @@
       }
     }
   },
-  "packageManager": "npm@10.8.2"
+  "packageManager": "npm@11.18.0"
 }
